@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -10,7 +11,7 @@ import { Input } from "@nextui-org/react";
 import { Loading } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 
-import Navbar from "components/Navbar";
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 
 function App() {
