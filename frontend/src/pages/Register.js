@@ -4,15 +4,16 @@ import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
+import { Text } from "@nextui-org/react";
 
 import "./pages.css";
 
-function Login() {
+function Register() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="80%">
-        <h1>Groupomania</h1>
-        <h2>Se connecter</h2>
+        <Text h1>Groupomania</Text>
+        <Text h2>Créer un nouveau compte</Text>
         <form action="post">
           <Input
             rounded
@@ -37,11 +38,11 @@ function Login() {
           shadow
           color="warning"
         >
-          Se connecter
+          S'inscrire
         </Button>
       </Card>
     </div>
   );
 }
 
-export default Login;
+export default Register;
