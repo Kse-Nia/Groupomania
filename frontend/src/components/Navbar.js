@@ -10,6 +10,7 @@ function Navbar() {
   return (
     <nav className="Navbar">
       <a className="NavbarLink" href="/">
+        <i class="fas fa-home"></i>
         Accueil
       </a>
       <a className="NavbarLink" href="/register">

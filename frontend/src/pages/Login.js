@@ -10,7 +10,7 @@ import "./pages.css";
 function Login() {
   return (
     <div className="wrapcontainer">
-      <Card className="Card" width="80%">
+      <Card className="Card" width="60%">
         <h1>Groupomania</h1>
         <h2>Se connecter</h2>
         <form action="post">

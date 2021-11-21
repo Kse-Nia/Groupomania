@@ -15,6 +15,10 @@
     align-items: center;
 }
 
+.card {
+    width: 40%;
+}
+
 .validationbutton {
     margin: 4% auto 4%;
 }
