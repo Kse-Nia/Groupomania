@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { Routes, Route, Link } from "react-router-dom";
+import Axios from "axios";
 
 import { CssBaseline } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
@@ -18,6 +19,18 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 
 function App() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const createAccount = () => {
+    Axios.post("http://localhost:3001/register", {
+      username: username,
+      password: password,
+    }).then(() => {
+      console.log("ça marche!");
+    });
+  };
+
   return (
     <div className="App">
       <CssBaseline />
