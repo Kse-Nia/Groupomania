@@ -9,21 +9,22 @@ const db = mysql.createConnection({
     database: 'Groupomania'
 });
 
-app.post('/register', (req, res) => {
+app.post("/register", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    db.query('INSERT INTO User ('
-        username ', '
-        password ') VALUES (?,?)', [username, password], (err, result) => {
+    db.query(
+        "INSERT INTO User (username, password) VALUES (?,?,?,?,?)",
+        [username, password],
+        (err, result) => {
             if (err) {
-                console.log(err)
+                console.log(err);
             } else {
-                res.send("Ok");
+                res.send("OK");
             }
         }
     );
-})
+});
 
 app.listen(3001, (req, res) => {
     console.log("The server is running");
