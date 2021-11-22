@@ -3,20 +3,26 @@ const app = express();
 const mysql = require("mysql");
 
 const db = mysql.createConnection({
-    host: 'localhost',
     user: 'root',
-    password: 'password',
+    host: 'localhost',
+    password: '',
     database: 'Groupomania'
 });
 
-app.get("/register", (req, res) => {
-    db.query(
-        "INSERT INTO User (username, password) VALUES ('pedro', 'password');",
-        (err, results) => {
-            console.log(error);
-            res.send(results);
+app.post('/register', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    db.query('INSERT INTO User ('
+        username ', '
+        password ') VALUES (?,?)', [username, password], (err, result) => {
+            if (err) {
+                console.log(err)
+            } else {
+                res.send("Ok");
+            }
         }
-    )
+    );
 })
 
 app.listen(3001, (req, res) => {
