@@ -21,8 +21,7 @@ function Login() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
-        <h1>Groupomania</h1>
-        <h2>Se connecter</h2>
+        <h1> Groupomania </h1> <h2> Se connecter </h2>{" "}
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             rounded
@@ -30,7 +29,7 @@ function Login() {
             label="Pseudo"
             placeholder="Entrez un pseudo"
           />
-          <Spacer y={1} />
+          <Spacer y={1} />{" "}
           <Grid>
             <Input
               rounded
@@ -39,17 +38,17 @@ function Login() {
               type="password"
               placeholder="Entrez un mot de passe"
             />
-          </Grid>
-        </form>
+          </Grid>{" "}
+        </form>{" "}
         <Button
           className="validationbutton"
           size="large"
           shadow
           color="warning"
         >
-          Se connecter
-        </Button>
-      </Card>
+          Se connecter{" "}
+        </Button>{" "}
+      </Card>{" "}
     </div>
   );
 }

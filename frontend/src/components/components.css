@@ -9,7 +9,7 @@
     width: 100%;
     min-height: 5vh;
     box-shadow: 3px 6px 6px hsl(0deg 0% 0% / 0.40);
-    background-color: white;
+    /*   background-color: white; */
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -17,7 +17,7 @@
 }
 
 .NavbarLink {
-    color: black;
+    color: white;
     margin: 1% auto 1%;
 }
 

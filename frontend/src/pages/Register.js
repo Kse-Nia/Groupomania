@@ -23,7 +23,7 @@ function Register() {
 
   return (
     <div className="wrapcontainer">
-      <Card className="Card" width="80%">
+      <Card className="Card" width="60%">
         <Text h1>Groupomania</Text>
         <Text h2>Créer un nouveau compte</Text>
         <form onSubmit={handleSubmit(onSubmit)}>

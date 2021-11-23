@@ -4,9 +4,17 @@ import { Routes, Route, Link } from "react-router-dom";
 import Axios from "axios";
 
 import { CssBaseline } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import { Container, Row, Col } from "@nextui-org/react";
-import { Avatar } from "@nextui-org/react";
+/* import {
+  Button
+} from "@nextui-org/react";
+import {
+  Container,
+  Row,
+  Col
+} from "@nextui-org/react";
+import {
+  Avatar
+} from "@nextui-org/react"; */
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Loading } from "@nextui-org/react";
@@ -36,11 +44,11 @@ function App() {
       <CssBaseline />
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
+        <Route path="/" element={<Home />} />{" "}
+        <Route path="/register" element={<Register />} />{" "}
+        <Route path="/login" element={<Login />} />{" "}
+        <Route path="/profile" element={<Profile />} />{" "}
+      </Routes>{" "}
     </div>
   );
 }
