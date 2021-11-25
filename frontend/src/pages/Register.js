@@ -6,7 +6,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 
