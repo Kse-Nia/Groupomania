@@ -42,6 +42,21 @@ function Register() {
             })}
           />
           <Spacer y={1} />
+          <Input
+            rounded
+            bordered
+            className="form-control"
+            id="useremail"
+            type="text"
+            label="Email"
+            placeholder="Entrez une adresse mail"
+            name="useremail"
+            defaultValue="useremail"
+            {...register("useremail", {
+              required: "Required",
+            })}
+          />
+          <Spacer y={1} />
           <Grid>
             <Input
               rounded
