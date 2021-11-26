@@ -21,7 +21,7 @@ function Login() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
-        <h1> Groupomania </h1> <h2> Se connecter </h2>{" "}
+        <h1> Groupomania </h1> <h2> Se connecter </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             rounded

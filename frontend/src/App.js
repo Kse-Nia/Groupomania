@@ -15,10 +15,10 @@ import {
 import {
   Avatar
 } from "@nextui-org/react"; */
-import { Card } from "@nextui-org/react";
+/* import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Loading } from "@nextui-org/react";
-import { Text } from "@nextui-org/react";
+import { Text } from "@nextui-org/react"; */
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
