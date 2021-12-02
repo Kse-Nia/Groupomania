@@ -9,7 +9,7 @@ const apiLimiter = rateLimit({
 });
 
 
-router.get("/register", (req, res) => {
+router.post("/register", (req, res) => {
     const username = req.body.username;
     const useremail = req.body.useremail;
     const password = req.body.password;
@@ -24,7 +24,7 @@ router.get("/register", (req, res) => {
     );
 });
 
-router.get("/login", (req, res) => {
+router.post("/login", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
