@@ -6,22 +6,23 @@ const cors = require('cors');
 const {
     Sequelize
 } = require('sequelize');
+const User = require('./models/user');
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize('Groupomania', 'kseniya', 'nrppgt', {
+const sequelize = new Sequelize('Groupomania', 'kseniya', 'password', {
     host: 'localhost',
     dialect: 'mysql'
 });
 
+sequelize.sync()
+    .then((result) => {
+        console.log(result);
+    })
+    .catch((err) => {
+        console.log(err);
+    })
 
 app.use(cors());
-
-const db = mysql.createConnection({
-    user: 'root',
-    host: 'localhost',
-    password: '',
-    database: 'Groupomania'
-});
 
 const userRoute = require('./routes/User');
 app.use('/user', userRoute);
