@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const db = require('../db_connection');
+const rateLimit = require("express-rate-limit");
+
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+});
 
 
 router.get("/register", (req, res) => {
