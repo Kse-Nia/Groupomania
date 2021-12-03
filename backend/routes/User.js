@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../database');
 
 
-router.get("/register", (req, res) => {
+router.post("/register", (req, res) => {
     const username = req.body.username;
     const useremail = req.body.useremail;
     const password = req.body.password;
