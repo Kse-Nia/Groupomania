@@ -29,29 +29,20 @@ router.post("/login", (req, res) => {
     const password = req.body.password;
 
     db.query(
-        "SELECT * FROM Users WHERE username = ?",
-        username,
+        "SELECT * FROM User WHERE username = ?",
+        [username, password],
         (err, results) => {
             if (err) {
                 console.log(err);
             }
-            if (results.length > 0) {
-                if (password == results[0].password) {
-                    res.json({
-                        loggedIn: true,
-                        username: username
-                    });
+            if (results) {
+                if (password = results[0].password) {
+                    res.send("Connecté!");
                 } else {
-                    res.json({
-                        loggedIn: false,
-                        message: "Wrong username/password combo!",
-                    });
+                    res.send("Mauvais identifiants");
                 }
             } else {
-                res.json({
-                    loggedIn: false,
-                    message: "User doesn't exist"
-                });
+                res.send("Compte n'existe pas");
             }
         }
     );

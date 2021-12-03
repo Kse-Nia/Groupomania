@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";

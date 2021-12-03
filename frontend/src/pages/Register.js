@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
@@ -23,8 +22,7 @@ function Register() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
-        <Text h1>Groupomania</Text>
-        <Text h2>Créer un nouveau compte</Text>
+        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>{" "}
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             rounded
@@ -39,8 +37,8 @@ function Register() {
             {...register("username", {
               required: "Required",
             })}
-          />
-          <Spacer y={1} />
+          />{" "}
+          <Spacer y={1} />{" "}
           <Input
             rounded
             bordered
@@ -54,8 +52,8 @@ function Register() {
             {...register("useremail", {
               required: "Required",
             })}
-          />
-          <Spacer y={1} />
+          />{" "}
+          <Spacer y={1} />{" "}
           <Grid>
             <Input
               rounded
@@ -64,14 +62,14 @@ function Register() {
               type="password"
               placeholder="Entrez un mot de passe"
             />
-          </Grid>
+          </Grid>{" "}
           <input
             className="validationbutton"
             type="submit"
             value="S'inscrire"
           />
-        </form>
-      </Card>
+        </form>{" "}
+      </Card>{" "}
     </div>
   );
 }
