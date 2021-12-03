@@ -1,16 +1,9 @@
-import React, {
-  useState
-} from "react";
+import React, { useState } from "react";
 import "./App.css";
-import {
-  Routes,
-  Route
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Axios from "axios";
 
-import {
-  CssBaseline
-} from "@nextui-org/react";
+import { CssBaseline } from "@nextui-org/react";
 /* import {
   Button
 } from "@nextui-org/react";
@@ -48,37 +41,17 @@ function App() {
     });
   };
 
-  return ( <
-    div className = "App" >
-    <
-    CssBaseline / >
-    <
-    Navbar / >
-    <
-    Routes >
-    <
-    Route path = "/"
-    element = {
-      < Home / >
-    }
-    />{" "} <
-    Route path = "/register"
-    element = {
-      < Register / >
-    }
-    />{" "} <
-    Route path = "/login"
-    element = {
-      < Login / >
-    }
-    />{" "} <
-    Route path = "/profile"
-    element = {
-      < Profile / >
-    }
-    />{" "} <
-    /Routes>{" "} <
-    /div>
+  return (
+    <div className="App">
+      <CssBaseline />
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />{" "}
+        <Route path="/register" element={<Register />} />{" "}
+        <Route path="/login" element={<Login />} />{" "}
+        <Route path="/profile" element={<Profile />} />{" "}
+      </Routes>{" "}
+    </div>
   );
 }
 
