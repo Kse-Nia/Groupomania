@@ -5,17 +5,35 @@ import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
+import Axios from "axios";
 
 import "./pages.css";
 
+const axios = require("axios").default;
+
 function Login() {
-  const {
+  const login = () => {
+    /*   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => console.log(data); */
+
+    Axios.post("http://localhost:3001/user/login", {
+      username: username,
+      password: password,
+    }).then((response) => {
+      if (response.data.loggedIn) {
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("username", response.data.username);
+        history.push("/");
+      } else {
+        setErrorMessage(response.data.message);
+      }
+    });
+  };
 
   return (
     <div className="wrapcontainer">

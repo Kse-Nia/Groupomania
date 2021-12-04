@@ -5,6 +5,7 @@ const userRoute = require('./routes/User');
 const db = require('./db_connection');
 
 app.use(cors());
+app.use(express.json());
 
 app.use("/user", userRoute);
 
