@@ -22,7 +22,7 @@ function Register() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>{" "}
+        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             rounded
@@ -37,8 +37,8 @@ function Register() {
             {...register("username", {
               required: "Required",
             })}
-          />{" "}
-          <Spacer y={1} />{" "}
+          />
+          <Spacer y={1} />
           <Input
             rounded
             bordered
@@ -52,8 +52,8 @@ function Register() {
             {...register("useremail", {
               required: "Required",
             })}
-          />{" "}
-          <Spacer y={1} />{" "}
+          />
+          <Spacer y={1} />
           <Grid>
             <Input
               rounded
@@ -68,8 +68,8 @@ function Register() {
             type="submit"
             value="S'inscrire"
           />
-        </form>{" "}
-      </Card>{" "}
+        </form>
+      </Card>
     </div>
   );
 }
