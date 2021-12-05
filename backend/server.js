@@ -1,4 +1,5 @@
 const express = require("express");
+const http = require('http');
 const app = express();
 const cors = require("cors");
 /* const userRoute = require('./routes/User'); */
@@ -6,48 +7,48 @@ const db = require('./db_connection');
 
 app.use(cors());
 app.use(express.json());
-/* 
-app.use("/user", userRoute); */
 
-app.post('/register', async (req, res) => {
+const normalizePort = val => {
+    const port = parseInt(val, 10);
 
-    const username = req.body.username;
-    const useremail = req.body.useremail;
-    const password = req.body.password;
+    if (isNaN(port)) {
+        return val;
+    }
+    if (port >= 0) {
+        return port;
+    }
+    return false;
+};
+const port = normalizePort(process.env.PORT || '3001');
+app.set('port', port);
 
-    db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password],
-            (err, results) => {
-                console.log(err);
-            }),
-        (err, results) => {
-            console.log(err);
-            res.send(results);
-        }
+const errorHandler = error => {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+    const address = server.address();
+    const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges.');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use.');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+};
+
+const server = http.createServer(app);
+
+server.on('error', errorHandler);
+server.on('listening', () => {
+    const address = server.address();
+    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+    console.log('Listening on ' + bind);
 });
 
-app.post('/login', async (req, res) => {
-    const username = req.body.userlogin;
-    const password = req.body.password;
-
-    db.query(
-        "SELECT `username`, `password` FROM `User` ", [username, password],
-        (err, results) => {
-            if (err) {
-                console.log(err);
-            }
-            if (results) {
-                res.send(results);
-            }
-        })
-})
-
-/* app.get('profile', (req, res, next) => {
-    const username = req.body.userlogin;
-    const useremail = req.body.userlogin;
-
-    db.query("SELECT * FROM User WHERE username = ? AND useremail = ?", [username, useremail])
-}) */
-
-app.listen(3001, (req, res) => {
-    console.log("Server running...");
-});
+server.listen(port);
