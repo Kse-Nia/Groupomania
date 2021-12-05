@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import Axios from "axios";
 
 import { Button, Card } from "@nextui-org/react";
+import { Container, Row, Col } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
-
+import SocialPicture from "../Assets/auth.jpg";
 import "./pages.css";
 
 function Register() {
@@ -15,19 +16,24 @@ function Register() {
   const [userpassword, setUserpassword] = useState("");
 
   const register = () => {
-    Axios.post("http://localhost:3001/register", {
+    Axios.post("http://localhost:3001/login", {
       username: username,
       useremail: useremail,
       password: userpassword,
     }).then((response) => {
-      console.log(response);
+      if (response.data.loggedIn) {
+        localStorage.setItem("Connecté", true);
+        localStorage.setItem("Pseudo", response.data.username);
+      } else {
+        console.log(response.data.message);
+      }
     });
   };
 
   return (
     <div className="wrapcontainer">
-      <Card className="Card" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>
+      <Card className="Card login" width="60%">
+        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>
         <form>
           <Input
             rounded
@@ -42,31 +48,30 @@ function Register() {
             }}
           />
           <Spacer y={1} />
-          <Input
-            rounded
-            bordered
-            className="form-control"
-            type="text"
-            label="Email"
-            placeholder="Entrez une adresse mail"
-            name="useremail"
-            onChange={(e) => {
-              setUseremail(e.target.value);
-            }}
-          />
-          <Spacer y={1} />
           <Grid>
             <Input
               rounded
               bordered
-              label="Mot de passe"
-              type="password"
-              placeholder="Entrez un mot de passe"
+              label="Adresse mail"
+              type="email"
+              placeholder="Votre adresse mail"
               onChange={(e) => {
-                setUserpassword(e.target.value);
+                setUseremail(e.target.value);
               }}
             />
-          </Grid>{" "}
+          </Grid>
+          <Spacer y={1} />
+          <Input
+            rounded
+            bordered
+            label="Mot de passe"
+            type="password"
+            placeholder="Entrez un mot de passe"
+            onChange={(e) => {
+              setUserpassword(e.target.value);
+            }}
+          />
+          <Spacer y={1} />
           <Button onClick={register}>S'inscrire</Button>
         </form>
       </Card>

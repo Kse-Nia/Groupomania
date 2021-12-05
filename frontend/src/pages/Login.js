@@ -21,13 +21,18 @@ function Login() {
       username: usernamelog,
       password: userpasswordlog,
     }).then((response) => {
-      console.log(response.data);
+      if (response.data.loggedIn) {
+        localStorage.setItem("Connecté", true);
+        localStorage.setItem("Pseudo", response.data.username);
+      } else {
+        console.log(response.data.message);
+      }
     });
   };
 
   return (
     <div className="wrapcontainer">
-      <Card className="Card" width="60%">
+      <Card className="Card login" width="60%">
         <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>
         <form>
           <Input
@@ -54,10 +59,10 @@ function Login() {
                 setUserpasswordLog(e.target.value);
               }}
             />
-          </Grid>{" "}
-          <Button color="warning" auto onClick={login}>
-            Se connecter
-          </Button>
+          </Grid>
+          <Spacer y={1} />
+          <Spacer y={1} />
+          <Button onClick={login}>Se connecter</Button>
         </form>
         <p>{LogStat}</p>
       </Card>

@@ -9,13 +9,13 @@ app.use(express.json());
 /* 
 app.use("/user", userRoute); */
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
 
     const username = req.body.username;
     const useremail = req.body.useremail;
     const password = req.body.password;
 
-    db.query("INSERT INTO User (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password], (err, result) => {
+    db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password], (err, results) => {
             console.log(err);
         }),
         (err, results) => {
@@ -24,26 +24,32 @@ app.post('/register', (req, res) => {
         }
 });
 
-app.post('/login', (req, res, next) => {
+app.post('/login', async (req, res) => {
     const username = req.body.userlogin;
     const password = req.body.password;
 
-    db.query("SELECT * FROM User WHERE username = ? AND password = ?", [username, password], (err, result) => {
-        if (err) {
-            res.send({
-                err: err
-            });
-        } else {
-            if (result) {
-                res.send(result)
-            } else {
-                res.send({
-                    message: "Erreur"
-                })
+    db.query(
+        "SELECT `username`, `password` FROM User", [username, password],
+        (err, results) => {
+            if (err) {
+                console.log(err);
             }
-        }
-    })
+            if (results) {
+                if (password == results[0].password) {
+                    res.send('Connection réussie');
+                } else {
+                    res.send("Erreur dans les indentifiants");
+                }
+            }
+        })
 })
+
+/* app.get('profile', (req, res, next) => {
+    const username = req.body.userlogin;
+    const useremail = req.body.userlogin;
+
+    db.query("SELECT * FROM User WHERE username = ? AND useremail = ?", [username, useremail])
+}) */
 
 app.listen(3001, (req, res) => {
     console.log("Server running...");
