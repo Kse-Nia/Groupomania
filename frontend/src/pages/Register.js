@@ -16,7 +16,7 @@ function Register() {
   const [userpassword, setUserpassword] = useState("");
 
   const register = () => {
-    Axios.post("http://localhost:3001/login", {
+    Axios.post("http://localhost:3001/register", {
       username: username,
       useremail: useremail,
       password: userpassword,
@@ -33,7 +33,7 @@ function Register() {
   return (
     <div className="wrapcontainer">
       <Card className="Card login" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>
+        <Text h1> Groupomania </Text> <Text h2> S'inscrire </Text>
         <form>
           <Input
             rounded

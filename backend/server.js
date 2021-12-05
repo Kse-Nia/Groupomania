@@ -15,9 +15,10 @@ app.post('/register', async (req, res) => {
     const useremail = req.body.useremail;
     const password = req.body.password;
 
-    db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password], (err, results) => {
-            console.log(err);
-        }),
+    db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password],
+            (err, results) => {
+                console.log(err);
+            }),
         (err, results) => {
             console.log(err);
             res.send(results);
@@ -29,17 +30,13 @@ app.post('/login', async (req, res) => {
     const password = req.body.password;
 
     db.query(
-        "SELECT `username`, `password` FROM User", [username, password],
+        "SELECT `username`, `password` FROM `User` ", [username, password],
         (err, results) => {
             if (err) {
                 console.log(err);
             }
             if (results) {
-                if (password == results[0].password) {
-                    res.send('Connection réussie');
-                } else {
-                    res.send("Erreur dans les indentifiants");
-                }
+                res.send(results);
             }
         })
 })
