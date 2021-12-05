@@ -42,14 +42,10 @@ body {
 .CardPresentation {
     width: 50%;
     height: auto;
+    display: flex;
+    align-items: center;
 }
 
-.registerPicture {
-    width: 100%;
-    height: auto;
-    /*   object-fit: contain; */
-    margin: 0 auto 1%;
-}
 
 .FormContainer {
     display: flex;
