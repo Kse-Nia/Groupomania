@@ -33,7 +33,7 @@ app.post('/register', async (req, res) => {
     const useremail = req.body.useremail;
     const password = req.body.password;
 
-    db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password], (err, results) => {
+    sequelize.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password], (err, results) => {
             console.log(err);
         }),
         (err, results) => {
@@ -43,10 +43,10 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const username = req.body.userlogin;
+    const username = req.body.username;
     const password = req.body.password;
 
-    db.query(
+    sequelize.query(
         "SELECT `username`, `password` FROM User", [username, password],
         (err, results) => {
             if (err) {
