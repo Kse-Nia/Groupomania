@@ -9,24 +9,27 @@ app.use(express.json());
 /* 
 app.use("/user", userRoute); */
 
-app.post('/register', async (req, res) => {
+app.post('/register', (req, res) => {
 
     const username = req.body.username;
     const useremail = req.body.useremail;
     const password = req.body.password;
 
     db.query("INSERT INTO `User` (username, useremail, password) VALUES (?, ?, ?)", [username, useremail, password],
-            (err, results) => {
-                console.log(err);
-            }),
         (err, results) => {
-            console.log(err);
-            res.send(results);
-        }
+            if (err) {
+                console.log(err);
+            }
+            if (results) {
+                console.log(results);
+                res.send(results);
+            }
+        })
 });
 
-app.post('/login', async (req, res) => {
-    const username = req.body.userlogin;
+app.post('/login', (req, res) => {
+
+    const username = req.body.username;
     const password = req.body.password;
 
     db.query(
@@ -36,6 +39,7 @@ app.post('/login', async (req, res) => {
                 console.log(err);
             }
             if (results) {
+                console.log(results);
                 res.send(results);
             }
         })
