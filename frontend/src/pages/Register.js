@@ -1,7 +1,5 @@
-import React from "react";
-
-import { useForm } from "react-hook-form";
-
+import React, { useEffect, useState } from "react";
+import Axios from "axios";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
@@ -12,19 +10,27 @@ import { Button } from "@nextui-org/react";
 import "./pages.css";
 
 function Register() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
+  // Hook states
+  const [username, setUsername] = useState(""); // String
+  const [useremail, setUseremail] = useState("");
+  const [userpassword, setUserPassword] = useState("");
+
+  const register = () => {
+    console.log(username);
+    Axios.post("http://localhost:3001/user/register", {
+      username: username,
+      useremail: useremail,
+      userpassword: userpassword,
+    }).then((response) => {
+      console.log(response);
+    });
+  };
 
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
         <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>{" "}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <Input
             rounded
             bordered
@@ -34,12 +40,11 @@ function Register() {
             label="Pseudo"
             placeholder="Entrez un pseudo"
             name="username"
-            defaultValue="username"
-            {...register("username", {
-              required: "Required",
-            })}
+            onChange={(event) => {
+              setUsername(event.target.value);
+            }}
           />{" "}
-          <Spacer y={1} />{" "}
+          <Spacer y={1} />
           <Input
             rounded
             bordered
@@ -49,12 +54,12 @@ function Register() {
             label="Email"
             placeholder="Entrez une adresse mail"
             name="useremail"
-            defaultValue="useremail"
-            {...register("useremail", {
-              required: "Required",
-            })}
-          />{" "}
-          <Spacer y={1} />{" "}
+            // Function for passing Useremail
+            onChange={(event) => {
+              setUseremail(event.target.value);
+            }}
+          />
+          <Spacer y={1} />
           <Grid>
             <Input
               rounded
@@ -62,10 +67,12 @@ function Register() {
               label="Mot de passe"
               type="password"
               placeholder="Entrez un mot de passe"
+              onChange={(event) => {
+                setUserPassword(event.target.value);
+              }}
             />
           </Grid>
-          <Spacer y={1} />
-          <Button onClick={register}> Se connecter </Button>
+          <Spacer y={1} /> <Button onClick={register}> Se connecter </Button>
         </form>
       </Card>
     </div>

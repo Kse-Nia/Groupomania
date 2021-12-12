@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
@@ -11,15 +10,15 @@ import Axios from "axios";
 import "./pages.css";
 
 function Login() {
-  const [usernamelog, setUsernameLog] = useState("");
-  const [userpasswordlog, setUserpasswordLog] = useState("");
+  const [username, setUsername] = useState("");
+  const [userpassword, setUserpassword] = useState("");
 
   const [LogStat, setLogStat] = useState("");
 
   const login = () => {
-    Axios.post("http://localhost:3001/login", {
-      username: usernamelog,
-      password: userpasswordlog,
+    Axios.post("http://localhost:3001/user/login", {
+      username: username,
+      userpassword: userpassword,
     }).then((response) => {
       if (response.data.loggedIn) {
         localStorage.setItem("Connecté", true);
@@ -44,10 +43,10 @@ function Login() {
             placeholder="Entrez un pseudo"
             name="username"
             onChange={(e) => {
-              setUsernameLog(e.target.value);
+              setUsername(e.target.value);
             }}
-          />
-          <Spacer y={1} />
+          />{" "}
+          <Spacer y={1} />{" "}
           <Grid>
             <Input
               rounded
@@ -56,15 +55,14 @@ function Login() {
               type="password"
               placeholder="Entrez un mot de passe"
               onChange={(e) => {
-                setUserpasswordLog(e.target.value);
+                setUserpassword(e.target.value);
               }}
             />
           </Grid>
-          <Spacer y={1} />
-          <Spacer y={1} />
-          <Button onClick={login}>Se connecter</Button>
+          <Spacer y={1} /> <Spacer y={1} />
+          <Button onClick={login}> Se connecter </Button>
         </form>
-        <p>{LogStat}</p>
+        <p> {LogStat} </p>
       </Card>
     </div>
   );
