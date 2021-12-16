@@ -44,7 +44,7 @@ function Register() {
               setUsername(event.target.value);
             }}
           />{" "}
-          <Spacer y={1} />
+          <Spacer y={1} />{" "}
           <Input
             rounded
             bordered
@@ -58,8 +58,8 @@ function Register() {
             onChange={(event) => {
               setUseremail(event.target.value);
             }}
-          />
-          <Spacer y={1} />
+          />{" "}
+          <Spacer y={1} />{" "}
           <Grid>
             <Input
               rounded
@@ -70,11 +70,11 @@ function Register() {
               onChange={(event) => {
                 setUserPassword(event.target.value);
               }}
-            />
-          </Grid>
-          <Spacer y={1} /> <Button onClick={register}> Se connecter </Button>
-        </form>
-      </Card>
+            />{" "}
+          </Grid>{" "}
+          <Spacer y={1} /> <Button onClick={register}> S'enregistrer </Button>
+        </form>{" "}
+      </Card>{" "}
     </div>
   );
 }
