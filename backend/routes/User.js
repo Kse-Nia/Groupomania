@@ -15,27 +15,6 @@ router.post('/register', (req, res) => {
         });
 });
 
-/* router.post('/login', (req, res) => {
-    const username = req.body.username;
-    const userpassword = req.body.userpassword;
-
-    db.query("SELECT * FROM User WHERE username = ?",
-        username,
-        (err, results) => {
-            if (err) {
-                console.log(err);
-            }
-            if (results.length > 0) {
-                if (userpassword == results[0].userpassword) {
-                    res.json("Connecté");
-                } else {
-                    res.json("Mauvais combo");
-                }
-            } else {
-                res.json("Aucun compte");
-            }
-        });
-}); */
 
 router.post("/login", (req, res) => {
     const username = req.body.username;

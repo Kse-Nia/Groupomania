@@ -7,14 +7,13 @@ const userModel = require('../models/user.model');
 const postModel = require('../models/post.model');
 
 
-
 exports.deleteUser = (req, res, next) => {
     const User = userModel(db);
     const Post = postModel(db);
     User.findOne({
             where: {
                 idUser: req.body.idUser,
-                email: req.body.useremail
+                useremailemail: req.body.useremail
             }
         })
         .then(user => {
@@ -82,8 +81,7 @@ exports.deleteUser = (req, res, next) => {
 
 //////////////////////////////
 
-const passwordValidator = require('../middleware/passwordValidator');
-const cloudinary = require('cloudinary').v2;
+/* const passwordValidator = require('../middleware/passwordValidator'); */
 
 // Info  profil User
 exports.getUserMe = (req, res, next) => {
