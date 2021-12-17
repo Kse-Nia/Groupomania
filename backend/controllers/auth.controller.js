@@ -38,21 +38,26 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const {
-        useremail,
+        username,
         userpassword
     } = req.body
-    const db = db.getDB();
-    try {
-        const user = await UserModel.login(useremail, userpassword);
-        const token = createToken(user.idUser);
-        res.cookie('jwt', token);
-        res.status(200).json({
-            user: user.idUser
-        })
-    } catch (err) {
-        const errors = signInErrors(err);
-        res.status(200).json({
-            errors
-        });
-    }
+    const mysql = `SELECT username, userpassword FROM User WHERE username=?`;
+    /*    const db = db.getDB(); */
+
+    db.query(mysql, username, async (err, result) => {
+        try {
+            const db = db.getDB();
+            const user = UserModel.login(username, userpassword);
+            const token = createToken(user.idUser);
+            res.cookie('jwt', token);
+            res.status(200).json({
+                user: user.idUser
+            })
+        } catch (err) {
+            console.log(err);
+            res.status(200).json({
+                err
+            });
+        }
+    })
 }
