@@ -20,12 +20,7 @@ function Login() {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
-      if (response.data.loggedIn) {
-        localStorage.setItem("Connecté", true);
-        localStorage.setItem("Pseudo", response.data.username);
-      } else {
-        console.log(response.data.message);
-      }
+      console.log(response);
     });
   };
 

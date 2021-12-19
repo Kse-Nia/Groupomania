@@ -19,10 +19,10 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require("./routes/auth.routes");
 const uploadRoutes = require("./routes/Upload");
 
-/* app.use("/user/register", authRoutes);
-app.use("/user/login", authRoutes); */
+
 app.use("/user", userRoutes);
 app.use("/upload", uploadRoutes);
+
 
 
 app.use(express.static(__dirname));
