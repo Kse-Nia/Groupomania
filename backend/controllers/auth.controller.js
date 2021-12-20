@@ -17,7 +17,6 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const username = req.body.username;
-    const useremail = req.body.useremail;
     const userpassword = req.body.userpassword;
 
     db.query("SELECT * FROM User WHERE username = ? AND userpassword = ?", [username, userpassword], (err, result) => {
@@ -26,7 +25,7 @@ exports.login = async (req, res) => {
             res.send('error');
         };
 
-        if (result) {
+        if (result.length > 0) {
             res.send(result);
         } else {
             res.send({

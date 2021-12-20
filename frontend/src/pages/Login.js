@@ -20,14 +20,19 @@ function Login() {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
-      console.log(response);
+      if (response.data.message) {
+        setLogStat(response.data.message);
+      } else {
+        setLogStat(response.data[0].username);
+      }
     });
   };
 
   return (
     <div className="wrapcontainer">
       <Card className="Card login" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>
+        <Text h1> Groupomania </Text>
+        <Text h2> Se connecter </Text>
         <form>
           <Input
             rounded
@@ -52,13 +57,13 @@ function Login() {
               onChange={(e) => {
                 setUserpassword(e.target.value);
               }}
-            />{" "}
-          </Grid>{" "}
+            />
+          </Grid>
           <Spacer y={1} /> <Spacer y={1} />
-          <Button onClick={login}> Se connecter </Button>{" "}
-        </form>{" "}
-        <p> {LogStat} </p>{" "}
-      </Card>{" "}
+          <Button onClick={login}> Se connecter </Button>
+        </form>
+        <p>{LogStat}</p>
+      </Card>
     </div>
   );
 }
