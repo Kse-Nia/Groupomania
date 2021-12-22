@@ -12,18 +12,18 @@ import "./pages.css";
 function Login() {
   const [username, setUsername] = useState("");
   const [userpassword, setUserpassword] = useState("");
-
-  const [LogStat, setLogStat] = useState("");
+  /* const [errorMessage, setErrorMessage] = useState(""); */
 
   const login = () => {
     Axios.post("http://localhost:3001/user/login", {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
-      if (response.data.message) {
-        setLogStat(response.data.message);
+      if (response.data.loggedIn) {
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("username", response.data.username);
       } else {
-        setLogStat(response.data[0].username);
+        console.log("Error");
       }
     });
   };
@@ -62,7 +62,6 @@ function Login() {
           <Spacer y={1} /> <Spacer y={1} />
           <Button onClick={login}> Se connecter </Button>
         </form>
-        <p>{LogStat}</p>
       </Card>
     </div>
   );

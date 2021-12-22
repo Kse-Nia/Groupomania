@@ -16,11 +16,10 @@ app.use((req, res, next) => {
 
 // Les routes
 const authRoutes = require('./routes/auth.routes');
-const userRoutes = require("./routes/auth.routes");
 const uploadRoutes = require("./routes/Upload");
 
 
-app.use("/user", userRoutes);
+app.use("/user", authRoutes);
 app.use("/upload", uploadRoutes);
 
 

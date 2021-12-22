@@ -1,6 +1,7 @@
 const UserModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const bcrypt = require("bcrypt");
 
 exports.register = async (req, res) => {
     const username = req.body.username;
@@ -19,18 +20,40 @@ exports.login = async (req, res) => {
     const username = req.body.username;
     const userpassword = req.body.userpassword;
 
-    db.query("SELECT * FROM User WHERE username = ? AND userpassword = ?", [username, userpassword], (err, result) => {
+    db.query(
+        "SELECT username, userpassword FROM User WHERE username = ?",
+        username,
+        (err, result) => {
+            if (err) {
+                res.send({
+                    err: err
+                });
+            }
 
-        if (err) {
-            res.send('error');
-        };
-
-        if (result.length > 0) {
-            res.send(result);
-        } else {
-            res.send({
-                message: "Mauvais combo"
-            });
+            if (result.length > 0) {
+                bcrypt.compare(password, result[0].password, (error, response) => {
+                    if (response) {
+                        req.session.user = result;
+                        console.log(req.session.user);
+                        res.send(result);
+                    } else {
+                        res.send({
+                            message: "Mauvais combo"
+                        });
+                    }
+                });
+            } else {
+                res.send({
+                    message: "Compte introuvable"
+                });
+            }
         }
-    })
+    );
 };
+
+// Partie Logout
+
+exports.logout = (req, res) => {
+    res.clearCookie("jwt");
+    res.status(200).json("LOGOUT");
+}
