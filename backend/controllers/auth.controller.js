@@ -39,6 +39,7 @@ exports.register = async (req, res) => {
 }; */
 
 
+/*  // Hash login
 
 exports.login = async (req, res) => {
     const username = req.body.username;
@@ -72,6 +73,25 @@ exports.login = async (req, res) => {
             }
         }
     );
+}; */
+
+exports.login = async (req, res) => {
+    const username = req.body.username;
+    const userpassword = req.body.userpassword;
+
+    db.query("SELECT * FROM User WHERE username = ? AND userpassword = ?", [username, userpassword], (err, result) => {
+        if (err) {
+            res.send('error');
+        };
+
+        if (result.length > 0) {
+            res.send(result);
+        } else {
+            res.send({
+                message: "Mauvais combo"
+            });
+        }
+    })
 };
 
 // Partie Logout
