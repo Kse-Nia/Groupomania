@@ -12,6 +12,7 @@ import "./pages.css";
 function Login() {
   const [username, setUsername] = useState("");
   const [userpassword, setUserpassword] = useState("");
+  const [LogStat, setLogStat] = useState("");
   /* const [errorMessage, setErrorMessage] = useState(""); */
 
   const login = () => {
@@ -19,11 +20,13 @@ function Login() {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
-      if (response.data.loggedIn) {
+      if (response.data.message) {
         localStorage.setItem("loggedIn", true);
         localStorage.setItem("username", response.data.username);
+        setLogStat(response.data.message);
       } else {
         console.log("Error");
+        setLogStat(response.data[0].username);
       }
     });
   };
@@ -61,6 +64,7 @@ function Login() {
           </Grid>
           <Spacer y={1} /> <Spacer y={1} />
           <Button onClick={login}> Se connecter </Button>
+          <p> {LogStat} </p>
         </form>
       </Card>
     </div>
