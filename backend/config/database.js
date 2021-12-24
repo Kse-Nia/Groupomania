@@ -2,9 +2,9 @@ const {
     Sequelize
 } = require('sequelize');
 
-const sequelize = new Sequelize('Groupomania', 'kseniya', 'password', {
+const db = new Sequelize('Groupomania', 'kseniya', 'password', {
     host: 'localhost',
     dialect: 'mysql'
 });
 
-module.exports = sequelize;
+module.exports = db;

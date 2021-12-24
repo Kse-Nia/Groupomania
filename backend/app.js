@@ -1,8 +1,14 @@
+// Import
 const express = require('express');
 const app = express();
-
 const sequelize = require('sequelize');
+const db = require("./models");
+const cors = require('cors');
+const path = require('path');
+const userRoutes = require('./routes/auth.routes')
 
+
+// CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -12,25 +18,22 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-    console.log('Requête reçue !');
-    next();
-});
 
-app.use((req, res, next) => {
-    res.status(201);
-    next();
-});
+// Routes
+app.use('/user', userRoutes);
+// DB
+db.sequelize.sync();
 
-app.use((req, res, next) => {
-    res.json({
-        message: 'Votre requête a bien été reçue !'
-    });
-    next();
-});
+const test = async function () {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection established successfully.');
+    } catch (error) {
+        console.error('Unable to connect:', error);
+    }
+};
+dbTest();
+// Routeurs
 
-app.use((req, res, next) => {
-    console.log('Réponse envoyée avec succès !');
-});
 
 module.exports = app;
