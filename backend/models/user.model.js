@@ -1,37 +1,31 @@
-let mysql = require('mysql');
-const db = require("../config/db");
+const {
+    Sequelize
+} = require('sequelize');
 
+const sequelize = require('../config/database');
 
-module.exports = (db) => {
-    class User extends Model {
-        static associate(models) {
-            models.User.hasMany(models.Article, {
-                foreignKey: 'idUser'
-            })
-        }
-    };
-    User.init({
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
-        },
-        useremail: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        userpassword: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        isAdmin: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        }
-    }, {
-        db,
-        modelName: 'User',
-    });
-    return User;
-};
+const User = sequelize.define("User", {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    useremail: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    userpassword: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    isAdmin: {
+        type: DataTypes.BOOLEAN,
+    }
+});
+
+module.exports = User;

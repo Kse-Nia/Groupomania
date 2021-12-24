@@ -1,79 +1,63 @@
-const dbconfig = require('../config/db');
-const db = dbconfig.getDB();
+const bcrypt = require('bcrypt'); // Hash pass
+const jwt = require('jsonwebtoken');
 
-const db = dbc.getDB();
+const {
+    User
+} = require('../models/user.model');
 
-// Partie User
+// Regex register
+const regexMail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+.[a-zA-Z.]{2,15}/;
+const regexPass = /^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
 
-exports.getOneUser = (req, res, next) => {
-    const {
-        id: idUser
-    } = req.params;
-    const mysqlGetUser = `SELECT * FROM users WHERE users.user_id = ${idUser};`;
-    db.query(mysqlGetUser, (err, result) => {
-        if (err) {
-            res.status(404).json({
-                err
-            });
-            throw err;
-        }
-        delete result[0].user_password;
-        res.status(200).json(result);
-    });
-};
 
-exports.updateOneUser = (req, res, next) => {
-    if (req.file) {
-        const {
-            id: idUser
-        } = req.params
-        let {
-            destination,
-            filename
-        } = req.file
-        destination = destination + filename
-
-        const mysqlInsertImage = `INSERT INTO images (post_id, idUser, image_url) VALUES (NULL, ${idUser}, "${destination}");`;
-        db.query(mysqlInsertImage, (err, result) => {
-            if (err) {
-                res.status(404).json({
-                    err
-                });
-                throw err;
-            }
+exports.register = async (req, res) => {
+    if (req.body.useremail == null || req.body.userpassword == null) {
+        return res.status(400).json({
+            'error': 'Veillez remplir toutes les données'
         });
     }
+    if (!regexMail.test(req.body.email)) {
+        return res.status(400).json({
+            'error': 'Email non valide'
+        });
+    }
+    if (!regexPass.test(req.body.password)) {
+        return res.status(400).json({
+            'error': 'Mot de passe non valide'
+        });
+    }
+    User.findOne({
+            attributes: ['useremail'],
+            where: {
+                useremail: req.body.useremail
+            }
+        })
+        .then((user) => {
+            if (!user) {
+                // partie du hash password
+                bcrypt.hash(req.body.password, 10)
+                    .then(hash => {
+                        console.log(hash)
+                        const registerUser = User.create({
+                                useremail: req.body.useremail,
+                                userpassword: hash,
+                                username: req.body.username,
+                                isAdmin: req.body.isAdmin
+                            })
+                            .then((user) => {
+                                console.log(user)
+                                res.status(201).json({
+                                    message: 'Utilisateur créé !'
+                                })
+                            });
+                    })
+                    .catch(error => res.status(400).json({
+                        error
+                    }));
+            }
+        })
 
-    const username = req.body;
-    const {
-        id: idUser
-    } = req.params;
-    const mysqlUpdateUser = `UPDATE User SET username = ${username} WHERE users.user_id = ${idUser};`;
-    db.query(mysqlUpdateUser, (err, result) => {
-        if (err) {
-            res.status(404).json({
-                err
-            });
-            throw err;
-        }
-        if (result) {
-            res.status(200).json(result);
-        }
-    });
-};
-
-exports.getProfilPic = (req, res, next) => {
-    const {
-        id: idUser
-    } = req.params;
-    const mysqlGetUser = `SELECT image_url FROM images WHERE images.user_id = ${idUser} ORDER BY images.image_id desc;`;
-    db.query(mysqlGetUser, (err, result) => {
-        if (err) {
-            res.status(404).json({
-                err
-            });
-            throw err;
-        }
-        res.status(200).json(result);
-    });
+        .catch(error => res.status(500).json({
+            'error': 'Error'
+        }));
 };
