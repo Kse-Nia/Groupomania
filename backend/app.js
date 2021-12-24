@@ -24,15 +24,6 @@ app.use('/user', userRoutes);
 // DB
 db.sequelize.sync();
 
-const test = async function () {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection established successfully.');
-    } catch (error) {
-        console.error('Unable to connect:', error);
-    }
-};
-dbTest();
 // Routeurs
 
 
