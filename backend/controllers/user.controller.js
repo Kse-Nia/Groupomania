@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
         })
 
         .then((user) => {
-            if (user) {
+            if (User) {
                 return res.status(404).json({
                     error: "Le compte existe déja"
                 });
@@ -70,7 +70,7 @@ exports.register = async (req, res) => {
                                     userId: user.id,
                                     username: user.username,
                                     token: jwt.sign({
-                                            userId: user.id
+                                            userId: User.id
                                         },
                                         process.env.PASS_WORD, {
                                             expiresIn: "24h"
@@ -99,8 +99,8 @@ exports.login = (req, res, next) => {
                 useremail: req.body.useremail,
             },
         })
-        .then((user) => {
-            if (!user) {
+        .then((User) => {
+            if (!User) {
                 return res.status(401).json({
                     error: "Compte introuvable"
                 });
@@ -116,10 +116,10 @@ exports.login = (req, res, next) => {
                             });
                     }
                     res.status(200).json({
-                        id: user.id,
-                        username: user.username,
+                        id: User.id,
+                        username: User.username,
                         token: jwt.sign({
-                            id: user.id
+                            id: User.id
                         }, process.env.PASS_WORD, {
                             expiresIn: "24h",
                         }),
@@ -138,7 +138,7 @@ exports.login = (req, res, next) => {
 exports.deleteOneUser = (req, res, next) => {
     db.User.destroy({
             where: {
-                userId: req.params.userId
+                id: req.params.id
             },
         })
         .then(() => res.status(200).json({
