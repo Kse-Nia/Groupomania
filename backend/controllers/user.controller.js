@@ -13,7 +13,7 @@ const regexPass = /^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z
 exports.getAllUsers = (req, res, next) => {
     db.User.findAll()
         .then((users) => res.status(200).json({
-            users
+            User
         }))
         .catch((err) => res.status(401).json({
             err
@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
             },
         })
 
-        .then((user) => {
+        .then((User) => {
             if (User) {
                 return res.status(404).json({
                     error: "Le compte existe déja"
@@ -67,8 +67,8 @@ exports.register = async (req, res) => {
                             })
                             .then((user) =>
                                 res.status(201).json({
-                                    userId: user.id,
-                                    username: user.username,
+                                    userId: User.id,
+                                    username: User.username,
                                     token: jwt.sign({
                                             userId: User.id
                                         },
@@ -106,7 +106,7 @@ exports.login = (req, res, next) => {
                 });
             }
             bcrypt
-                .compare(req.body.userpassword, user.userpassword)
+                .compare(req.body.userpassword, User.userpassword)
                 .then((valid) => {
                     if (!valid) {
                         return res

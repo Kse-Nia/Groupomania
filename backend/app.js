@@ -1,13 +1,20 @@
 // Import
 const express = require('express');
-const app = express();
-const sequelize = require('sequelize');
-const db = require("./models");
+/* const sequelize = require('sequelize'); */
+const Sequelize = require('sequelize');
+const dotenv = require('dotenv').config();
+const db = require("./config/database");
 const cors = require('cors');
 const path = require('path');
 const userRoutes = require('./routes/User.routes');
 
 
+/* db.sequelize.authenticate()
+    .then(() => console.log('database connected'))
+    .catch(error => console.log(error))
+
+   */
+const app = express();
 // CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,15 +23,11 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json());
+/* app.use(express.json()); */
 
+app.use('/user', UserRoutes);
 
 // Routes
 app.use('/user', userRoutes);
-// DB
-db.sequelize.sync();
-
-// Routeurs
-
 
 module.exports = app;
