@@ -1,35 +1,24 @@
 const jwt = require("jsonwebtoken");
-const dbc = require("../config/db");
+const db = require('../config/database');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
     try {
-        if (req.cookies.jwt) {
-            const {
-                jwt: token
-            } = req.cookies;
-            const decodedToken = jwt.verify(token, process.env.JWT_TOKEN);
-            const {
-                user_id: userId
-            } = decodedToken;
-            let db = dbc.getDB();
-            const sql = `SELECT user_id FROM users WHERE user_id = ${userId}`;
-            db.query(sql, (err, result) => {
-                if (err) res.status(204).json(err);
-                else {
-                    next();
-                }
-            });
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(
+            token,
+            process.env.PASS_WORD
+        );
+        const userId = decodedToken.userId;
+        if (req.body.userId && req.body.userId !== userId) {
+            throw "Invalid user ID";
         } else {
-            res.clearCookie();
-            res.status(401).json({
-                message: "Unauthorized"
-            });
+            next();
         }
-    } catch (err) {
-        res.clearCookie();
-        console.log(err);
+    } catch {
         res.status(401).json({
-            message: "Unauthorized"
+            error: new Error("Invalid request!"),
         });
     }
 };
+
+module.exports = auth;

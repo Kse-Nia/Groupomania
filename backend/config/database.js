@@ -16,11 +16,10 @@ const {
 } = require('sequelize');
 const UserModel = require('../models/user.model');
 
-const db = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+const db = new Sequelize('Groupomania', 'kseniya', 'password', {
     host: 'localhost',
     dialect: 'mysql'
 });
 
-const User = UserModel(sequelize, Sequelize);
 
 module.exports = db;

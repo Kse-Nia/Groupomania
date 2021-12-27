@@ -1,19 +1,17 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken"); // pour créé les token et les vérifie
+const jwt = require("jsonwebtoken"); // création token + verification
 const db = require("../config/database");
-const dotenv = require("dotenv").config(); // pour caché les donnés
+const dotenv = require("dotenv").config(); // cacher les données
 const path = require("path");
 
-/* // Regex register
-const regexMail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-const regexPass = /^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/; */
 
-// Tous les comptes user
+// Tous les comptes User
+
 exports.getAllUsers = (req, res, next) => {
     db.User.findAll()
         .then((users) => res.status(200).json({
-            User
+            users
         }))
         .catch((err) => res.status(401).json({
             err
@@ -48,10 +46,8 @@ exports.register = async (req, res) => {
     db.User.findOne({
             where: {
                 username: req.body.username,
-                /*           useremail: req.body.useremail, */
             },
         })
-
         .then((User) => {
             if (User) {
                 return res.status(404).json({
@@ -62,7 +58,7 @@ exports.register = async (req, res) => {
                     .hash(req.body.userpassword, 10)
                     .then((hash) => {
                         db.User.create({
-                                pseudo: req.body.username,
+                                username: req.body.username,
                                 password: hash,
                             })
                             .then((user) =>
@@ -93,7 +89,7 @@ exports.register = async (req, res) => {
 };
 
 //login
-exports.login = (req, res, next) => {
+exports.login = async (req, res) => {
     db.User.findOne({
             where: {
                 useremail: req.body.useremail,
@@ -134,7 +130,7 @@ exports.login = (req, res, next) => {
         }));
 };
 
-//delete user
+//delete compte User
 exports.deleteOneUser = (req, res, next) => {
     db.User.destroy({
             where: {

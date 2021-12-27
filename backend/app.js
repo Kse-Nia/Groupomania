@@ -7,7 +7,7 @@ const db = require("./config/database");
 const cors = require('cors');
 const path = require('path');
 const userRoutes = require('./routes/User.routes');
-
+const adminRoutes = require('./routes/Admin.routes');
 
 /* db.sequelize.authenticate()
     .then(() => console.log('database connected'))
@@ -23,11 +23,8 @@ app.use((req, res, next) => {
     next();
 });
 
-/* app.use(express.json()); */
-
-app.use('/user', UserRoutes);
 
 // Routes
 app.use('/user', userRoutes);
-
+/* app.use('/admin', adminRoutes); */
 module.exports = app;

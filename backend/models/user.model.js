@@ -1,8 +1,9 @@
 const {
-    Sequelize
+    Sequelize,
+    DataTypes
 } = require('sequelize');
-const DataTypes = require('sequelize/lib/data-types');
-const sequelize = require('../config/database');
+const sequelize = new Sequelize('mysql::memory:');
+
 const Model = Sequelize.Model;
 
 
@@ -51,14 +52,8 @@ User.init({
     }
 }) */
 
-User.sync({
-    force: true
-}).then(() => {
-    // Now the `users` table in the database corresponds to the model definition
-    return User.create({
-        firstName: 'John',
-        lastName: 'Hancock'
-    });
-});
+
+// `sequelize.define` also returns the model
+console.log(User === sequelize.models.User); // true
 
 module.exports = User;
