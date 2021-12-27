@@ -1,59 +1,50 @@
-const {
-    Sequelize,
-    DataTypes
-} = require('sequelize');
-const sequelize = new Sequelize('mysql::memory:');
-
-const Model = Sequelize.Model;
-
-
-const User = sequelize.define('User', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    username: {
-        type: DataTypes.STRING,
-    },
-    useremail: {
-        type: DataTypes.STRING,
-    },
-    userpassword: {
-        type: DataTypes.STRING,
-    },
-    isAdmin: {
-        type: DataTypes.BOOLEAN,
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+    "Groupomania",
+    "kseniya",
+    "password", {
+        host: "localhost",
+        dialect: "mysql",
     }
-});
+);
 
-/* class User extends Model {}
-User.init({
+try {
+    sequelize.authenticate();
+    console.log("connexion reussi");
+} catch (error) {
+    console.log("connexion pas reussi");
+};
+
+
+// Création modèle utilisateur
+
+const User = sequelize.define("User", {
     id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+        allowNull: true,
     },
     username: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
     },
     useremail: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
     },
     userpassword: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
     },
     isAdmin: {
         type: Sequelize.BOOLEAN,
-    }
-}) */
+        defaultValue: 0,
+    },
+});
 
-
-// `sequelize.define` also returns the model
-console.log(User === sequelize.models.User); // true
+User.sync({
+    alter: true,
+});
 
 module.exports = User;
