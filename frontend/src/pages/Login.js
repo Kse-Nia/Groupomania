@@ -16,7 +16,7 @@ function Login() {
   /* const [errorMessage, setErrorMessage] = useState(""); */
 
   const login = () => {
-    Axios.post("http://localhost:3001/user/login", {
+    Axios.post("http://localhost:3001/login", {
       username: username,
       userpassword: userpassword,
     }).then((response) => {

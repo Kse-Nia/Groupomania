@@ -1,0 +1,24 @@
+{
+    "development": {
+      "username": "kseniya",
+      "password": "password",
+      "database": "TESTMERN",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "test": {
+      "username": "kseniya",
+      "password": "password",
+      "database": "TESTMERN",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "production": {
+      "username": "kseniya",
+      "password": "password",
+      "database": "TESTMERN",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  }
+  

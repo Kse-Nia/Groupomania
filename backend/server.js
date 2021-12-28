@@ -1,50 +1,95 @@
-// Creation serveur
-const http = require('http');
-const app = require('./app');
+const express = require("express");
+const db = require("./models");
+const {
+    Users
+} = require("./models");
+const cors = require('cors')
 
-// Renvoie d'un port valide
-const normalizePort = val => {
-    const port = parseInt(val, 10);
+const bcrypt = require("bcrypt");
+const {
+    createTokens,
+    validateToken
+} = require("./JWT");
+const cookieParser = require("cookie-parser");
 
-    if (isNaN(port)) {
-        return val;
-    }
-    if (port >= 0) {
-        return port;
-    }
-    return false;
-};
-const port = normalizePort(process.env.PORT || 6001);
-app.set('port', port);
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
 
-// Error handler
-const errorHandler = error => {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges.');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use.');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
-};
-
-const server = http.createServer(app);
-
-server.on('error', errorHandler);
-server.on('listening', () => {
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-    console.log('Listening on ' + bind);
+// Headers CORS
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    next();
 });
 
-server.listen(port);
+// APP
+
+app.post("/register", (req, res) => {
+    const {
+        username,
+        useremail,
+        userpassword
+    } = req.body;
+    bcrypt.hash(userpassword, 10).then((hash) => {
+        Users.create({
+            username: username,
+            useremail: useremail,
+            userpassword: hash
+        }).then(() => {
+            res.json("Enregistré")
+        }).catch((err) => {
+            if (err) {
+                res.status(400).json({
+                    error: err
+                });
+            }
+        })
+    })
+});
+
+app.post("/login", async (req, res) => {
+    const {
+        username,
+        userpassword
+    } = req.body;
+
+    const user = await Users.findOne({
+        where: {
+            username: username
+        }
+    });
+
+    if (!user) res.status(400).json({
+        error: "Erreur: compte introuvable"
+    });
+
+    const hashPass = user.userpassword;
+    bcrypt.compare(userpassword, hashPass).then((match) => {
+        if (!match) {
+            res.status(400).json({
+                error: "Mauvais pseudo ou mot de passe"
+            })
+        } else {
+            const accessToken = createTokens(user);
+            res.cookie("access-token", accessToken, {
+                maxAge: 60 * 60 * 24 * 30 * 1000,
+                httpOnly: true,
+            });
+            res.json("Connecté");
+        }
+    })
+});
+
+app.get("/profile", (req, res) => {
+    res.json("profile");
+});
+
+
+db.sequelize.sync().then(() => {
+    app.listen(7001, () => {
+        console.log("SERVER RUNNING ON PORT 7001");
+    });
+});

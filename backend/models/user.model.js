@@ -12,13 +12,13 @@ try {
     sequelize.authenticate();
     console.log("connexion reussi");
 } catch (error) {
-    console.log("connexion pas reussi");
+    console.log("connexion non reussi");
 };
 
 
 // Création modèle utilisateur
 
-const User = sequelize.define("User", {
+const Users = sequelize.define("Users", {
     id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -43,8 +43,8 @@ const User = sequelize.define("User", {
     },
 });
 
-User.sync({
+Users.sync({
     alter: true,
 });
 
-module.exports = User;
+module.exports = Users;
