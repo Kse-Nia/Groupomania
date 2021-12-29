@@ -17,7 +17,7 @@ function Login() {
 
   const login = () => {
     // Partie POST - insértion des données
-    Axios.post("http://localhost:7001/login", {
+    Axios.post("http://localhost:7001/auth/login", {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
