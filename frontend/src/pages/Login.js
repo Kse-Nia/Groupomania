@@ -15,14 +15,9 @@ function Login() {
   const [LogStat, setLogStat] = useState("");
   /* const [errorMessage, setErrorMessage] = useState(""); */
 
-  Axios.defaults.withCredentials = true;
-
   const login = () => {
     // Partie POST - insértion des données
     Axios.post("http://localhost:7001/login", {
-      method: "GET",
-      withCredentials: true,
-
       username: username,
       userpassword: userpassword,
     }).then((response) => {
@@ -37,12 +32,12 @@ function Login() {
     });
   };
 
-  // Partie GET - recup des données, si Log ou pas
+  /*   // Partie GET - recup des données, si Log ou pas
   useEffect(() => {
     Axios.get("http://localhost:7001/login").then((response) => {
       console.log(response);
     });
-  }, []);
+  }, []); */
 
   return (
     <div className="wrapcontainer">
