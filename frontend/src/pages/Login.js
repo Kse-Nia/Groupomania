@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Grid } from "@nextui-org/react";
@@ -15,8 +15,14 @@ function Login() {
   const [LogStat, setLogStat] = useState("");
   /* const [errorMessage, setErrorMessage] = useState(""); */
 
+  Axios.defaults.withCredentials = true;
+
   const login = () => {
+    // Partie POST - insértion des données
     Axios.post("http://localhost:7001/login", {
+      method: "GET",
+      withCredentials: true,
+
       username: username,
       userpassword: userpassword,
     }).then((response) => {
@@ -30,6 +36,13 @@ function Login() {
       }
     });
   };
+
+  // Partie GET - recup des données, si Log ou pas
+  useEffect(() => {
+    Axios.get("http://localhost:7001/login").then((response) => {
+      console.log(response);
+    });
+  }, []);
 
   return (
     <div className="wrapcontainer">
