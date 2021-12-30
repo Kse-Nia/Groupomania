@@ -12,10 +12,10 @@ function Navbar() {
       <a className="NavbarLink" href="/">
         Accueil{" "}
       </a>{" "}
-      <a className="NavbarLink" href="/user/register">
+      <a className="NavbarLink" href="/auth/register">
         S 'inscrire{" "}
       </a>{" "}
-      <a className="NavbarLink" href="/user/login">
+      <a className="NavbarLink" href="/auth/login">
         Se connecter{" "}
       </a>{" "}
       <div className="logopicture">

@@ -36,25 +36,32 @@ exports.login = async (req, res) => {
     } = req.body;
 
     const user = await Users.findOne({
-        where: {
-            username: username
-        }
-    });
-
-    if (!user) res.status(400).json({
-        error: "Compte introuvable"
-    });
-
-    const dbPassword = user.password;
-    bcrypt.compare(userpassword, dbPassword).then((match) => {
-        if (!match) {
-            res
-                .status(400)
-                .json({
-                    error: "Mauvais combo!"
+            where: {
+                username: username
+            }
+        }).then(user => {
+            if (!user) {
+                return res.status(401).json({
+                    error: 'Utilisateur non trouvé !'
                 });
-        } else {
-            res.json("Connecté");
-        }
-    });
+            }
+            bcrypt.compare(req.body.userpassword, user.userpassword)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({
+                            error: 'Mot de passe incorrect !'
+                        });
+                    }
+                    res.status(200).json({
+                        userId: user._id,
+                        token: 'TOKEN'
+                    });
+                })
+                .catch(error => res.status(500).json({
+                    error
+                }));
+        })
+        .catch(error => res.status(500).json({
+            error
+        }));
 };

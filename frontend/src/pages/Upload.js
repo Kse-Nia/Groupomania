@@ -1,3 +1,4 @@
+/*
 import React, { useState } from "react";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
@@ -20,11 +21,11 @@ function Upload() {
     const formData = new FormData();
     formData.append("file", image[0]);
     formData.append("upload_preset", "vgmulp38");
-    Axios.post("http://localhost:3001/user/upload", formData).then(
+    Axios.post("http://localhost:3001/auth/upload", formData).then(
       (response) => {
         const fileName = response.data.public_id;
 
-        Axios.post("http://localhost:3001/upload", {
+        Axios.post("http://localhost:7001/upload", {
           title: title,
           description: description,
           image: fileName,
@@ -37,7 +38,7 @@ function Upload() {
   };
   return (
     <div className="Upload">
-      <h1>Create A Post</h1>
+      <h1> Create A Post </h1>{" "}
       <div className="UploadForm">
         <input
           type="text"
@@ -45,7 +46,7 @@ function Upload() {
           onChange={(event) => {
             setTitle(event.target.value);
           }}
-        />
+        />{" "}
         <input
           type="text"
           placeholder="Description..."
@@ -53,12 +54,18 @@ function Upload() {
             setDescription(event.target.value);
           }}
         />
-
-        <input type="file" onChange={(e) => setImage(e.target.files)} />
-        <button onClick={upload}>Upload</button>
+        <form
+          action="/upload/photo"
+          enctype="multipart/form-data"
+          method="POST"
+        >
+          <input type="file" name="myImage" accept="image/*" />
+          <input type="submit" value="Upload Photo" />
+        </form>
       </div>
     </div>
   );
 }
 
 export default Upload;
+*/

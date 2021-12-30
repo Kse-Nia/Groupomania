@@ -29,19 +29,6 @@ app.use((req, res, next) => {
 
 app.use('/auth', userRoutes);
 
-app.get("/login", (req, res) => {
-    if (req.session.user) {
-        res.send({
-            loggedIn: true,
-            user: req.session.user
-        })
-    } else {
-        res.send({
-            loggedIn: false,
-        })
-    }
-})
-
 
 db.sequelize.sync().then(() => {
     app.listen(7001, () => {
