@@ -15,26 +15,31 @@ try {
     console.log("connexion non reussi");
 };
 
-// Création modèle utilisateur
+// Création modèle Post
 
-const Image = sequelize.define("image", {
-    type: {
-        type: Sequelize.STRING
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    description: {
-        type: Sequelize.TEXT
-    },
-    data: {
-        type: Sequelize.BLOB('long')
-    }
-});
 
-Image.sync({
-    alter: true,
-});
+module.exports = (sequelize, DataTypes) => {
+    const Posts = sequelize.define("Posts", {
+        type: {
+            type: Sequelize.STRING
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        description: {
+            type: Sequelize.TEXT
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+    });
 
-module.exports = Image;
+    Posts.associate = (models) => {
+        Posts.hasMany(models.Comments, {
+            onDelete: "cascade",
+        });
+    };
+    return Posts;
+};

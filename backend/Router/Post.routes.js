@@ -1,11 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const userCtrl = require('../controllers/user.controller');
-const auth = require('../middlewares/auth.middleware');
-const upload = require('../middlewares/multer-config');
+const userCtrl = require('../Controllers/user.controllers');
+const upload = require('../middleware/multer-config');
+const {
+    Posts
+} = require('../models');
 
+router.get("/byId/:id", async (req, res) => {
+    const id = req.params.id;
+    const post = await Posts.findByPk(id);
+    res.json(post);
+});
 
-router.post("/", auth, upload.single("post_image"), postCtrl.createPost);
+router.post("/", async (req, res) => {
+    const post = req.body;
+    await Posts.create(post);
+    res.json(post);
+});
 
-// Images
-router.get("/image/:id", auth, postCtrl.getOneImage);
+/* // Images
+router.get("/image/:id", auth, postCtrl.getOneImage); */

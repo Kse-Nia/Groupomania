@@ -10,12 +10,12 @@ const {
 } = require("./JWT");
 
 const userRoutes = require('./Router/user.routes');
-/* const cookieParser = require("cookie-parser"); */
+const postRouter = require('./Router/Post.routes');
+const commentRouter = require('./Router/Comments.routes');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-/* app.use(cookieParser()); */
 
 // Headers CORS
 app.use((req, res, next) => {
@@ -28,7 +28,8 @@ app.use((req, res, next) => {
 // APP
 
 app.use('/auth', userRoutes);
-
+/* app.use('/posts', postRouter); */
+/* app.use('/comments', commentRouter); */
 
 db.sequelize.sync().then(() => {
     app.listen(7001, () => {
