@@ -31,52 +31,50 @@ function Register() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>{" "}
+        <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>
         <form>
-          <Input
-            rounded
-            bordered
-            className="form-control"
-            id="username"
-            type="text"
-            label="Pseudo"
-            placeholder="Entrez un pseudo"
-            name="username"
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-          />{" "}
-          <Spacer y={1} />{" "}
-          <Input
-            rounded
-            bordered
-            className="form-control"
-            id="useremail"
-            type="text"
-            label="Email"
-            placeholder="Entrez une adresse mail"
-            name="useremail"
-            // Function for passing Useremail
-            onChange={(event) => {
-              setUseremail(event.target.value);
-            }}
-          />{" "}
-          <Spacer y={1} />{" "}
-          <Grid>
-            <Input
-              rounded
-              bordered
-              label="Mot de passe"
-              type="password"
-              placeholder="Entrez un mot de passe"
-              onChange={(event) => {
-                setUserPassword(event.target.value);
-              }}
-            />{" "}
-          </Grid>{" "}
+          <Grid.Container gap={4}>
+            <Grid>
+              <Input
+                bordered
+                className="form-control"
+                id="username"
+                type="text"
+                label="Pseudo"
+                labelPlaceholder="Pseudo"
+                name="username"
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                }}
+              />
+            </Grid>
+            <Grid>
+              <Input
+                bordered
+                className="form-control"
+                id="useremail"
+                type="text"
+                labelPlaceholder="Adresse mail"
+                name="useremail"
+                // Function for passing Useremail
+                onChange={(event) => {
+                  setUseremail(event.target.value);
+                }}
+              />
+            </Grid>
+            <Grid>
+              <Input.Password
+                bordered
+                labelPlaceholder="Mot de passe"
+                onChange={(event) => {
+                  setUserPassword(event.target.value);
+                }}
+              />
+            </Grid>
+          </Grid.Container>
           <Spacer y={1} /> <Button onClick={register}> S'enregistrer </Button>
-        </form>{" "}
-      </Card>{" "}
+        </form>
+      </Card>
     </div>
   );
 }

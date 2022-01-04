@@ -8,10 +8,15 @@ const {
     createTokens,
     validateToken
 } = require("./JWT");
+const path = require('path');
+const multer = require("multer");
 
 const userRoutes = require('./Router/user.routes');
-const postRouter = require('./Router/Post.routes');
+
+
+/* const postRouter = require('./Router/Upload.routes'); */
 const commentRouter = require('./Router/Comments.routes');
+const upload = require("./middleware/multer-config");
 
 const app = express();
 app.use(cors());
@@ -28,8 +33,12 @@ app.use((req, res, next) => {
 // APP
 
 app.use('/auth', userRoutes);
-/* app.use('/posts', postRouter); */
-/* app.use('/comments', commentRouter); */
+
+// Partie chargement image
+
+app.use("/upload", userRoutes);
+
+
 
 db.sequelize.sync().then(() => {
     app.listen(7001, () => {

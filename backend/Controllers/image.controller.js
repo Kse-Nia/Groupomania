@@ -1,4 +1,4 @@
-const fs = require("fs");
+/* const fs = require("fs");
 const db = require("../models");
 const Image = db.images;
 
@@ -36,4 +36,4 @@ const uploadImage = async (req, res) => {
 
 module.exports = {
     uploadImage,
-};
+}; */

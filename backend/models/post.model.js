@@ -17,7 +17,6 @@ try {
 
 // Création modèle Post
 
-
 module.exports = (sequelize, DataTypes) => {
     const Posts = sequelize.define("Posts", {
         type: {

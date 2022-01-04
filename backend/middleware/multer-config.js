@@ -1,3 +1,4 @@
+// Multer passe par un middleware
 const multer = require('multer');
 const Sequelize = require('sequelize')
 const db = require("../models");
@@ -10,15 +11,13 @@ const MIME_TYPES = {
 };
 
 const storage = multer.diskStorage({
+    //callback fonction determine where stored
     destination: (req, file, callback) => {
-        callback(null, '/auth/upload');
+        callback(null, 'images');
     },
     filename: (req, file, callback) => {
         console.log(file);
-
-        const name = file.originalname.split(' ').join('_');
-        const extension = MIME_TYPES[file.mimetype];
-        callback(null, name + Date.now() + '.' + extension); // Info à propos de l'image
+        callback(null, Date.now() + path.extname(file.originalname)); // Info à propos de l'image
     }
 });
 

@@ -12,32 +12,23 @@ import "./pages.css";
 function Login() {
   const [username, setUsername] = useState("");
   const [userpassword, setUserpassword] = useState("");
-  const [LogStat, setLogStat] = useState("");
-  /* const [errorMessage, setErrorMessage] = useState(""); */
 
   const login = () => {
     // Partie POST - insértion des données
-    Axios.post("http://localhost:7001/login", {
+    Axios.post("http://localhost:7001/auth/login", {
       username: username,
       userpassword: userpassword,
     }).then((response) => {
-      if (response.data.message) {
+      if (response.data) {
         localStorage.setItem("loggedIn", true);
-        localStorage.setItem("username", response.data.username);
-        setLogStat(response.data.message);
+        localStorage.setItem("username", username);
+        localStorage.getItem("username", response.data.username);
+        console.log(username);
       } else {
-        console.log("Error");
-        setLogStat(response.data[0].username);
+        console.log(Error);
       }
     });
   };
-
-  /*   // Partie GET - recup des données, si Log ou pas
-  useEffect(() => {
-    Axios.get("http://localhost:7001/login").then((response) => {
-      console.log(response);
-    });
-  }, []); */
 
   return (
     <div className="wrapcontainer">
@@ -70,7 +61,7 @@ function Login() {
             />{" "}
           </Grid>{" "}
           <Spacer y={1} /> <Spacer y={1} />
-          <Button onClick={login}> Se connecter </Button> <p> {LogStat} </p>{" "}
+          <Button onClick={login}> Se connecter </Button> <p> </p>
         </form>{" "}
       </Card>{" "}
     </div>
