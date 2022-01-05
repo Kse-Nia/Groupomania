@@ -53,7 +53,7 @@ function Upload() {
                 setDescription(event.target.value);
               }}
             />
-            <Input
+            <input
               type="file"
               name="image"
               accept="image/png, image/jpeg"

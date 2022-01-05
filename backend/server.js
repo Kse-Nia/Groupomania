@@ -35,10 +35,7 @@ app.use((req, res, next) => {
 app.use('/auth', userRoutes);
 
 // Partie chargement image
-
 app.use("/upload", userRoutes);
-
-
 
 db.sequelize.sync().then(() => {
     app.listen(7001, () => {
