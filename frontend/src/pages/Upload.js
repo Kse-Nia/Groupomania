@@ -19,15 +19,12 @@ function Upload() {
     const formData = new FormData();
     formData.append("file", file[0]);
 
-    Axios.post(
-      `https://api.cloudinary.com/v1_1/pedro-machado-inc/image/upload`,
-      {
-        title: title,
-        description: description,
-        image: file,
-        author: localStorage.getItem("username"),
-      }
-    ).then((response) => {
+    Axios.post(`http://localhost:7001/auth/upload`, {
+      title: title,
+      description: description,
+      image: file,
+      author: localStorage.getItem("username"),
+    }).then((response) => {
       navigate.push("/");
     });
   };
@@ -35,8 +32,8 @@ function Upload() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="80%" height="auto">
-        <Text h1> Créer un nouveau post</Text>
-        <label>Poster votre image:</label>
+        <Text h1> Créer un nouveau post </Text>{" "}
+        <label> Poster votre image: </label>{" "}
         <form method="POST" action="/upload" encType="multipart/form-data">
           <label>
             <Input
@@ -45,14 +42,14 @@ function Upload() {
               onChange={(event) => {
                 setTitle(event.target.value);
               }}
-            />
+            />{" "}
             <Input
               type="text"
               placeholder="Description..."
               onChange={(event) => {
                 setDescription(event.target.value);
               }}
-            />
+            />{" "}
             <input
               type="file"
               name="image"
@@ -61,14 +58,14 @@ function Upload() {
                 const file = event.target.files[0];
                 setFile(file);
               }}
-            />
-          </label>
-          <Spacer y={1} />
-        </form>
+            />{" "}
+          </label>{" "}
+          <Spacer y={1} />{" "}
+        </form>{" "}
         <Button type="submit" onClick={send}>
-          Poster
-        </Button>
-      </Card>
+          Poster{" "}
+        </Button>{" "}
+      </Card>{" "}
     </div>
   );
 }
