@@ -2,6 +2,9 @@ const bcrypt = require("bcrypt");
 const {
     Users
 } = require("../models");
+const {
+    post
+} = require("../Router/user.routes");
 
 exports.register = async (req, res) => {
     const {
@@ -64,21 +67,3 @@ exports.login = async (req, res) => {
             error
         }));
 };
-
-/* // controller image
-
-exports.upload = (req, res, next) => {
-    const imageObject = JSON.parse(req.body.image);
-    delete imageObject;
-    const image = new Image({
-        ...imageObject,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    });
-    image.save()
-        .then(() => res.status(201).json({
-            message: 'Image enregistrée !'
-        }))
-        .catch(error => res.status(400).json({
-            error
-        }));
-}; */
