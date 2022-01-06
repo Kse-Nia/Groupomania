@@ -8,7 +8,6 @@ const {
 } = require("util");
 const pipeline = promisify(require("stream").pipeline);
 
-
 router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
 
