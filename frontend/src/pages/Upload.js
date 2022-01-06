@@ -32,8 +32,8 @@ function Upload() {
   return (
     <div className="wrapcontainer">
       <Card className="Card" width="80%" height="auto">
-        <Text h1> Créer un nouveau post </Text>{" "}
-        <label> Poster votre image: </label>{" "}
+        <Text h1> Créer un nouveau post </Text>
+        <label> Poster votre image: </label>
         <form method="POST" action="/upload" encType="multipart/form-data">
           <label>
             <Input
