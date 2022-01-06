@@ -27,13 +27,13 @@ exports.deletePost = (req, res, next) => {
             where: {
                 id: req.params.id
             }
-        }) // On trouve l'objet dans la base de données //
+        })
         .then((post) => {
             Posts.destroy({
                     where: {
                         id: req.params.id
                     }
-                }) // Méthode //
+                })
                 .then(() => res.status(200).json({
                     message: 'Post supprimé'
                 }))
