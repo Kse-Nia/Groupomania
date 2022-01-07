@@ -10,17 +10,17 @@ function Navbar() {
   return (
     <nav className="Navbar">
       <a className="NavbarLink" href="/">
-        Accueil{" "}
-      </a>{" "}
-      <a className="NavbarLink" href="/auth/register">
-        S 'inscrire{" "}
-      </a>{" "}
-      <a className="NavbarLink" href="/auth/login">
-        Se connecter{" "}
-      </a>{" "}
+        Accueil
+      </a>
+      <a className="NavbarLink" href="/user/register">
+        S 'inscrire
+      </a>
+      <a className="NavbarLink" href="/user/login">
+        Se connecter
+      </a>
       <div className="logopicture">
         <img src={Logo} alt="Groupomania logo" className="logo" />
-      </div>{" "}
+      </div>
     </nav>
   );
 }

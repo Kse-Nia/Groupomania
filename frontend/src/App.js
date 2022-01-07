@@ -4,13 +4,6 @@ import { Routes, Route } from "react-router-dom";
 import Axios from "axios";
 
 import { CssBaseline } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import { Container, Row, Col } from "@nextui-org/react";
-import { Avatar } from "@nextui-org/react";
-import { Card } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import { Loading } from "@nextui-org/react";
-import { Text } from "@nextui-org/react";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -25,12 +18,12 @@ function App() {
       <CssBaseline />
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth/register" element={<Register />} />
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/profile" element={<Profile />} />
-        <Route path="/auth/upload" element={<Upload />} />
-      </Routes>
+        <Route path="/" element={<Home />} />{" "}
+        <Route path="/user/register" element={<Register />} />{" "}
+        <Route path="/user/login" element={<Login />} />{" "}
+        <Route path="/auth/profile" element={<Profile />} />{" "}
+        <Route path="/upload" element={<Upload />} />{" "}
+      </Routes>{" "}
     </div>
   );
 }

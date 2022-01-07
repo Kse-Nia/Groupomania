@@ -14,7 +14,6 @@ const multer = require("multer");
 const userRoutes = require('./Router/user.routes');
 
 
-/* const postRouter = require('./Router/Upload.routes'); */
 const commentRouter = require('./Router/Comments.routes');
 const upload = require("./middleware/multer-config");
 
@@ -32,10 +31,10 @@ app.use((req, res, next) => {
 
 // APP
 
-app.use('/auth', userRoutes);
+app.use("/user", userRoutes);
 
 // Partie chargement image
-app.use("/upload", userRoutes);
+/* app.use("/upload", userRoutes); */
 
 db.sequelize.sync().then(() => {
     app.listen(7001, () => {

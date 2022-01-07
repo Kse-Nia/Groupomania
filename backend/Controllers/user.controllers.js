@@ -2,9 +2,6 @@ const bcrypt = require("bcrypt");
 const {
     Users
 } = require("../models");
-const {
-    post
-} = require("../Router/user.routes");
 
 exports.register = async (req, res) => {
     const {
@@ -37,6 +34,12 @@ exports.login = async (req, res) => {
         userpassword
     } = req.body;
 
+    if (username == null || userpassword == null) {
+        return res.status(400).json({
+            error: "Veillez entrer toutes les données"
+        });
+    };
+
     const user = await Users.findOne({
             where: {
                 username: username
@@ -55,8 +58,7 @@ exports.login = async (req, res) => {
                         });
                     }
                     res.status(200).json({
-                        userId: user._id,
-                        token: 'TOKEN'
+                        userId: user.id
                     });
                 })
                 .catch(error => res.status(500).json({

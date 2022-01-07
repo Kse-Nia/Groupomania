@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { Card } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import { Grid } from "@nextui-org/react";
+/* import { Input } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
+import { Button } from "@nextui-org/react"; */
+import { Grid } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
 import { Avatar } from "@nextui-org/react";
 
 import "./pages.css";

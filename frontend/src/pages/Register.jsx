@@ -19,7 +19,7 @@ function Register() {
     console.log(username);
     console.log(userpassword);
 
-    Axios.post("http://localhost:7001/auth/register", {
+    Axios.post("http://localhost:7001/user/register", {
       username: username,
       useremail: useremail,
       userpassword: userpassword,
@@ -46,8 +46,8 @@ function Register() {
                 onChange={(event) => {
                   setUsername(event.target.value);
                 }}
-              />
-            </Grid>
+              />{" "}
+            </Grid>{" "}
             <Grid>
               <Input
                 bordered
@@ -60,8 +60,8 @@ function Register() {
                 onChange={(event) => {
                   setUseremail(event.target.value);
                 }}
-              />
-            </Grid>
+              />{" "}
+            </Grid>{" "}
             <Grid>
               <Input.Password
                 bordered
@@ -69,12 +69,12 @@ function Register() {
                 onChange={(event) => {
                   setUserPassword(event.target.value);
                 }}
-              />
-            </Grid>
-          </Grid.Container>
+              />{" "}
+            </Grid>{" "}
+          </Grid.Container>{" "}
           <Spacer y={1} /> <Button onClick={register}> S'enregistrer </Button>
-        </form>
-      </Card>
+        </form>{" "}
+      </Card>{" "}
     </div>
   );
 }
