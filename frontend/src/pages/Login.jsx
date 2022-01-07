@@ -20,10 +20,13 @@ function Login() {
       userpassword: userpassword,
     }).then((response) => {
       if (response.data) {
+        // Enregistrement dans le localstorage
         localStorage.setItem("loggedIn", true);
         localStorage.setItem("username", username);
         localStorage.getItem("username", response.data.username);
-        console.log(username);
+
+        // Envoi vers la page profile
+        window.location = "/user/profile";
       } else {
         console.log(Error);
       }
@@ -46,8 +49,8 @@ function Login() {
             onChange={(e) => {
               setUsername(e.target.value);
             }}
-          />{" "}
-          <Spacer y={1} />{" "}
+          />
+          <Spacer y={1} />
           <Grid>
             <Input
               rounded
@@ -58,12 +61,12 @@ function Login() {
               onChange={(e) => {
                 setUserpassword(e.target.value);
               }}
-            />{" "}
-          </Grid>{" "}
+            />
+          </Grid>
           <Spacer y={1} /> <Spacer y={1} />
           <Button onClick={login}> Se connecter </Button> <p> </p>
-        </form>{" "}
-      </Card>{" "}
+        </form>
+      </Card>
     </div>
   );
 }

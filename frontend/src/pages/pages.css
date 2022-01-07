@@ -32,6 +32,15 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+.Card__profile {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: red;
+}
+
 .login {
     display: flex;
     flex-direction: column;

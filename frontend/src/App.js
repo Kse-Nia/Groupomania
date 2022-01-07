@@ -18,12 +18,12 @@ function App() {
       <CssBaseline />
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />{" "}
-        <Route path="/user/register" element={<Register />} />{" "}
-        <Route path="/user/login" element={<Login />} />{" "}
-        <Route path="/auth/profile" element={<Profile />} />{" "}
-        <Route path="/upload" element={<Upload />} />{" "}
-      </Routes>{" "}
+        <Route path="/" element={<Home />} />
+        <Route path="/user/register" element={<Register />} />
+        <Route path="/user/login" element={<Login />} />
+        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/upload" element={<Upload />} />
+      </Routes>
     </div>
   );
 }

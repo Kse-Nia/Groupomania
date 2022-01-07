@@ -69,3 +69,22 @@ exports.login = async (req, res) => {
             error
         }));
 };
+
+// Profile
+
+exports.getProfile = (req, res, next) => {
+    Users.findOne({
+            attributes: ["id", "useremail", "username", "isAdmin"], // éléments à afficher
+            where: {
+                id: id
+            },
+        })
+        .then((user) => {
+            console.log("User");
+            res.status(200).json(user);
+        })
+        .catch((err) => {
+            console.log("utilisateur non trouvé")
+            res.status(404).json(err)
+        });
+};
