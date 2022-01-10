@@ -31,7 +31,8 @@ app.use((req, res, next) => {
 
 // APP
 
-app.use("/user", userRoutes);
+app.use("/user", userRoutes); // Routes authentification / enregistrement
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Partie chargement image
 /* app.use("/upload", userRoutes); */

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { Card } from "@nextui-org/react";
 /* import { Input } from "@nextui-org/react";
-import { Spacer } from "@nextui-org/react";
 import { Button } from "@nextui-org/react"; */
 import { Grid } from "@nextui-org/react";
+import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 import { Avatar } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/react";
@@ -27,12 +27,15 @@ function Profile() {
         <Grid>
           <Text size="1.25rem">{localStorage.getItem("username")}</Text>
           <Text size="1.25rem">{localStorage.getItem("useremail")}</Text>
+          <Spacer y={1} />
           <Avatar src={avatarpicture} bordered size={90} />
+          <Spacer y={1} />
           <Textarea
             placeholder="Ecrire quelques lignes sur vous.."
             minRows={1}
             maxRows={10}
           />
+          <Spacer y={1} />
           <Text size={14}>Email</Text>
         </Grid>
       </Card>

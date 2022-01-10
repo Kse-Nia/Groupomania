@@ -85,6 +85,64 @@ exports.getProfile = (req, res, next) => {
         })
         .catch((err) => {
             console.log("utilisateur non trouvé")
-            res.status(404).json(err)
+            res.status(500).json(err)
         });
+};
+
+// Gestion suppression
+
+exports.deleteProfile = (req, res) => {
+    //récupération de l'id de l'user dans le token
+    let userId = req.body.id;
+    if (userId != null) {
+        models.Users.findOne({
+            where: {
+                id: userId
+            }
+        }).then((user) => {
+            if (user != null) {
+                //si l'utilisateur a était correctement identifié
+                models.Message.findAll({
+                        where: {
+                            userId: user.id
+                        }
+                    }).then((posts) => {
+                        postMessage.forEach((posts) => {
+                            const messageId = message.id;
+                            models.Comment.destroy({
+                                where: {
+                                    messageId: messageId
+                                }
+                            });
+                        });
+                    }),
+
+                    models.Posts.destroy({
+                        //suppression de tous les posts de l'User
+                        where: {
+                            userId: user.id
+                        }
+                    })
+                    .then(() => {
+                        //Suppression de l'utilisateur
+                        models.Users.destroy({
+                                where: {
+                                    id: user.id
+                                },
+                            })
+                            .then(() => res.end())
+                            .catch((error) => console.log(error));
+                    })
+                    .catch((err) => res.status(500).json(err));
+            } else {
+                res.status(401).json({
+                    error: "Le compte est introuvable"
+                });
+            }
+        });
+    } else {
+        res.status(500).json({
+            error: "Suppression impossible",
+        });
+    }
 };
