@@ -53,7 +53,6 @@ exports.deletePost = (req, res, next) => {
 exports.createPost = (req, res, next) => {
 
     let userId = req.body.id;
-
     console.log(userId);
 
     const post = {
