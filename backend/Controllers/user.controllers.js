@@ -3,30 +3,39 @@ const {
     Users
 } = require("../models");
 
+/* --- Partie register --- */
+
 exports.register = async (req, res) => {
     const {
         username,
         useremail,
         userpassword
     } = req.body;
-    bcrypt.hash(userpassword, 10).then((hash) => {
-        Users.create({
+    // on appelle la fun (async) de hachage + demande "saler" pass 10 fois; hash crypté du pass
+    bcrypt.hash(userpassword, 10)
+        .then(hash => {
+            // création de l'User 
+            const user = Users.create({
                 username: username,
                 useremail: useremail,
-                userpassword: hash,
-            })
-            .then(() => {
-                res.json("Enregistré");
-            })
-            .catch((err) => {
-                if (err) {
-                    res.status(400).json({
-                        error: err,
-                    });
-                }
+                userpassword: hash
             });
-    });
+            user.save()
+                .then(() => res.status(201).json({
+                    message: 'Compte utilisateur créé !'
+                }))
+
+                .catch(error => res.status(400).json({
+                    error
+                }));
+        })
+        .catch(error => res.status(500).json({
+            error
+        }));
 };
+
+
+/* --- Partie login --- */
 
 exports.login = async (req, res) => {
     const {
@@ -42,12 +51,13 @@ exports.login = async (req, res) => {
 
     const user = await Users.findOne({
             where: {
-                username: username
+                username: req.body.username
             }
-        }).then(user => {
+        })
+        .then(user => {
             if (!user) {
                 return res.status(401).json({
-                    error: 'Utilisateur non trouvé !'
+                    error: 'Utilisateur introuvable !'
                 });
             }
             bcrypt.compare(req.body.userpassword, user.userpassword)
@@ -58,7 +68,8 @@ exports.login = async (req, res) => {
                         });
                     }
                     res.status(200).json({
-                        userId: user.id
+                        userId: user._id,
+                        token: 'TOKEN'
                     });
                 })
                 .catch(error => res.status(500).json({
