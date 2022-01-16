@@ -28,6 +28,12 @@ const Users = sequelize.define("Users", {
     username: {
         type: Sequelize.STRING,
         allowNull: true,
+        validate: {
+            is: /^[a-z]+$/i,
+            isIn: {
+                msg: "Doit contenir que des lettres"
+            }
+        }
     },
     useremail: {
         type: Sequelize.STRING,
