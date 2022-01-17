@@ -19,10 +19,36 @@ try {
 
 module.exports = (sequelize, DataTypes) => {
     const Comments = sequelize.define("Comments", {
-        commentBody: {
-            type: DataTypes.STRING,
+        id: {
             allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
         },
+        userId: {
+            allowNull: false,
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'Users',
+                key: 'id'
+            }
+        },
+        postId: {
+            allowNull: false,
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'Post',
+                key: 'idPost'
+            }
+        },
+        content: {
+            allowNull: false,
+            type: Sequelize.TEXT
+        },
+        attachment: {
+            allowNull: false,
+            type: Sequelize.STRING
+        }
     });
 
     return Comments;

@@ -19,25 +19,45 @@ try {
 
 module.exports = (sequelize, DataTypes) => {
     const Posts = sequelize.define("Posts", {
+        idPost: {
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
+        },
+        idUser: {
+            allowNull: false,
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'Users',
+                key: 'id'
+            }
+        },
         type: {
             type: Sequelize.STRING
         },
         title: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             allowNull: false,
-        },
-        description: {
-            type: Sequelize.TEXT
         },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        picture: {
+            type: Sequelize.STRING
+        },
+        likes: {
+            type: Sequelize.INTEGER
+        }
     });
 
     Posts.associate = (models) => {
         Posts.hasMany(models.Comments, {
-            onDelete: "cascade",
+            onDelete: "cascade"
+        });
+        Posts.hasMany(models.Like, {
+            onDelete: "cascade"
         });
     };
     return Posts;
