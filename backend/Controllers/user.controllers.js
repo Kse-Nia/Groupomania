@@ -25,12 +25,11 @@ exports.register = async (req, res) => {
         .then(hash => {
             // création de l'User 
             const user = Users.create({
-                username: username,
-                useremail: useremail,
-                userpassword: hash,
-                isAdmin: req.body.isAdmin
-            });
-            user.save()
+                    username: username,
+                    useremail: useremail,
+                    userpassword: hash,
+                    isAdmin: req.body.isAdmin
+                })
                 .then(() => res.status(201).json({
                     message: 'Compte utilisateur créé !'
                 }))
@@ -43,7 +42,6 @@ exports.register = async (req, res) => {
             error
         }));
 };
-
 
 /* --- Partie login --- */
 
