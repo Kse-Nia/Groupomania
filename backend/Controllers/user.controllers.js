@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
         });
     };
 
-    const user = await Users.findOne({
+    Users.findOne({
             where: {
                 username: req.body.username
             }
@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
         .then(user => {
             if (!user) {
                 return res.status(401).json({
-                    error: 'Utilisateur introuvable !'
+                    error: 'Utilisateur introuvable'
                 });
             }
             bcrypt.compare(req.body.userpassword, user.userpassword)
@@ -64,10 +64,10 @@ exports.login = async (req, res) => {
                         });
                     }
                     res.status(200).json({
-                        userId: user._id,
+                        userId: user.id,
                         // fonction sign pour encoder nouveau token qui contient l'id 
                         token: jwt.sign({
-                                userId: user._id
+                                userId: user.id
                             },
                             'RANDOM_TOKEN_SECRET', {
                                 expiresIn: '24h'
