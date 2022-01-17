@@ -12,35 +12,23 @@ exports.register = async (req, res) => {
         useremail,
         userpassword
     } = req.body;
-
-    if (username = null || useremail == null || userpassword == null) {
-        // error 400, envoyer message comme quoi données invalides
-        return res.status(400).json({
-            error: "Veillez remplir tous les champs"
-        });
-    };
-
-    // on appelle la fun (async) de hachage + demande "saler" pass 10 fois; hash crypté du pass
-    bcrypt.hash(userpassword, 10)
-        .then(hash => {
-            // création de l'User 
-            const user = Users.create({
-                    username: username,
-                    useremail: useremail,
-                    userpassword: hash,
-                    isAdmin: req.body.isAdmin
-                })
-                .then(() => res.status(201).json({
-                    message: 'Compte utilisateur créé !'
-                }))
-
-                .catch(error => res.status(400).json({
-                    error
-                }));
-        })
-        .catch(error => res.status(500).json({
-            error
-        }));
+    bcrypt.hash(userpassword, 10).then((hash) => {
+        Users.create({
+                username: username,
+                useremail: useremail,
+                userpassword: hash,
+            })
+            .then(() => {
+                res.json("Enregistré");
+            })
+            .catch((err) => {
+                if (err) {
+                    res.status(400).json({
+                        error: err,
+                    });
+                }
+            });
+    });
 };
 
 /* --- Partie login --- */
