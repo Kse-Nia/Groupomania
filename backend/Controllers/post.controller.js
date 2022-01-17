@@ -1,39 +1,93 @@
 const {
     model
 } = require("../models"); // Model pour les posts
+let multer = require('multer');
 const fs = require("fs"); // accès à la modif des images
 
+////////////////////////////
+exports.allPost = (req, res) => {
+    model.find((err, result) => {
+        if (err) {
+            res.status(404).json({
+                err
+            });
+        }
+        res.status(200).json(result);
+    }).sort({
+        createdAt: -1
+    });
+};
 
-// Partie gestion des posts
-/* exports.upload = (req, res, next) => {
-    const post = {
+exports.createPost = async (req, res) => {
+    let fileName;
+
+    if (req.file !== null) {
+        try {
+            if (
+                req.file.detectedMimeType != "image/png" &&
+                req.file.detectedMimeType != "image/jpg" &&
+                req.file.detectedMimeType != "image/jpeg"
+            )
+                throw Error("format de fichier non pris en charge");
+        } catch (err) {
+            const errors = uploadErrors(err);
+            return res.status(201).json({
+                errors
+            });
+        }
+        fileName = req.body.id + Date.now() + ".jpg";
+
+        await pipeline(
+            req.file.stream,
+            fs.createWriteStream(
+                `${__dirname}/../backend/images/${fileName}`
+            )
+        );
+    }
+
+    const newPost = Posts.create({
+        idPost: req.body.idPost,
+        idUser: req.body.id,
         title: req.body.title,
-        description: req.body.description,
-        image: req.body.image,
-        username: req.body.username
-    };
+        picture: req.file !== null ? "./images/" + fileName : "",
+        likes: [],
+        comments: [],
+    });
 
-    Posts.create(post).then(() => {
-        res.status(201).json({
-            message: "Post envoyé"
-        })
-    }).catch((err) => {
-        res.status(400).json({
-            err
-        })
-    })
-} */
+    try {
+        const post = await newPost.save();
+        return res.status(201).json(post);
+    } catch (err) {
+        return res.status(400).send(err);
+    }
+};
+
+
+exports.updatePost = (req, res) => {
+
+    Posts.findByIdAndUpdate(
+        req.params.id, {
+            $set: updatedRecord
+        }, {
+            new: true
+        },
+        (err, result) => {
+            if (!err) res.send(result);
+            else console.log("Update error : " + err);
+        }
+    );
+};
 
 exports.deletePost = (req, res, next) => {
     Posts.findOne({
             where: {
-                id: req.params.id
+                id: req.params.idPost
             }
         })
         .then((post) => {
             Posts.destroy({
                     where: {
-                        id: req.params.id
+                        id: req.params.idPost
                     }
                 })
                 .then(() => res.status(200).json({
@@ -46,63 +100,4 @@ exports.deletePost = (req, res, next) => {
         .catch(error => res.status(500).json({
             error
         }));
-};
-
-////////////////////////////
-
-exports.createPost = (req, res, next) => {
-
-    let userId = req.body.id;
-    console.log(userId);
-
-    const post = {
-        title: req.body.title,
-        description: req.body.description,
-        image: req.body.file,
-        username: req.body.username
-    };
-
-    if (req.file != undefined) {
-        attachmentURL = `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`;
-    } else {
-        attachmentURL == null;
-    }
-    if (title == null || description == null) {
-        return res.status(400).json({
-            error: "Veillez entrer toutes les info"
-        });
-    }
-
-    model.Users.findOne({
-            where: {
-                id: userId
-            },
-        })
-        .then(function (userFound) {
-            done(null, userFound);
-        })
-        .catch(function (err) {
-            return res.status(500).json({
-                error: "Compte introuvable"
-            }); //cas ou l'utilisateur n'est pas trouvé
-        });
-
-    if (userFound) {
-        console.log(userFound.id);
-        model.Posts.create({
-            userId: userFound.id, //relier le post à l'User
-            title: title,
-            description: content,
-            attachement: attachmentURL,
-            likes: 0
-        }).then(function (newPost) {
-            done(newPost);
-        });
-    } else {
-        res.status(404).json({
-            error: "Utilisateur introuvable"
-        });
-    }
 };

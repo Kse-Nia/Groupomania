@@ -12,6 +12,14 @@ exports.register = async (req, res) => {
         useremail,
         userpassword
     } = req.body;
+
+    if (username = null || useremail == null || userpassword == null) {
+        // error 400, envoyer message comme quoi données invalides
+        return res.status(400).json({
+            error: "Veillez remplir tous les champs"
+        });
+    };
+
     // on appelle la fun (async) de hachage + demande "saler" pass 10 fois; hash crypté du pass
     bcrypt.hash(userpassword, 10)
         .then(hash => {
@@ -19,7 +27,8 @@ exports.register = async (req, res) => {
             const user = Users.create({
                 username: username,
                 useremail: useremail,
-                userpassword: hash
+                userpassword: hash,
+                isAdmin: req.body.isAdmin
             });
             user.save()
                 .then(() => res.status(201).json({
@@ -77,7 +86,7 @@ exports.login = async (req, res) => {
                             'RANDOM_TOKEN_SECRET', {
                                 expiresIn: '24h'
                             }
-                        )
+                        ),
                     });
                 })
                 .catch(error => res.status(500).json({
@@ -94,59 +103,67 @@ exports.login = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
     // on envoie tous les users sauf admin
-    try {
-        const user = await Users.findAll({
-            attributes: ["username", "avatar", "useremail"],
+    /*  try {
+         const user = await Users.findAll({
+             attributes: ["id", "username", "useremail"],
+             where: {
+                 id: {
+                     [Op.ne]: 1,
+                 },
+             },
+         });
+         res.status(200).send(user);
+     } catch (error) {
+         return res.status(500).send({
+             error: "Erreur"
+         });
+     } */
+    Users.findAll({
+            attributes: ['id', 'username', 'useremail'],
+
+        })
+        .then((user) => {
+            res.status(200).json(user)
+        })
+        .catch(error => res.status(400).json(error))
+};
+
+// Affichage compte
+
+exports.getOneAccount = (req, res, next) => {
+    Users.findOne({
             where: {
-                id: {
-                    [Op.ne]: 1,
-                },
-            },
-        });
-        res.status(200).send(user);
-    } catch (error) {
-        return res.status(500).send({
-            error: "Erreur"
-        });
-    }
+                id: req.params.id
+            }
+        })
+        .then((user) => res.status(200).json(user))
+        .catch(error => res.status(404).json({
+            error
+        }));
 };
 
 // Suppression
 
-exports.deleteAccount = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const user = await Users.findOne({
+exports.deleteAccount = (req, res, next) => {
+    Users.findOne({
             where: {
-                id: id
+                id: req.params.id
             }
-        });
-        if (user.photo !== null) {
-            const filename = user.photo.split("/upload")[1];
-            fs.unlink(`upload/${filename}`, () => {
-                // sil' y a une photo on la supprime et on supprime le compte
-                Users.destroy({
+        })
+        .then((user) => {
+            User.destroy({
                     where: {
-                        id: id
+                        id: req.params.id
                     }
-                });
-                res.status(200).json({
-                    messageRetour: "Compte supprimé"
-                });
-            });
-        } else {
-            Users.destroy({
-                where: {
-                    id: id
-                }
-            }); // on supprime le compte
-            res.status(200).json({
-                messageRetour: "Compte supprimé"
-            });
-        }
-    } catch (error) {
-        return res.status(500).send({
-            error: "Error"
-        });
-    }
+                }) // Méthode //
+                .then(() => res.status(200).json({
+                    message: 'Votre compte a été supprimé'
+                }))
+                .catch(error => res.status(400).json({
+                    error
+                }));
+        })
+        .catch(error => res.status(500).json({
+            error
+        }));
 };

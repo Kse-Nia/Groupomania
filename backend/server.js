@@ -4,16 +4,11 @@ const {
     Users
 } = require("./models");
 const cors = require('cors')
-const {
-    createTokens,
-    validateToken
-} = require("./JWT");
 const path = require('path');
 const multer = require("multer");
 
 const userRoutes = require('./Router/user.routes');
-
-
+const postRoutes = require("./Router/post.routes")
 const commentRouter = require('./Router/Comments.routes');
 const upload = require("./middleware/multer-config");
 
@@ -32,6 +27,7 @@ app.use((req, res, next) => {
 // APP
 
 app.use("/user", userRoutes); // Routes authentification / enregistrement
+app.use("/post", postRoutes); // Routes Posts
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Partie chargement image
