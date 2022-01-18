@@ -1,7 +1,20 @@
-'use strict';
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+    "Groupomania2",
+    "kseniya",
+    "password", {
+        host: "localhost",
+        dialect: "mysql",
+    }
+);
 
-const Sequelize = require('sequelize')
-const sequelize = require("../config/config");
+try {
+    sequelize.authenticate();
+    console.log("connexion reussi");
+} catch (error) {
+    console.log("connexion non reussi");
+};
+
 
 // Création modèle utilisateur
 

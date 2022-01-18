@@ -4,20 +4,23 @@
     "password": "password",
     "database": "Groupomania2",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "port": "3306"
   },
   "test": {
     "username": "kseniya",
     "password": "password",
     "database": "Groupomania2",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "port": "3306"
   },
   "production": {
     "username": "kseniya",
     "password": "password",
     "database": "Groupomania2",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "port": "3306"
   }
 }
