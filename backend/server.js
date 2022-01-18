@@ -1,25 +1,14 @@
-const express = require("express");
-const db = require("./models");
-const {
-    Users
-} = require("./models");
-const cors = require('cors')
-const {
-    createTokens,
-    validateToken
-} = require("./JWT");
-const path = require('path');
-const multer = require("multer");
-
-const userRoutes = require('./Router/user.routes');
-
-
-const commentRouter = require('./Router/Comments.routes');
-const upload = require("./middleware/multer-config");
-
+const express = require('express');
+require('dotenv').config({
+    path: './config/.env'
+});
+const cors = require("cors");
 const app = express();
+const db = require("./Models");
+
+
 app.use(cors());
-app.use(express.json());
+/* app.use(helmet()); */
 
 // Headers CORS
 app.use((req, res, next) => {
@@ -29,15 +18,14 @@ app.use((req, res, next) => {
     next();
 });
 
-// APP
 
-app.use("/user", userRoutes);
 
-// Partie chargement image
-/* app.use("/upload", userRoutes); */
-
-db.sequelize.sync().then(() => {
-    app.listen(7001, () => {
-        console.log("SERVER RUNNING ON PORT 7001");
+// Partie server
+db.sequelize.sync().then((req) => {
+    app.listen(process.env.PORT, () => {
+        console.log(`Server is running on port ${process.env.PORT}`);
     });
 });
+
+
+module.exports = app;

@@ -9,19 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.0.1",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
+    "dotenv": "^14.2.0",
     "express": "^4.17.2",
-    "jsonwebtoken": "^8.5.1",
-    "multer": "^1.4.4",
+    "fs": "^0.0.1-security",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.15",
-    "sequelize": "^7.0.0-alpha.2"
-  },
-  "devDependencies": {
-    "sequelize-cli": "^6.3.0"
+    "path": "^0.12.7",
+    "sequelize": "^6.13.0",
+    "sequelize-cli": "^6.4.1"
   }
 }
