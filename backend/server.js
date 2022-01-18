@@ -1,13 +1,6 @@
 const express = require("express");
 const db = require("./models");
-const {
-    Users
-} = require("./models");
 const cors = require('cors')
-const {
-    createTokens,
-    validateToken
-} = require("./JWT");
 const path = require('path');
 const multer = require("multer");
 
