@@ -1,0 +1,56 @@
+From 12130ab52029ba9ae3391978a72ef650323581d3 Mon Sep 17 00:00:00 2001
+From: kseniya <kseniyamudrakovadev@gmail.com>
+Date: Wed, 19 Jan 2022 11:39:53 +0100
+Subject: [PATCH 2/3] revert change controllers
+
+---
+ backend/config/config.json | 6 +++---
+ backend/package.json       | 3 ++-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/backend/config/config.json b/backend/config/config.json
+index 11b065a..6db587f 100644
+--- a/backend/config/config.json
++++ b/backend/config/config.json
+@@ -3,21 +3,21 @@
+       "username": "kseniya",
+       "password": "password",
+       "database": "TESTMERN",
+-      "host": "127.0.0.1",
++      "host": "localhost",
+       "dialect": "mysql"
+     },
+     "test": {
+       "username": "kseniya",
+       "password": "password",
+       "database": "TESTMERN",
+-      "host": "127.0.0.1",
++      "host": "localhost",
+       "dialect": "mysql"
+     },
+     "production": {
+       "username": "kseniya",
+       "password": "password",
+       "database": "TESTMERN",
+-      "host": "127.0.0.1",
++      "host": "localhost",
+       "dialect": "mysql"
+     }
+   }
+diff --git a/backend/package.json b/backend/package.json
+index 4d42fc7..9b0d3ed 100644
+--- a/backend/package.json
++++ b/backend/package.json
+@@ -4,7 +4,8 @@
+   "description": "",
+   "main": "server.js",
+   "scripts": {
+-    "test": "echo \"Error: no test specified\" && exit 1"
++    "test": "echo \"Error: no test specified\" && exit 1",
++    "start": "nodemon server.js"
+   },
+   "author": "",
+   "license": "ISC",
+-- 
+2.34.1
+

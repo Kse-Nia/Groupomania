@@ -18,19 +18,29 @@ try {
 // Création modèle Commentaire
 
 module.exports = (sequelize, DataTypes) => {
-    var Comment = sequelize.define('Comment', {
-        content: DataTypes.TEXT,
-        messageId: DataTypes.INTEGER,
-        userId: DataTypes.INTEGER
+    let Comment = sequelize.define('Comment', {
+        type: {
+            type: Sequelize.STRING
+        },
+        content: {
+            type: Sequelize.STRING
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        userId: {
+            type: DataTypes.INTEGER
+        }
     });
 
     Comment.associate = function (models) {
         Comment.belongsTo(models.Users, {
-            foreignKey: 'userId',
+            foreignKey: 'id',
 
         });
         Comment.belongsTo(models.Posts, {
-            foreignKey: 'messageId',
+            foreignKey: 'postId',
             onDelete: 'CASCADE',
         });
     }

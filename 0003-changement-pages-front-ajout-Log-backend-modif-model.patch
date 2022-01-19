@@ -1,0 +1,1231 @@
+From 81b9ce5b3dd04033a059c348b285eb3586c52de2 Mon Sep 17 00:00:00 2001
+From: kseniya <kseniyamudrakovadev@gmail.com>
+Date: Wed, 19 Jan 2022 13:47:23 +0100
+Subject: [PATCH 3/3] changement pages front, ajout Log, backend modif models
+
+---
+ .DS_Store                              | Bin 6148 -> 6148 bytes
+ backend/config/config.json             |   6 +-
+ backend/models/comments.js             |  23 ++-
+ backend/models/post.model.js           |  17 +-
+ backend/models/user.model.js           |  64 +++----
+ frontend/package-lock.json             | 243 +++++++++++++++++++++++++
+ frontend/package.json                  |   5 +
+ frontend/src/App.js                    |  16 +-
+ frontend/src/Assets/logout.svg         |   1 +
+ frontend/src/components/AppContext.jsx |   0
+ frontend/src/components/Log/Logout.jsx |  32 ++++
+ frontend/src/components/Nav.css        | 106 +++++++++++
+ frontend/src/components/Nav.css.map    |   9 +
+ frontend/src/components/Nav.jsx        |  49 +++++
+ frontend/src/components/Nav.scss       |  80 ++++++++
+ frontend/src/components/Navbar.jsx     |   6 +-
+ frontend/src/components/components.css |   2 +-
+ frontend/src/pages/Trend.jsx           |  33 ++++
+ frontend/yarn.lock                     | 102 ++++++++++-
+ 19 files changed, 739 insertions(+), 55 deletions(-)
+ create mode 100644 frontend/src/Assets/logout.svg
+ create mode 100644 frontend/src/components/AppContext.jsx
+ create mode 100644 frontend/src/components/Log/Logout.jsx
+ create mode 100644 frontend/src/components/Nav.css
+ create mode 100644 frontend/src/components/Nav.css.map
+ create mode 100644 frontend/src/components/Nav.jsx
+ create mode 100644 frontend/src/components/Nav.scss
+ create mode 100644 frontend/src/pages/Trend.jsx
+
+diff --git a/.DS_Store b/.DS_Store
+index f88b8cfef13fda1ab152ba01d12275b2d8869959..5b9d703101fb5d4b321fbf144b35f8a1ff83db2e 100644
+GIT binary patch
+delta 56
+zcmZoMXfc@J&&akhU^gQp+hiUlZGLu!B!)zWWQJ^pRE9i;l*tlI4>*hsOm!5DO$|0N
+M-(=a$&heKY0ErO}E&u=k
+
+delta 44
+zcmZoMXfc@J&&awlU^gQp>tr4#?a8T32RV$)40IHXO)NI+G2djF*r2zWo#QV*036l~
+A@c;k-
+
+diff --git a/backend/config/config.json b/backend/config/config.json
+index 6db587f..f1f92c9 100644
+--- a/backend/config/config.json
++++ b/backend/config/config.json
+@@ -2,21 +2,21 @@
+     "development": {
+       "username": "kseniya",
+       "password": "password",
+-      "database": "TESTMERN",
++      "database": "Groupomania",
+       "host": "localhost",
+       "dialect": "mysql"
+     },
+     "test": {
+       "username": "kseniya",
+       "password": "password",
+-      "database": "TESTMERN",
++      "database": "Groupomania",
+       "host": "localhost",
+       "dialect": "mysql"
+     },
+     "production": {
+       "username": "kseniya",
+       "password": "password",
+-      "database": "TESTMERN",
++      "database": "Groupomania",
+       "host": "localhost",
+       "dialect": "mysql"
+     }
+diff --git a/backend/models/comments.js b/backend/models/comments.js
+index d56faa2..a5f1254 100644
+--- a/backend/models/comments.js
++++ b/backend/models/comments.js
+@@ -15,15 +15,24 @@ try {
+     console.log("connexion non reussi");
+ };
+ 
+-// Création modèle utilisateur
++// Création modèle Commentaire
+ 
+ module.exports = (sequelize, DataTypes) => {
+-    const Comments = sequelize.define("Comments", {
+-        commentBody: {
+-            type: DataTypes.STRING,
+-            allowNull: false,
+-        },
++    var Comment = sequelize.define('Comment', {
++        content: DataTypes.TEXT,
++        messageId: DataTypes.INTEGER,
++        userId: DataTypes.INTEGER
+     });
+ 
+-    return Comments;
++    Comment.associate = function (models) {
++        Comment.belongsTo(models.Users, {
++            foreignKey: 'userId',
++
++        });
++        Comment.belongsTo(models.Posts, {
++            foreignKey: 'messageId',
++            onDelete: 'CASCADE',
++        });
++    }
++    return Comment;
+ };
+\ No newline at end of file
+diff --git a/backend/models/post.model.js b/backend/models/post.model.js
+index ce5ded5..e3d3344 100644
+--- a/backend/models/post.model.js
++++ b/backend/models/post.model.js
+@@ -18,7 +18,7 @@ try {
+ // Création modèle Post
+ 
+ module.exports = (sequelize, DataTypes) => {
+-    const Posts = sequelize.define("Posts", {
++    let Posts = sequelize.define('Posts', {
+         type: {
+             type: Sequelize.STRING
+         },
+@@ -29,16 +29,25 @@ module.exports = (sequelize, DataTypes) => {
+         description: {
+             type: Sequelize.TEXT
+         },
++        data: {
++            type: Sequelize.BLOB('long')
++        },
+         username: {
+             type: DataTypes.STRING,
+             allowNull: false,
+         },
+     });
+ 
+-    Posts.associate = (models) => {
++    Posts.associate = function (models) {
++        Posts.belongsTo(models.Users, {
++            foreignKey: 'userId',
++            as: 'user',
++            onDelete: 'CASCADE',
++        });
+         Posts.hasMany(models.Comments, {
+-            onDelete: "cascade",
++            foreignKey: 'commentId',
++            as: 'comments',
+         });
+-    };
++    }
+     return Posts;
+ };
+\ No newline at end of file
+diff --git a/backend/models/user.model.js b/backend/models/user.model.js
+index b194e86..d4f8970 100644
+--- a/backend/models/user.model.js
++++ b/backend/models/user.model.js
+@@ -16,35 +16,37 @@ try {
+ };
+ 
+ 
+-// Création modèle utilisateur
++module.exports = (sequelize, DataTypes) => {
++    let Users = sequelize.define('Users', {
++        id: {
++            type: DataTypes.UUID,
++            defaultValue: Sequelize.UUIDV4,
++            primaryKey: true,
++            allowNull: true,
++        },
++        username: {
++            type: DataTypes.STRING,
++            allowNull: true,
++        },
++        useremail: {
++            type: DataTypes.STRING,
++            allowNull: true,
++        },
++        userpassword: {
++            type: DataTypes.STRING,
++            allowNull: true,
++        },
++        isAdmin: {
++            type: DataTypes.BOOLEAN,
++            defaultValue: 0,
++        }
++    });
++    Users.associate = function (models) {
++        Users.hasMany(models.Posts, {
++            foreignKey: 'userId',
++            as: 'post',
++        });
++    };
+ 
+-const Users = sequelize.define("Users", {
+-    id: {
+-        type: Sequelize.UUID,
+-        defaultValue: Sequelize.UUIDV4,
+-        primaryKey: true,
+-        allowNull: true,
+-    },
+-    username: {
+-        type: Sequelize.STRING,
+-        allowNull: true,
+-    },
+-    useremail: {
+-        type: Sequelize.STRING,
+-        allowNull: true,
+-    },
+-    userpassword: {
+-        type: Sequelize.STRING,
+-        allowNull: true,
+-    },
+-    isAdmin: {
+-        type: Sequelize.BOOLEAN,
+-        defaultValue: 0,
+-    },
+-});
+-
+-Users.sync({
+-    alter: true,
+-});
+-
+-module.exports = Users;
+\ No newline at end of file
++    return Users;
++};
+\ No newline at end of file
+diff --git a/frontend/package-lock.json b/frontend/package-lock.json
+index d7fe7cc..b008e96 100644
+--- a/frontend/package-lock.json
++++ b/frontend/package-lock.json
+@@ -19,8 +19,13 @@
+         "react": "^17.0.2",
+         "react-dom": "^17.0.2",
+         "react-hook-form": "^7.20.2",
++        "react-redux": "^7.2.6",
+         "react-router-dom": "^6.0.2",
+         "react-scripts": "^4.0.3",
++        "redux": "^4.1.2",
++        "redux-devtools-extension": "^2.13.9",
++        "redux-logger": "^3.0.6",
++        "redux-thunk": "^2.4.1",
+         "sequelize": "^6.12.0-alpha.1",
+         "sqlite3": "^4.2.0",
+         "web-vitals": "^1.0.1",
+@@ -3521,6 +3526,15 @@
+         "@types/node": "*"
+       }
+     },
++    "node_modules/@types/hoist-non-react-statics": {
++      "version": "3.3.1",
++      "resolved": "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz",
++      "integrity": "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==",
++      "dependencies": {
++        "@types/react": "*",
++        "hoist-non-react-statics": "^3.3.0"
++      }
++    },
+     "node_modules/@types/html-minifier-terser": {
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/@types/html-minifier-terser/-/html-minifier-terser-5.1.2.tgz",
+@@ -3649,11 +3663,37 @@
+       "resolved": "https://registry.npmjs.org/@types/prettier/-/prettier-2.4.2.tgz",
+       "integrity": "sha512-ekoj4qOQYp7CvjX8ZDBgN86w3MqQhLE1hczEJbEIjgFEumDy+na/4AJAbLXfgEWFNB2pKadM5rPFtuSGMWK7xA=="
+     },
++    "node_modules/@types/prop-types": {
++      "version": "15.7.4",
++      "resolved": "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz",
++      "integrity": "sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ=="
++    },
+     "node_modules/@types/q": {
+       "version": "1.5.5",
+       "resolved": "https://registry.npmjs.org/@types/q/-/q-1.5.5.tgz",
+       "integrity": "sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ=="
+     },
++    "node_modules/@types/react": {
++      "version": "17.0.38",
++      "resolved": "https://registry.npmjs.org/@types/react/-/react-17.0.38.tgz",
++      "integrity": "sha512-SI92X1IA+FMnP3qM5m4QReluXzhcmovhZnLNm3pyeQlooi02qI7sLiepEYqT678uNiyc25XfCqxREFpy3W7YhQ==",
++      "dependencies": {
++        "@types/prop-types": "*",
++        "@types/scheduler": "*",
++        "csstype": "^3.0.2"
++      }
++    },
++    "node_modules/@types/react-redux": {
++      "version": "7.1.22",
++      "resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.22.tgz",
++      "integrity": "sha512-GxIA1kM7ClU73I6wg9IRTVwSO9GS+SAKZKe0Enj+82HMU6aoESFU2HNAdNi3+J53IaOHPiUfT3kSG4L828joDQ==",
++      "dependencies": {
++        "@types/hoist-non-react-statics": "^3.3.0",
++        "@types/react": "*",
++        "hoist-non-react-statics": "^3.3.0",
++        "redux": "^4.0.0"
++      }
++    },
+     "node_modules/@types/resolve": {
+       "version": "0.0.8",
+       "resolved": "https://registry.npmjs.org/@types/resolve/-/resolve-0.0.8.tgz",
+@@ -3662,6 +3702,11 @@
+         "@types/node": "*"
+       }
+     },
++    "node_modules/@types/scheduler": {
++      "version": "0.16.2",
++      "resolved": "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz",
++      "integrity": "sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew=="
++    },
+     "node_modules/@types/source-list-map": {
+       "version": "0.1.2",
+       "resolved": "https://registry.npmjs.org/@types/source-list-map/-/source-list-map-0.1.2.tgz",
+@@ -6995,6 +7040,11 @@
+       "resolved": "https://registry.npmjs.org/cssom/-/cssom-0.3.8.tgz",
+       "integrity": "sha512-b0tGHbfegbhPJpxpiBPU2sCkigAqtM9O121le6bbOlgyV+NyGyCmVfJ6QW9eRjz8CpNfWEOYBIMIGRYkLwsIYg=="
+     },
++    "node_modules/csstype": {
++      "version": "3.0.10",
++      "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.0.10.tgz",
++      "integrity": "sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA=="
++    },
+     "node_modules/cyclist": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/cyclist/-/cyclist-1.0.1.tgz",
+@@ -7069,6 +7119,11 @@
+       "resolved": "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz",
+       "integrity": "sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw="
+     },
++    "node_modules/deep-diff": {
++      "version": "0.3.8",
++      "resolved": "https://registry.npmjs.org/deep-diff/-/deep-diff-0.3.8.tgz",
++      "integrity": "sha1-wB3mPvsO7JeYgB1Ax+Da4ltYLIQ="
++    },
+     "node_modules/deep-equal": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/deep-equal/-/deep-equal-1.1.1.tgz",
+@@ -10169,6 +10224,19 @@
+         "minimalistic-crypto-utils": "^1.0.1"
+       }
+     },
++    "node_modules/hoist-non-react-statics": {
++      "version": "3.3.2",
++      "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz",
++      "integrity": "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==",
++      "dependencies": {
++        "react-is": "^16.7.0"
++      }
++    },
++    "node_modules/hoist-non-react-statics/node_modules/react-is": {
++      "version": "16.13.1",
++      "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
++      "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
++    },
+     "node_modules/hoopy": {
+       "version": "0.1.4",
+       "resolved": "https://registry.npmjs.org/hoopy/-/hoopy-0.1.4.tgz",
+@@ -16085,6 +16153,35 @@
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.1.tgz",
+       "integrity": "sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA=="
+     },
++    "node_modules/react-redux": {
++      "version": "7.2.6",
++      "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-7.2.6.tgz",
++      "integrity": "sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==",
++      "dependencies": {
++        "@babel/runtime": "^7.15.4",
++        "@types/react-redux": "^7.1.20",
++        "hoist-non-react-statics": "^3.3.2",
++        "loose-envify": "^1.4.0",
++        "prop-types": "^15.7.2",
++        "react-is": "^17.0.2"
++      },
++      "peerDependencies": {
++        "react": "^16.8.3 || ^17"
++      },
++      "peerDependenciesMeta": {
++        "react-dom": {
++          "optional": true
++        },
++        "react-native": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/react-redux/node_modules/react-is": {
++      "version": "17.0.2",
++      "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz",
++      "integrity": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
++    },
+     "node_modules/react-refresh": {
+       "version": "0.8.3",
+       "resolved": "https://registry.npmjs.org/react-refresh/-/react-refresh-0.8.3.tgz",
+@@ -16430,6 +16527,39 @@
+         "node": ">=8"
+       }
+     },
++    "node_modules/redux": {
++      "version": "4.1.2",
++      "resolved": "https://registry.npmjs.org/redux/-/redux-4.1.2.tgz",
++      "integrity": "sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==",
++      "dependencies": {
++        "@babel/runtime": "^7.9.2"
++      }
++    },
++    "node_modules/redux-devtools-extension": {
++      "version": "2.13.9",
++      "resolved": "https://registry.npmjs.org/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz",
++      "integrity": "sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==",
++      "deprecated": "Package moved to @redux-devtools/extension.",
++      "peerDependencies": {
++        "redux": "^3.1.0 || ^4.0.0"
++      }
++    },
++    "node_modules/redux-logger": {
++      "version": "3.0.6",
++      "resolved": "https://registry.npmjs.org/redux-logger/-/redux-logger-3.0.6.tgz",
++      "integrity": "sha1-91VZZvMJjzyIYExEnPC69XeCdL8=",
++      "dependencies": {
++        "deep-diff": "^0.3.5"
++      }
++    },
++    "node_modules/redux-thunk": {
++      "version": "2.4.1",
++      "resolved": "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.4.1.tgz",
++      "integrity": "sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==",
++      "peerDependencies": {
++        "redux": "^4"
++      }
++    },
+     "node_modules/regenerate": {
+       "version": "1.4.2",
+       "resolved": "https://registry.npmjs.org/regenerate/-/regenerate-1.4.2.tgz",
+@@ -23614,6 +23744,15 @@
+         "@types/node": "*"
+       }
+     },
++    "@types/hoist-non-react-statics": {
++      "version": "3.3.1",
++      "resolved": "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz",
++      "integrity": "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==",
++      "requires": {
++        "@types/react": "*",
++        "hoist-non-react-statics": "^3.3.0"
++      }
++    },
+     "@types/html-minifier-terser": {
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/@types/html-minifier-terser/-/html-minifier-terser-5.1.2.tgz",
+@@ -23732,11 +23871,37 @@
+       "resolved": "https://registry.npmjs.org/@types/prettier/-/prettier-2.4.2.tgz",
+       "integrity": "sha512-ekoj4qOQYp7CvjX8ZDBgN86w3MqQhLE1hczEJbEIjgFEumDy+na/4AJAbLXfgEWFNB2pKadM5rPFtuSGMWK7xA=="
+     },
++    "@types/prop-types": {
++      "version": "15.7.4",
++      "resolved": "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz",
++      "integrity": "sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ=="
++    },
+     "@types/q": {
+       "version": "1.5.5",
+       "resolved": "https://registry.npmjs.org/@types/q/-/q-1.5.5.tgz",
+       "integrity": "sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ=="
+     },
++    "@types/react": {
++      "version": "17.0.38",
++      "resolved": "https://registry.npmjs.org/@types/react/-/react-17.0.38.tgz",
++      "integrity": "sha512-SI92X1IA+FMnP3qM5m4QReluXzhcmovhZnLNm3pyeQlooi02qI7sLiepEYqT678uNiyc25XfCqxREFpy3W7YhQ==",
++      "requires": {
++        "@types/prop-types": "*",
++        "@types/scheduler": "*",
++        "csstype": "^3.0.2"
++      }
++    },
++    "@types/react-redux": {
++      "version": "7.1.22",
++      "resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.22.tgz",
++      "integrity": "sha512-GxIA1kM7ClU73I6wg9IRTVwSO9GS+SAKZKe0Enj+82HMU6aoESFU2HNAdNi3+J53IaOHPiUfT3kSG4L828joDQ==",
++      "requires": {
++        "@types/hoist-non-react-statics": "^3.3.0",
++        "@types/react": "*",
++        "hoist-non-react-statics": "^3.3.0",
++        "redux": "^4.0.0"
++      }
++    },
+     "@types/resolve": {
+       "version": "0.0.8",
+       "resolved": "https://registry.npmjs.org/@types/resolve/-/resolve-0.0.8.tgz",
+@@ -23745,6 +23910,11 @@
+         "@types/node": "*"
+       }
+     },
++    "@types/scheduler": {
++      "version": "0.16.2",
++      "resolved": "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz",
++      "integrity": "sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew=="
++    },
+     "@types/source-list-map": {
+       "version": "0.1.2",
+       "resolved": "https://registry.npmjs.org/@types/source-list-map/-/source-list-map-0.1.2.tgz",
+@@ -26394,6 +26564,11 @@
+         }
+       }
+     },
++    "csstype": {
++      "version": "3.0.10",
++      "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.0.10.tgz",
++      "integrity": "sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA=="
++    },
+     "cyclist": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/cyclist/-/cyclist-1.0.1.tgz",
+@@ -26451,6 +26626,11 @@
+       "resolved": "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz",
+       "integrity": "sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw="
+     },
++    "deep-diff": {
++      "version": "0.3.8",
++      "resolved": "https://registry.npmjs.org/deep-diff/-/deep-diff-0.3.8.tgz",
++      "integrity": "sha1-wB3mPvsO7JeYgB1Ax+Da4ltYLIQ="
++    },
+     "deep-equal": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/deep-equal/-/deep-equal-1.1.1.tgz",
+@@ -28795,6 +28975,21 @@
+         "minimalistic-crypto-utils": "^1.0.1"
+       }
+     },
++    "hoist-non-react-statics": {
++      "version": "3.3.2",
++      "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz",
++      "integrity": "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==",
++      "requires": {
++        "react-is": "^16.7.0"
++      },
++      "dependencies": {
++        "react-is": {
++          "version": "16.13.1",
++          "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
++          "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
++        }
++      }
++    },
+     "hoopy": {
+       "version": "0.1.4",
+       "resolved": "https://registry.npmjs.org/hoopy/-/hoopy-0.1.4.tgz",
+@@ -33437,6 +33632,26 @@
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.1.tgz",
+       "integrity": "sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA=="
+     },
++    "react-redux": {
++      "version": "7.2.6",
++      "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-7.2.6.tgz",
++      "integrity": "sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==",
++      "requires": {
++        "@babel/runtime": "^7.15.4",
++        "@types/react-redux": "^7.1.20",
++        "hoist-non-react-statics": "^3.3.2",
++        "loose-envify": "^1.4.0",
++        "prop-types": "^15.7.2",
++        "react-is": "^17.0.2"
++      },
++      "dependencies": {
++        "react-is": {
++          "version": "17.0.2",
++          "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz",
++          "integrity": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
++        }
++      }
++    },
+     "react-refresh": {
+       "version": "0.8.3",
+       "resolved": "https://registry.npmjs.org/react-refresh/-/react-refresh-0.8.3.tgz",
+@@ -33693,6 +33908,34 @@
+         "strip-indent": "^3.0.0"
+       }
+     },
++    "redux": {
++      "version": "4.1.2",
++      "resolved": "https://registry.npmjs.org/redux/-/redux-4.1.2.tgz",
++      "integrity": "sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==",
++      "requires": {
++        "@babel/runtime": "^7.9.2"
++      }
++    },
++    "redux-devtools-extension": {
++      "version": "2.13.9",
++      "resolved": "https://registry.npmjs.org/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz",
++      "integrity": "sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==",
++      "requires": {}
++    },
++    "redux-logger": {
++      "version": "3.0.6",
++      "resolved": "https://registry.npmjs.org/redux-logger/-/redux-logger-3.0.6.tgz",
++      "integrity": "sha1-91VZZvMJjzyIYExEnPC69XeCdL8=",
++      "requires": {
++        "deep-diff": "^0.3.5"
++      }
++    },
++    "redux-thunk": {
++      "version": "2.4.1",
++      "resolved": "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.4.1.tgz",
++      "integrity": "sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==",
++      "requires": {}
++    },
+     "regenerate": {
+       "version": "1.4.2",
+       "resolved": "https://registry.npmjs.org/regenerate/-/regenerate-1.4.2.tgz",
+diff --git a/frontend/package.json b/frontend/package.json
+index 5f38234..257d1e5 100644
+--- a/frontend/package.json
++++ b/frontend/package.json
+@@ -14,8 +14,13 @@
+     "react": "^17.0.2",
+     "react-dom": "^17.0.2",
+     "react-hook-form": "^7.20.2",
++    "react-redux": "^7.2.6",
+     "react-router-dom": "^6.0.2",
+     "react-scripts": "^4.0.3",
++    "redux": "^4.1.2",
++    "redux-devtools-extension": "^2.13.9",
++    "redux-logger": "^3.0.6",
++    "redux-thunk": "^2.4.1",
+     "sequelize": "^6.12.0-alpha.1",
+     "sqlite3": "^4.2.0",
+     "web-vitals": "^1.0.1",
+diff --git a/frontend/src/App.js b/frontend/src/App.js
+index 8322537..dbe27f7 100644
+--- a/frontend/src/App.js
++++ b/frontend/src/App.js
+@@ -1,6 +1,7 @@
+ import React, { useState } from "react";
+ import "./App.css";
+-import { Routes, Route } from "react-router-dom";
++import { Routes, Route, Navigate } from "react-router-dom";
++import { Redirect } from "react-router";
+ import Axios from "axios";
+ 
+ import { CssBaseline } from "@nextui-org/react";
+@@ -18,12 +19,13 @@ function App() {
+       <CssBaseline />
+       <Navbar />
+       <Routes>
+-        <Route path="/" element={<Home />} />{" "}
+-        <Route path="/user/register" element={<Register />} />{" "}
+-        <Route path="/user/login" element={<Login />} />{" "}
+-        <Route path="/auth/profile" element={<Profile />} />{" "}
+-        <Route path="/upload" element={<Upload />} />{" "}
+-      </Routes>{" "}
++        <Route path="/" element={<Home />} />
++        <Route path="/user/register" element={<Register />} />
++        <Route path="/user/login" element={<Login />} />
++        <Route path="/user/profile" element={<Profile />} />
++        <Route path="/upload" element={<Upload />} />
++        <Route path="*" element={<Navigate to="/" />} />
++      </Routes>
+     </div>
+   );
+ }
+diff --git a/frontend/src/Assets/logout.svg b/frontend/src/Assets/logout.svg
+new file mode 100644
+index 0000000..5c9daff
+--- /dev/null
++++ b/frontend/src/Assets/logout.svg
+@@ -0,0 +1 @@
++<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-out-alt" class="svg-inline--fa fa-sign-out-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z"></path></svg>
+\ No newline at end of file
+diff --git a/frontend/src/components/AppContext.jsx b/frontend/src/components/AppContext.jsx
+new file mode 100644
+index 0000000..e69de29
+diff --git a/frontend/src/components/Log/Logout.jsx b/frontend/src/components/Log/Logout.jsx
+new file mode 100644
+index 0000000..a4a7b36
+--- /dev/null
++++ b/frontend/src/components/Log/Logout.jsx
+@@ -0,0 +1,32 @@
++import React from "react";
++import cookie from "js-cookie";
++import axios from "axios";
++import Logout from "../Assets/logout.svg";
++
++const Logout = () => {
++  const removeCookie = (key) => {
++    if (window !== "undefined") {
++      cookie.remove(key, { expires: 1 });
++    }
++  };
++
++  const logout = async () => {
++    await axios({
++      method: "get",
++      url: `${process.env.REACT_APP_API_URL}/user/logout`,
++      withCredentials: true,
++    })
++      .then(() => removeCookie("jwt"))
++      .catch((err) => console.log(err));
++
++    window.location = "/";
++  };
++
++  return (
++    <li onClick={logout}>
++      <img src={Logout} alt="logout" />
++    </li>
++  );
++};
++
++export default Logout;
+diff --git a/frontend/src/components/Nav.css b/frontend/src/components/Nav.css
+new file mode 100644
+index 0000000..430dea3
+--- /dev/null
++++ b/frontend/src/components/Nav.css
+@@ -0,0 +1,106 @@
++nav {
++  position: fixed;
++  width: 100%;
++  height: 50px;
++  border-radius: 6px;
++  -webkit-box-shadow: 10px 1px 0px, 20px 3px 0px 0px rgba(102, 68, 0, 0.5);
++          box-shadow: 10px 1px 0px, 20px 3px 0px 0px rgba(102, 68, 0, 0.5);
++  z-index: 10;
++  top: 0;
++}
++
++@media screen and (max-width: 1000px) {
++  nav {
++    padding: 0 5%;
++  }
++}
++
++nav::after {
++  content: "";
++  height: 45px;
++  width: 110%;
++  left: -20px;
++  top: 0;
++  position: absolute;
++  -webkit-backdrop-filter: blur(5px);
++          backdrop-filter: blur(5px);
++  background: rgba(255, 255, 255, 0.86);
++  z-index: -10;
++}
++
++nav .nav-container {
++  width: 100%;
++  height: 50px;
++  max-width: 1000px;
++  margin: 0 auto;
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  -webkit-box-pack: justify;
++      -ms-flex-pack: justify;
++          justify-content: space-between;
++  -webkit-box-align: center;
++      -ms-flex-align: center;
++          align-items: center;
++}
++
++nav .nav-container .logo {
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  -webkit-box-align: center;
++      -ms-flex-align: center;
++          align-items: center;
++}
++
++nav .nav-container .logo h3 {
++  -webkit-transform: translate(20px, 2px);
++          transform: translate(20px, 2px);
++  font-size: 1.5em;
++}
++
++nav .nav-container .logo img {
++  height: 26px;
++  width: 26px;
++}
++
++nav .nav-container ul {
++  width: 35%;
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  -webkit-box-align: center;
++      -ms-flex-align: center;
++          align-items: center;
++  -webkit-box-pack: center;
++      -ms-flex-pack: center;
++          justify-content: center;
++  -webkit-box-pack: justify;
++      -ms-flex-pack: justify;
++          justify-content: space-between;
++  font-size: 1.2rem;
++}
++
++nav .nav-container ul .welcome {
++  -webkit-transform: translateY(5px);
++          transform: translateY(5px);
++}
++
++@media screen and (max-width: 600px) {
++  nav .nav-container ul .welcome {
++    display: none;
++  }
++}
++
++nav .nav-container ul li img {
++  height: 25px;
++  width: 25px;
++  display: -ms-grid;
++  display: grid;
++  -webkit-box-align: center;
++      -ms-flex-align: center;
++          align-items: center;
++  justify-items: center;
++  cursor: pointer;
++}
++/*# sourceMappingURL=Nav.css.map */
+\ No newline at end of file
+diff --git a/frontend/src/components/Nav.css.map b/frontend/src/components/Nav.css.map
+new file mode 100644
+index 0000000..a3e0993
+--- /dev/null
++++ b/frontend/src/components/Nav.css.map
+@@ -0,0 +1,9 @@
++{
++    "version": 3,
++    "mappings": "AAAA,AAAA,GAAG,CAAC;EACA,QAAQ,EAAE,KAAK;EACf,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,aAAa,EAAE,GAAG;EAClB,UAAU,EAAE,IAAI,CAAC,GAAG,CAAC,GAAG,EAAE,IAAI,CAAC,GAAG,CAAC,GAAG,CAAC,GAAG,CAAC,qBAAqB;EAEhE,OAAO,EAAE,EAAE;EACX,GAAG,EAAE,CAAC;CAuET;;AArEG,MAAM,CAAC,MAAM,MAAM,SAAS,EAAE,MAAM;EAVxC,AAAA,GAAG,CAAC;IAWI,OAAO,EAAE,IAAI;GAoEpB;;;AA/ED,AAcI,GAdD,AAcE,OAAO,CAAC;EACL,OAAO,EAAE,EAAE;EACX,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;EACX,IAAI,EAAE,KAAK;EACX,GAAG,EAAE,CAAC;EACN,QAAQ,EAAE,QAAQ;EAClB,eAAe,EAAE,SAAS;EAC1B,UAAU,EAAE,yBAAyB;EACrC,OAAO,EAAE,GAAG;CACf;;AAxBL,AA0BI,GA1BD,CA0BC,cAAc,CAAC;EACX,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,SAAS,EAAE,MAAM;EACjB,MAAM,EAAE,MAAM;EACd,OAAO,EAAE,IAAI;EACb,eAAe,EAAE,aAAa;EAC9B,WAAW,EAAE,MAAM;CA6CtB;;AA9EL,AAmCQ,GAnCL,CA0BC,cAAc,CASV,KAAK,CAAC;EACF,OAAO,EAAE,IAAI;EACb,WAAW,EAAE,MAAM;CAWtB;;AAhDT,AAuCY,GAvCT,CA0BC,cAAc,CASV,KAAK,CAID,EAAE,CAAC;EACC,SAAS,EAAE,oBAAoB;EAC/B,SAAS,EAAE,KAAK;CACnB;;AA1Cb,AA4CY,GA5CT,CA0BC,cAAc,CASV,KAAK,CASD,GAAG,CAAC;EACA,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;CACd;;AA/Cb,AAkDQ,GAlDL,CA0BC,cAAc,CAwBV,EAAE,CAAC;EACC,KAAK,EAAE,GAAG;EACV,OAAO,EAAE,IAAI;EACb,WAAW,EAAE,MAAM;EACnB,eAAe,EAAE,MAAM;EACvB,eAAe,EAAE,aAAa;EAC9B,SAAS,EAAE,MAAM;CAqBpB;;AA7ET,AA0DY,GA1DT,CA0BC,cAAc,CAwBV,EAAE,CAQE,QAAQ,CAAC;EACL,SAAS,EAAE,eAAe;CAK7B;;AAHG,MAAM,CAAC,MAAM,MAAM,SAAS,EAAE,KAAK;EA7DnD,AA0DY,GA1DT,CA0BC,cAAc,CAwBV,EAAE,CAQE,QAAQ,CAAC;IAID,OAAO,EAAE,IAAI;GAEpB;;;AAhEb,AAoEgB,GApEb,CA0BC,cAAc,CAwBV,EAAE,CAgBE,EAAE,CAEE,GAAG,CAAC;EACA,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;EACX,OAAO,EAAE,IAAI;EACb,WAAW,EAAE,MAAM;EACnB,aAAa,EAAE,MAAM;EACrB,MAAM,EAAE,OAAO;CAClB",
++    "sources": [
++        "Nav.scss"
++    ],
++    "names": [],
++    "file": "Nav.css"
++}
+\ No newline at end of file
+diff --git a/frontend/src/components/Nav.jsx b/frontend/src/components/Nav.jsx
+new file mode 100644
+index 0000000..6db2e4f
+--- /dev/null
++++ b/frontend/src/components/Nav.jsx
+@@ -0,0 +1,49 @@
++import React from "react";
++import "./components.css";
++import Logo from "../Assets/icon.png";
++/* import { Spacer } from "@nextui-org/react";
++import { Text } from "@nextui-org/react";
++import { Button } from "@nextui-org/react";
++import { Container, Row, Col } from "@nextui-org/react"; */
++
++const Navbar = () => {
++  const uid = useContext(UidContext);
++  const userData = useSelector((state) => state.userReducer);
++
++  return (
++    <nav>
++      <div className="nav-container">
++        <div className="logo">
++          <NavLink exact to="/">
++            <div className="logo">
++              <img src={Logo} alt="icon" />
++              <h3>Groupomania</h3>
++            </div>
++          </NavLink>
++        </div>
++        {uid ? (
++          <ul>
++            <li></li>
++            <li className="welcome">
++              <NavLink exact to="/profil">
++                <h5>Bienvenue {userData.username}</h5>
++              </NavLink>
++            </li>
++            <Logout />
++          </ul>
++        ) : (
++          <ul>
++            <li></li>
++            <li>
++              <NavLink exact to="/profil">
++                <img src="./img/icons/login.svg" alt="login" />
++              </NavLink>
++            </li>
++          </ul>
++        )}
++      </div>
++    </nav>
++  );
++};
++
++export default Navbar;
+diff --git a/frontend/src/components/Nav.scss b/frontend/src/components/Nav.scss
+new file mode 100644
+index 0000000..d2a7ad7
+--- /dev/null
++++ b/frontend/src/components/Nav.scss
+@@ -0,0 +1,80 @@
++nav {
++    position: fixed;
++    width: 100%;
++    height: 50px;
++    border-radius: 6px;
++    box-shadow: 10px 1px 0px, 20px 3px 0px 0px rgba(102, 68, 0, 0.5);
++    ;
++    z-index: 10;
++    top: 0;
++
++    @media screen and(max-width: 1000px) {
++        padding: 0 5%;
++    }
++
++    &::after {
++        content: "";
++        height: 45px;
++        width: 110%;
++        left: -20px;
++        top: 0;
++        position: absolute;
++        backdrop-filter: blur(5px);
++        background: rgba(255, 255, 255, 0.86);
++        z-index: -10;
++    }
++
++    .nav-container {
++        width: 100%;
++        height: 50px;
++        max-width: 1000px;
++        margin: 0 auto;
++        display: flex;
++        justify-content: space-between;
++        align-items: center;
++
++        .logo {
++            display: flex;
++            align-items: center;
++
++            h3 {
++                transform: translate(20px, 2px);
++                font-size: 1.5em;
++            }
++
++            img {
++                height: 26px;
++                width: 26px;
++            }
++        }
++
++        ul {
++            width: 35%;
++            display: flex;
++            align-items: center;
++            justify-content: center;
++            justify-content: space-between;
++            font-size: 1.2rem;
++
++            .welcome {
++                transform: translateY(5px);
++
++                @media screen and(max-width: 600px) {
++                    display: none;
++                }
++            }
++
++            li {
++
++                img {
++                    height: 25px;
++                    width: 25px;
++                    display: grid;
++                    align-items: center;
++                    justify-items: center;
++                    cursor: pointer;
++                }
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/frontend/src/components/Navbar.jsx b/frontend/src/components/Navbar.jsx
+index 819d59f..da3d3aa 100644
+--- a/frontend/src/components/Navbar.jsx
++++ b/frontend/src/components/Navbar.jsx
+@@ -1,6 +1,10 @@
+ import React from "react";
+ import "./components.css";
+-import Logo from "../Assets/logo.png";
++import { NavLink } from "react-router-dom";
++import { UidContext } from "./AppContext.jsx";
++import Logout from "../Assets/logout.svg";
++import Logo from "../Assets/icon.png";
++
+ /* import { Spacer } from "@nextui-org/react";
+ import { Text } from "@nextui-org/react";
+ import { Button } from "@nextui-org/react";
+diff --git a/frontend/src/components/components.css b/frontend/src/components/components.css
+index 539997c..8b1d9c0 100644
+--- a/frontend/src/components/components.css
++++ b/frontend/src/components/components.css
+@@ -22,7 +22,7 @@
+ }
+ 
+ .logo {
+-    width: 30%;
++    width: 10%;
+     height: auto;
+     object-fit: cover;
+     margin-left: 60%;
+diff --git a/frontend/src/pages/Trend.jsx b/frontend/src/pages/Trend.jsx
+new file mode 100644
+index 0000000..0274b35
+--- /dev/null
++++ b/frontend/src/pages/Trend.jsx
+@@ -0,0 +1,33 @@
++import React, { useContext } from "react";
++import { useSelector } from "react-redux";
++import { UidContext } from "../components/AppContext";
++import LeftNav from "../components/LeftNav";
++import { isEmpty } from "../components/Utils";
++import Card from "../components/Post/Card";
++import Trends from "../components/Trends";
++import FriendsHint from "../components/Profil/FriendsHint";
++
++const Trend = () => {
++  const uid = useContext(UidContext);
++  const trendList = useSelector((state) => state.trendingReducer);
++
++  return (
++    <div className="trendingpage">
++      <LeftNav />
++      <div className="main">
++        <ul>
++          {!isEmpty(trendList[0]) &&
++            trendList.map((post) => <Card post={post} key={post.id} />)}
++        </ul>
++      </div>
++      <div className="right-side">
++        <div className="right-side-container">
++          <Trends />
++          {uid && <FriendsHint />}
++        </div>
++      </div>
++    </div>
++  );
++};
++
++export default Trend;
+diff --git a/frontend/yarn.lock b/frontend/yarn.lock
+index cf5f30a..a2856d2 100644
+--- a/frontend/yarn.lock
++++ b/frontend/yarn.lock
+@@ -1854,6 +1854,14 @@
+   dependencies:
+     "@types/node" "*"
+ 
++"@types/hoist-non-react-statics@^3.3.0":
++  "integrity" "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA=="
++  "resolved" "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz"
++  "version" "3.3.1"
++  dependencies:
++    "@types/react" "*"
++    "hoist-non-react-statics" "^3.3.0"
++
+ "@types/html-minifier-terser@^5.0.0":
+   "integrity" "sha512-h4lTMgMJctJybDp8CQrxTUiiYmedihHWkjnF/8Pxseu2S6Nlfcy8kwboQ8yejh456rP2yWoEVm1sS/FVsfM48w=="
+   "resolved" "https://registry.npmjs.org/@types/html-minifier-terser/-/html-minifier-terser-5.1.2.tgz"
+@@ -1931,11 +1939,35 @@
+   "resolved" "https://registry.npmjs.org/@types/prettier/-/prettier-2.4.2.tgz"
+   "version" "2.4.2"
+ 
++"@types/prop-types@*":
++  "integrity" "sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ=="
++  "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz"
++  "version" "15.7.4"
++
+ "@types/q@^1.5.1":
+   "integrity" "sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ=="
+   "resolved" "https://registry.npmjs.org/@types/q/-/q-1.5.5.tgz"
+   "version" "1.5.5"
+ 
++"@types/react-redux@^7.1.20":
++  "integrity" "sha512-GxIA1kM7ClU73I6wg9IRTVwSO9GS+SAKZKe0Enj+82HMU6aoESFU2HNAdNi3+J53IaOHPiUfT3kSG4L828joDQ=="
++  "resolved" "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.22.tgz"
++  "version" "7.1.22"
++  dependencies:
++    "@types/hoist-non-react-statics" "^3.3.0"
++    "@types/react" "*"
++    "hoist-non-react-statics" "^3.3.0"
++    "redux" "^4.0.0"
++
++"@types/react@*":
++  "integrity" "sha512-SI92X1IA+FMnP3qM5m4QReluXzhcmovhZnLNm3pyeQlooi02qI7sLiepEYqT678uNiyc25XfCqxREFpy3W7YhQ=="
++  "resolved" "https://registry.npmjs.org/@types/react/-/react-17.0.38.tgz"
++  "version" "17.0.38"
++  dependencies:
++    "@types/prop-types" "*"
++    "@types/scheduler" "*"
++    "csstype" "^3.0.2"
++
+ "@types/resolve@0.0.8":
+   "integrity" "sha512-auApPaJf3NPfe18hSoJkp8EbZzer2ISk7o8mCC3M9he/a04+gbMF97NkpD2S8riMGvm4BMRI59/SZQSaLTKpsQ=="
+   "resolved" "https://registry.npmjs.org/@types/resolve/-/resolve-0.0.8.tgz"
+@@ -1943,6 +1975,11 @@
+   dependencies:
+     "@types/node" "*"
+ 
++"@types/scheduler@*":
++  "integrity" "sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew=="
++  "resolved" "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz"
++  "version" "0.16.2"
++
+ "@types/source-list-map@*":
+   "integrity" "sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA=="
+   "resolved" "https://registry.npmjs.org/@types/source-list-map/-/source-list-map-0.1.2.tgz"
+@@ -4123,6 +4160,11 @@
+   dependencies:
+     "cssom" "~0.3.6"
+ 
++"csstype@^3.0.2":
++  "integrity" "sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA=="
++  "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.0.10.tgz"
++  "version" "3.0.10"
++
+ "cyclist@^1.0.1":
+   "integrity" "sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk="
+   "resolved" "https://registry.npmjs.org/cyclist/-/cyclist-1.0.1.tgz"
+@@ -4233,6 +4275,11 @@
+   "resolved" "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz"
+   "version" "0.7.0"
+ 
++"deep-diff@^0.3.5":
++  "integrity" "sha1-wB3mPvsO7JeYgB1Ax+Da4ltYLIQ="
++  "resolved" "https://registry.npmjs.org/deep-diff/-/deep-diff-0.3.8.tgz"
++  "version" "0.3.8"
++
+ "deep-equal@^1.0.1":
+   "integrity" "sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g=="
+   "resolved" "https://registry.npmjs.org/deep-equal/-/deep-equal-1.1.1.tgz"
+@@ -5846,6 +5893,13 @@
+     "minimalistic-assert" "^1.0.0"
+     "minimalistic-crypto-utils" "^1.0.1"
+ 
++"hoist-non-react-statics@^3.3.0", "hoist-non-react-statics@^3.3.2":
++  "integrity" "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw=="
++  "resolved" "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
++  "version" "3.3.2"
++  dependencies:
++    "react-is" "^16.7.0"
++
+ "hoopy@^0.1.4":
+   "integrity" "sha512-HRcs+2mr52W0K+x8RzcLzuPPmVIKMSv97RGHy0Ea9y/mpcaK+xTrjICA04KAHi4GRzxliNqNJEFYWHghy3rSfQ=="
+   "resolved" "https://registry.npmjs.org/hoopy/-/hoopy-0.1.4.tgz"
+@@ -9694,6 +9748,11 @@
+   "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.20.2.tgz"
+   "version" "7.20.2"
+ 
++"react-is@^16.7.0":
++  "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
++  "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
++  "version" "16.13.1"
++
+ "react-is@^16.8.1":
+   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
+   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
+@@ -9704,6 +9763,23 @@
+   "resolved" "https://registry.npmjs.org/react-is/-/react-is-17.0.1.tgz"
+   "version" "17.0.1"
+ 
++"react-is@^17.0.2":
++  "integrity" "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
++  "resolved" "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
++  "version" "17.0.2"
++
++"react-redux@^7.2.6":
++  "integrity" "sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ=="
++  "resolved" "https://registry.npmjs.org/react-redux/-/react-redux-7.2.6.tgz"
++  "version" "7.2.6"
++  dependencies:
++    "@babel/runtime" "^7.15.4"
++    "@types/react-redux" "^7.1.20"
++    "hoist-non-react-statics" "^3.3.2"
++    "loose-envify" "^1.4.0"
++    "prop-types" "^15.7.2"
++    "react-is" "^17.0.2"
++
+ "react-refresh@^0.8.3", "react-refresh@>=0.8.3 <0.10.0":
+   "integrity" "sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg=="
+   "resolved" "https://registry.npmjs.org/react-refresh/-/react-refresh-0.8.3.tgz"
+@@ -9790,7 +9866,7 @@
+   optionalDependencies:
+     "fsevents" "^2.1.3"
+ 
+-"react@*", "react@^16.8.0 || ^17", "react@^17.0.2", "react@>= 16", "react@>= 16.8.0 || 17.x.x || 18.x.x", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
++"react@*", "react@^16.8.0 || ^17", "react@^16.8.3 || ^17", "react@^17.0.2", "react@>= 16", "react@>= 16.8.0 || 17.x.x || 18.x.x", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
+   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
+   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
+   "version" "17.0.2"
+@@ -9879,6 +9955,30 @@
+     "indent-string" "^4.0.0"
+     "strip-indent" "^3.0.0"
+ 
++"redux-devtools-extension@^2.13.9":
++  "integrity" "sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A=="
++  "resolved" "https://registry.npmjs.org/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz"
++  "version" "2.13.9"
++
++"redux-logger@^3.0.6":
++  "integrity" "sha1-91VZZvMJjzyIYExEnPC69XeCdL8="
++  "resolved" "https://registry.npmjs.org/redux-logger/-/redux-logger-3.0.6.tgz"
++  "version" "3.0.6"
++  dependencies:
++    "deep-diff" "^0.3.5"
++
++"redux-thunk@^2.4.1":
++  "integrity" "sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q=="
++  "resolved" "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.4.1.tgz"
++  "version" "2.4.1"
++
++"redux@^3.1.0 || ^4.0.0", "redux@^4", "redux@^4.0.0", "redux@^4.1.2":
++  "integrity" "sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw=="
++  "resolved" "https://registry.npmjs.org/redux/-/redux-4.1.2.tgz"
++  "version" "4.1.2"
++  dependencies:
++    "@babel/runtime" "^7.9.2"
++
+ "regenerate-unicode-properties@^9.0.0":
+   "integrity" "sha512-3E12UeNSPfjrgwjkR81m5J7Aw/T55Tu7nUyZVQYCKEOs+2dkxEY+DpPtZzO4YruuiPb7NkYLVcyJC4+zCbk5pA=="
+   "resolved" "https://registry.npmjs.org/regenerate-unicode-properties/-/regenerate-unicode-properties-9.0.0.tgz"
+-- 
+2.34.1
+
