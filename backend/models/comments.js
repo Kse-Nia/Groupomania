@@ -15,15 +15,24 @@ try {
     console.log("connexion non reussi");
 };
 
-// Création modèle utilisateur
+// Création modèle Commentaire
 
 module.exports = (sequelize, DataTypes) => {
-    const Comments = sequelize.define("Comments", {
-        commentBody: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+    var Comment = sequelize.define('Comment', {
+        content: DataTypes.TEXT,
+        messageId: DataTypes.INTEGER,
+        userId: DataTypes.INTEGER
     });
 
-    return Comments;
+    Comment.associate = function (models) {
+        Comment.belongsTo(models.Users, {
+            foreignKey: 'userId',
+
+        });
+        Comment.belongsTo(models.Posts, {
+            foreignKey: 'messageId',
+            onDelete: 'CASCADE',
+        });
+    }
+    return Comment;
 };

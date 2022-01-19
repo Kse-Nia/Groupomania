@@ -1,6 +1,10 @@
 import React from "react";
 import "./components.css";
-import Logo from "../Assets/logo.png";
+import { NavLink } from "react-router-dom";
+import { UidContext } from "./AppContext.jsx";
+import Logout from "../Assets/logout.svg";
+import Logo from "../Assets/icon.png";
+
 /* import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";

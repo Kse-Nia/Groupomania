@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Redirect } from "react-router";
 import Axios from "axios";
 
 import { CssBaseline } from "@nextui-org/react";
@@ -18,12 +19,13 @@ function App() {
       <CssBaseline />
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />{" "}
-        <Route path="/user/register" element={<Register />} />{" "}
-        <Route path="/user/login" element={<Login />} />{" "}
-        <Route path="/auth/profile" element={<Profile />} />{" "}
-        <Route path="/upload" element={<Upload />} />{" "}
-      </Routes>{" "}
+        <Route path="/" element={<Home />} />
+        <Route path="/user/register" element={<Register />} />
+        <Route path="/user/login" element={<Login />} />
+        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </div>
   );
 }

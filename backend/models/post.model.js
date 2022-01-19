@@ -18,7 +18,7 @@ try {
 // Création modèle Post
 
 module.exports = (sequelize, DataTypes) => {
-    const Posts = sequelize.define("Posts", {
+    let Posts = sequelize.define('Posts', {
         type: {
             type: Sequelize.STRING
         },
@@ -29,16 +29,25 @@ module.exports = (sequelize, DataTypes) => {
         description: {
             type: Sequelize.TEXT
         },
+        data: {
+            type: Sequelize.BLOB('long')
+        },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
         },
     });
 
-    Posts.associate = (models) => {
-        Posts.hasMany(models.Comments, {
-            onDelete: "cascade",
+    Posts.associate = function (models) {
+        Posts.belongsTo(models.Users, {
+            foreignKey: 'userId',
+            as: 'user',
+            onDelete: 'CASCADE',
         });
-    };
+        Posts.hasMany(models.Comments, {
+            foreignKey: 'commentId',
+            as: 'comments',
+        });
+    }
     return Posts;
 };
