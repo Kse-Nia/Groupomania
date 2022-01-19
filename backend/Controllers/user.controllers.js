@@ -102,7 +102,7 @@ exports.findUser = (req, res) => {
             res.send(user)
         })
         .catch((err) => {
-            console.log("Une erreur est survenue : ", err)
+            console.log("Une erreur est survenue")
         })
 };
 
@@ -118,7 +118,7 @@ exports.deleteUser = (req, res) => {
         })
         .then((user) => {
             const Image = user.profileImage.split('/images/')[1];
-            if (Image != 'default_profile_picture.jpg') {
+            if (Image != 'avatar.png') {
                 fs.unlink(`images/${Image}`, () => {
                     user.destroy()
                         .then(num => {
@@ -139,7 +139,7 @@ exports.deleteUser = (req, res) => {
                         });
                 })
             } else {
-                user.destroy()
+                user.stroy()
                     .then(user => {
                         if (user) {
                             res.status(200).json({
@@ -168,7 +168,6 @@ exports.deleteUser = (req, res) => {
 // Mettre à jour le compte
 exports.updateUser = (req, res) => {
     const userId = req.params.id;
-
     const userObject = req.file ? {
         ...req.body,
         avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
