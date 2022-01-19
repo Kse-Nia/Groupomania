@@ -117,24 +117,24 @@ exports.deleteUser = (req, res) => {
             }
         })
         .then((user) => {
-            const registeredImage = user.profileImage.split('/images/')[1];
-            if (registeredImage != 'default_profile_picture.jpg') {
-                fs.unlink(`images/${registeredImage}`, () => {
+            const Image = user.profileImage.split('/images/')[1];
+            if (Image != 'default_profile_picture.jpg') {
+                fs.unlink(`images/${Image}`, () => {
                     user.destroy()
                         .then(num => {
                             if (num == 1) {
                                 res.status(200).json({
-                                    message: "Le compte a été supprimé!"
+                                    message: "Compte supprimé!"
                                 });
                             } else {
                                 res.send({
-                                    message: `Suppression impossible`
+                                    message: "Suppression impossible"
                                 });
                             }
                         })
                         .catch(err => {
                             res.status(500).send({
-                                message: "Impossible de supprimer le compte"
+                                message: "Suppression impossible"
                             });
                         });
                 })
@@ -153,26 +153,25 @@ exports.deleteUser = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Could not delete user with id=" + id
+                            message: "Suppression impossible"
                         });
                     });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving user with id=" + id
+                message: "Suppression impossible"
             });
         });
 };
 
-// Modify user account.
+// Mettre à jour le compte
 exports.updateUser = (req, res) => {
     const userId = req.params.id;
 
-    // Création d'un nouvel objet. Si pas d'image, alors on envoie req.body, si une image, on la nomme accordingly.
     const userObject = req.file ? {
         ...req.body,
-        profileImage: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : {
         ...req.body
     };
@@ -184,28 +183,27 @@ exports.updateUser = (req, res) => {
         })
         .then((user) => {
 
-            const registeredImage = user.profileImage.split('/images/')[1];
+            const Image = user.avatar.split('/images/')[1];
             if (user.id == userId) {
 
-                if (userObject.profileImage && userObject.profileImage != user.profileImage && registeredImage != 'default_profile_picture.jpg') {
+                if (userObject.avatar && userObject.avatar != user.avatar && Image != 'default_profile_picture.jpg') {
 
-                    fs.unlink(`images/${registeredImage}`, () => {
-
+                    fs.unlink(`images/${Image}`, () => {
                         user.update(userObject)
                             .then(updatedRows => {
                                 if (updatedRows == 1) {
                                     res.status(200).json({
-                                        message: "User account was updated successfully."
+                                        message: "Informations mises à jour"
                                     });
                                 } else {
-                                    res.status(400).json({
-                                        message: `Cannot update User account with id=${userId}. Maybe User account was not found or req.body is empty!`
+                                    res.status(401).json({
+                                        err
                                     });
                                 }
                             })
                             .catch(function () {
                                 res.status(500).send({
-                                    message: "Error updating User account with id=" + userId
+                                    message: "Une erreur est survenue"
                                 });
                             });
                     })
@@ -218,17 +216,17 @@ exports.updateUser = (req, res) => {
                     .then(updatedRows => {
                         if (updatedRows == 1) {
                             res.status(200).json({
-                                message: "User account was updated successfully."
+                                message: "Ok"
                             });
                         } else {
                             res.status(400).json({
-                                message: `Cannot update User account with id=${userId}. Maybe User account was not found or req.body is empty!`
+                                message: err
                             });
                         }
                     })
-                    .catch(function () {
+                    .catch(() => {
                         res.status(500).send({
-                            message: "Error updating User account with id=" + userId
+                            message: "Error"
                         });
                     });
             }
