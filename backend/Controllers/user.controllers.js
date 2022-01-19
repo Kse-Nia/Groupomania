@@ -1,8 +1,7 @@
-const model = require("../models");
-const User = model.user;
-
+const {
+    Users
+} = require("../models");
 const fs = require('fs');
-const bouncer = require('../middlewares/expressBouncer')
 
 // sécurité
 const bcrypt = require('bcrypt');
@@ -38,22 +37,22 @@ exports.register = async (req, res) => {
 
 // Login compte
 exports.login = async (req, res) {
-    let {
+    const {
         username,
         userpassword
     } = req.body;
-    if (username || !userpassword) {
+    if (!username || !userpassword) {
         res.status(401).json({
             message: 'Veillez remplir tous les champs!'
         });
     } else {
         const user = {
             where: {
-                username: username;
+                username: username
             }
         };
 
-        User.findOne(user)
+        Users.findOne(user)
             .then(user => {
                 if (!user) {
                     res.status(401).json({
@@ -67,7 +66,6 @@ exports.login = async (req, res) {
                                     message: 'Mot de passe incorrect'
                                 });
                             }
-                            bouncer.reset(req);
                             res.status(200).json({
                                 token: jwt.sign({
                                         userId: user.id
@@ -99,7 +97,7 @@ exports.login = async (req, res) {
 exports.findUser = (req, res) => {
     const id = req.params.id;
 
-    User.findByPk(id)
+    Users.findByPk(id)
         .then((user) => {
             res.send(user)
         })
@@ -113,12 +111,12 @@ exports.deleteUser = (req, res) => {
     const id = req.params.id;
 
     // cherche User + images
-    User.findOne({
+    Users.findOne({
             where: {
                 id: id
             }
         })
-        .then(user => {
+        .then((user) => {
             const registeredImage = user.profileImage.split('/images/')[1];
             if (registeredImage != 'default_profile_picture.jpg') {
                 fs.unlink(`images/${registeredImage}`, () => {
@@ -179,7 +177,7 @@ exports.updateUser = (req, res) => {
         ...req.body
     };
 
-    User.findOne({
+    Users.findOne({
             where: {
                 id: userId
             }
@@ -212,7 +210,7 @@ exports.updateUser = (req, res) => {
                             });
                     })
                 }
-                User.update(userObject, {
+                Users.update(userObject, {
                         where: {
                             id: userId
                         }
