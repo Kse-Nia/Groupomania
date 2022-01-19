@@ -16,6 +16,7 @@ try {
 };
 
 // Création modèle Post
+<<<<<<< HEAD
 
 module.exports = (sequelize, DataTypes) => {
     let Posts = sequelize.define('Posts', {
@@ -34,9 +35,24 @@ module.exports = (sequelize, DataTypes) => {
         },
         username: {
             type: DataTypes.STRING,
+=======
+module.exports = (sequelize, Sequelize) => {
+    const Post = sequelize.define("post", {
+        posterId: {
+            type: Sequelize.INTEGER,
+>>>>>>> origin
             allowNull: false,
+            references: {
+                key: 'id',
+                model: 'Users',
+            }
         },
+        content: {
+            type: Sequelize.BLOB('long'),
+            allowNull: false
+        }
     });
+<<<<<<< HEAD
 
     Posts.associate = function (models) {
         Posts.belongsTo(models.Users, {
@@ -50,4 +66,23 @@ module.exports = (sequelize, DataTypes) => {
         });
     }
     return Posts;
+=======
+    Post.associate = (models) {
+        Post.belongsTo(models.Users, {
+            foreignKey: 'authorId',
+            hooks: true,
+            as: 'author'
+        })
+        Post.hasMany(models.like, {
+            foreignKey: {
+                name: 'postId'
+            },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+            hooks: true,
+            as: 'reactions'
+        })
+    };
+    return Post;
+>>>>>>> origin
 };

@@ -1,11 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { UidContext } from "../components/AppContext";
+import { UidContext } from "../components/AppContext.jsx";
 import LeftNav from "../components/LeftNav";
-import { isEmpty } from "../components/Utils";
 import Card from "../components/Post/Card";
 import Trends from "../components/Trends";
-import FriendsHint from "../components/Profil/FriendsHint";
+
+import { Card } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
+import { Grid } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Spacer } from "@nextui-org/react";
+import { Text } from "@nextui-org/react";
+import Axios from "axios";
 
 const Trend = () => {
   const uid = useContext(UidContext);
