@@ -3,7 +3,6 @@ const {
 } = require("../models");
 const fs = require('fs');
 
-<<<<<<< HEAD
 /* --- Partie register --- */
 
 exports.register = async (req, res) => {
@@ -39,42 +38,6 @@ exports.register = async (req, res) => {
 /* --- Partie login --- */
 
 exports.login = async (req, res) => {
-=======
-// sécurité
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-
-// Création de compte
-exports.register = async (req, res) => {
-    bcrypt.hash(req.body.password, 15)
-        .then(hash => {
-            const Users = {
-                ...req.body,
-                userpassword: hash,
-            };
-            Users.create(newUser)
-                .then(function () {
-                    res.status(201).json({
-                        message: 'Nouveau compte créé'
-                    });
-                })
-                .catch((err) {
-                    res.status(401).json({
-                        err
-                    });
-                });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: 'une erreur est survenue'
-            })
-        });
-};
-
-// Login compte
-exports.login = async (req, res) {
->>>>>>> origin
     const {
         username,
         userpassword
@@ -88,33 +51,12 @@ exports.login = async (req, res) {
             where: {
                 username: req.body.username
             }
-<<<<<<< HEAD
-        })
-        .then(user => {
-            if (!user) {
-                return res.status(401).json({
-                    error: 'Utilisateur introuvable !'
-                });
-            }
-            bcrypt.compare(req.body.userpassword, user.userpassword)
-                .then(valid => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            error: 'Mot de passe incorrect !'
-                        });
-                    }
-                    res.status(200).json({
-                        userId: user._id,
-                        token: 'TOKEN'
-=======
         };
-
         Users.findOne(user)
             .then(user => {
                 if (!user) {
                     res.status(401).json({
                         message: 'Erreur est survenue'
->>>>>>> origin
                     });
                 } else {
                     bcrypt.compare(userpassword, user.userpassword)
