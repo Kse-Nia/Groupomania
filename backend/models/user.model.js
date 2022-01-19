@@ -17,34 +17,35 @@ try {
 
 
 module.exports = (sequelize, DataTypes) => {
-        let Users = sequelize.define('Users', {
-            id: {
-                type: DataTypes.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                primaryKey: true,
-                allowNull: true,
-            },
-            username: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            useremail: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            userpassword: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            isAdmin: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 0,
-            }
+    let Users = sequelize.define('Users', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            primaryKey: true,
+            allowNull: true,
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        useremail: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        userpassword: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+        }
+    });
+    Users.associate = function (models) {
+        Users.hasMany(models.Posts, {
+            foreignKey: 'userId',
+            as: 'post',
         });
-        Users.associate = function (models) {
-            Users.hasMany(models.Posts, {
-                foreignKey: 'userId',
-                as: 'post',
-            });
-            return Users;
-        };
+        return Users;
+    };
+}

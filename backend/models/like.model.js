@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+/* const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
     "Groupomania",
     "kseniya",
@@ -56,4 +56,4 @@ module.exports = (sequelize, Sequelize) => {
         })
     };
     return Like;
-};
+}; */
