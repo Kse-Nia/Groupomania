@@ -11,7 +11,7 @@ exports.register = async (req, res) => {
         useremail,
         userpassword
     } = req.body;
-    // on appelle la fun (async) de hachage + demande "saler" pass 10 fois; hash crypté du pass
+    // on appelle la func (async) de hachage + demande "saler" pass 10 fois; hash crypté du pass
     bcrypt.hash(userpassword, 10)
         .then(hash => {
             // création de l'User 
@@ -138,7 +138,7 @@ exports.deleteUser = (req, res) => {
                         });
                 })
             } else {
-                user.stroy()
+                user.destroy()
                     .then(user => {
                         if (user) {
                             res.status(200).json({
@@ -210,7 +210,7 @@ exports.updateUser = (req, res) => {
                                 message: "Ok"
                             });
                         } else {
-                            res.status(400).json({
+                            res.status(401).json({
                                 message: err
                             });
                         }

@@ -7,7 +7,7 @@
 
 .Navbar {
     width: 100%;
-    min-height: 5vh;
+    height: 10%;
     box-shadow: 3px 6px 6px hsl(0deg 0% 0% / 0.40);
     background-color: white;
     display: flex;
@@ -22,8 +22,8 @@
 }
 
 .logo {
-    width: 10%;
-    height: auto;
+    width: 5%;
+    max-height: auto;
     object-fit: cover;
     margin-left: 60%;
 }
