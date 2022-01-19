@@ -15,29 +15,37 @@ try {
     console.log("connexion non reussi");
 };
 
-// Création modèle Post
+
 module.exports = (sequelize, Sequelize) => {
-    const Post = sequelize.define("post", {
+    const Like = sequelize.define("like", {
         posterId: {
             type: Sequelize.INTEGER,
             allowNull: false,
-            references: {
-                key: 'id',
-                model: 'Users',
+            references: { // Like belongsTo User 1:1
+                model: 'users',
+                key: 'id'
             }
         },
-        content: {
-            type: Sequelize.BLOB('long'),
-            allowNull: false
+        postId: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'posts',
+                key: 'id'
+            }
+        },
+        reaction: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
         }
     });
-    Post.associate = (models) {
-        Post.belongsTo(models.Users, {
-            foreignKey: 'authorId',
+    Like.associate = (models) {
+        Like.belongsTo(models.user, {
+            foreignKey: 'posterId',
             hooks: true,
             as: 'author'
         })
-        Post.hasMany(models.like, {
+        Like.belongsTo(models.post, {
             foreignKey: {
                 name: 'postId'
             },
@@ -47,5 +55,5 @@ module.exports = (sequelize, Sequelize) => {
             as: 'reactions'
         })
     };
-    return Post;
+    return Like;
 };

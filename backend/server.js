@@ -1,25 +1,19 @@
 const express = require("express");
 const db = require("./models");
-const {
-    Users
-} = require("./models");
-const cors = require('cors')
-const {
-    createTokens,
-    validateToken
-} = require("./JWT");
-const path = require('path');
-const multer = require("multer");
+const cors = require("cors")
+const path = require("path");
 
-const userRoutes = require('./Router/user.routes');
-
-
-const commentRouter = require('./Router/Comments.routes');
-const upload = require("./middleware/multer-config");
+// Routes
+const userRoutes = require("./Router/user.routes");
+const postRoutes = require("./Router/Posts.routes");
+const commentRouter = require("./Router/Comments.routes");
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
+app.use(cors());
+app.use('/posts', express.static(path.join(__dirname, 'images')));
+
 
 // Headers CORS
 app.use((req, res, next) => {
@@ -32,6 +26,8 @@ app.use((req, res, next) => {
 // APP
 
 app.use("/user", userRoutes);
+app.use("/posts", postRoutes);
+app.use("/comment", commentRouter);
 
 // Partie chargement image
 /* app.use("/upload", userRoutes); */
