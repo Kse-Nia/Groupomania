@@ -182,18 +182,15 @@ exports.updateUser = (req, res) => {
             }
         })
         .then((user) => {
-
             const Image = user.avatar.split('/images/')[1];
             if (user.id == userId) {
-
-                if (userObject.avatar && userObject.avatar != user.avatar && Image != 'default_profile_picture.jpg') {
-
+                if (userObject.avatar && userObject.avatar != user.avatar && Image != 'avatar.png') {
                     fs.unlink(`images/${Image}`, () => {
                         user.update(userObject)
                             .then(updatedRows => {
                                 if (updatedRows == 1) {
                                     res.status(200).json({
-                                        message: "Informations mises à jour"
+                                        message: "Info user mises à jour"
                                     });
                                 } else {
                                     res.status(401).json({
