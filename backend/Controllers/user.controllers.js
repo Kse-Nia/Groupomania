@@ -43,7 +43,7 @@ exports.login = async (req, res) {
     } = req.body;
     if (!username || !userpassword) {
         res.status(401).json({
-            message: 'Veillez remplir tous les champs!'
+            message: 'Veillez remplir tous les champs'
         });
     } else {
         const user = {
@@ -96,13 +96,12 @@ exports.login = async (req, res) {
 // Afficher tous les comptes Users
 exports.findUser = (req, res) => {
     const id = req.params.id;
-
     Users.findByPk(id)
         .then((user) => {
-            res.send(user)
+            res.send(user);
         })
         .catch((err) => {
-            console.log("Une erreur est survenue")
+            console.log("Une erreur est survenue");
         })
 };
 
@@ -117,12 +116,12 @@ exports.deleteUser = (req, res) => {
             }
         })
         .then((user) => {
-            const Image = user.profileImage.split('/images/')[1];
+            const Image = user.avatar.split('/images/')[1];
             if (Image != 'avatar.png') {
                 fs.unlink(`images/${Image}`, () => {
                     user.destroy()
-                        .then(num => {
-                            if (num == 1) {
+                        .then(number => {
+                            if (number == 1) {
                                 res.status(200).json({
                                     message: "Compte supprimé!"
                                 });
@@ -144,10 +143,6 @@ exports.deleteUser = (req, res) => {
                         if (user) {
                             res.status(200).json({
                                 message: "Compte supprimé"
-                            });
-                        } else {
-                            res.send({
-                                message: num
                             });
                         }
                     })
