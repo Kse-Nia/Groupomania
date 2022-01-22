@@ -1,7 +1,9 @@
 const express = require("express");
-const db = require("./models");
 const cors = require("cors")
 const path = require("path");
+
+const sequelize = require("./config/database");
+const Model = require("./models");
 
 // Routes
 const userRoutes = require("./Router/user.routes");
@@ -23,6 +25,15 @@ app.use((req, res, next) => {
     next();
 });
 
+// Sequelize
+
+sequelize.sync()
+    .then((result) => {
+        console.log(result)
+    }).catch((err) => {
+        console.log(err);
+    })
+
 // APP
 
 app.use("/user", userRoutes);
@@ -31,9 +42,3 @@ app.use("/comment", commentRouter);
 
 // Partie chargement image
 /* app.use("/upload", userRoutes); */
-
-db.sequelize.sync().then(() => {
-    app.listen(7001, () => {
-        console.log("SERVER RUNNING ON PORT 7001");
-    });
-});

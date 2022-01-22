@@ -24,16 +24,11 @@ exports.upload = (req, res, next) => {
 
 // Afficher tous posts
 exports.getAllPosts = (req, res) => {
-    let totalSet = JSON.parse(req.params.offSet);
+    let totalPost = JSON.parse(req.params.offSet);
     Post.findAll({
-            include: [{
-                all: true
-            }],
-            order: [
-                ['createdAt', 'DESC']
-            ],
-            offset: totalSet,
-            limit: 1
+            where: {
+                id: req.user
+            }
         })
         .then(posts => {
             res.status(200).json(posts);

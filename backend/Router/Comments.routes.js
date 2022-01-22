@@ -21,3 +21,5 @@ router.post("/", async (req, res) => {
     await Comments.create(comment);
     res.json(comment);
 });
+
+module.exports = router;
