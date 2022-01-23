@@ -13,6 +13,7 @@ const pipeline = promisify(require("stream").pipeline);
 
 router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
-router.post('/upload', postCtr.upload);
+
+/* router.post('/upload', postCtr.upload); */
 
 module.exports = router;

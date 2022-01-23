@@ -1,37 +1,40 @@
+'use strict';
+
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
 
 
 // Création modèle Post
-const Post = sequelize.define("post", {
-    posterId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-            key: 'id',
-            model: 'Users',
-        }
-    },
-    content: {
-        type: Sequelize.BLOB('long'),
-        allowNull: false
-    }
-});
-Post.associate = function (models) {
-    Post.belongsTo(models.Users, {
-        as: 'post',
-        foreignKey: 'userId',
-    })
-    Post.hasMany(models.like, {
-        foreignKey: {
-            name: 'like'
+
+module.exports = (sequelize, Sequelize) => {
+    const Post = sequelize.define("Post", {
+        userId: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            references: {
+                key: 'id',
+                model: 'Users',
+            }
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-        hooks: true,
-        as: 'reactions'
-    })
+        title: {
+            title: Sequelize.STRING,
+        },
+        content: {
+            type: Sequelize.BLOB('long'),
+            allowNull: false
+        }
+    });
+
+    Post.associate = function (models) {
+        Post.belongsTo(models.Users, {
+            foreignKey: 'postId',
+            as: 'user',
+            onDelete: 'CASCADE',
+        });
+        Post.hasMany(models.Comment, {
+            foreignKey: 'postId',
+            as: 'comment',
+        });
+    }
+    return Post;
 };
-
-
-module.exports = Post;

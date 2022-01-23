@@ -1,26 +1,23 @@
 const {
-    Posts
-} = require('../models/post.model');
+    Post
+} = require("../models");
 
-// Partie gestion des posts
-exports.upload = (req, res, next) => {
+
+// Création d'un post
+exports.createPost = (req, res, next) => {
     const post = {
-        username: req.body.username,
+        userId: req.body.userId,
         title: req.body.title,
-        body: req.body.body,
-        image: req.body.image
+        content: req.body.content
     };
-
-    Posts.create(post).then(() => {
-        res.status(201).json({
-            message: "Post publié"
-        })
-    }).catch((err) => {
-        res.status(401).json({
-            err
-        })
-    })
-}
+    Post.create(post)
+        .then(() => res.status(201).json({
+            message: "Post créé!"
+        }))
+        .catch(error => res.status(400).json({
+            error
+        }));
+};
 
 // Afficher tous posts
 exports.getAllPosts = (req, res) => {
@@ -40,70 +37,51 @@ exports.getAllPosts = (req, res) => {
         });
 };
 
-// Afficher un seul post
-exports.findOne = (req, res) => {
-    const postId = req.params.id;
 
-    Post
-        .findOne({
-            where: {
-                id: postId
-            },
+// Affichage d'un seul post
+exports.getOnePost = (req, res, next) => {
+    Post.findByPk(req.params.id, {
             include: [{
-                all: true
-            }]
+                    model: Users,
+                    attributes: ['username']
+                },
+                {
+                    model: Comment,
+                    attributes: ['content'],
+                    include: {
+                        model: Users,
+                        attributes: ['username']
+                    }
+                },
+            ]
         })
-        .then(post => {
-            res.status(200).json(post);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error"
-            });
-        });
+        .then(post => res.status(200).json(post))
+        .catch(error => res.status(404).json({
+            error
+        }));
 };
 
-// Suppression
-exports.deletePost = (req, res) => {
-    const postId = req.params.id;
-    Post.destroy({
+// Suppression d'un post
+exports.deletePost = (req, res, next) => {
+    Post.findOne({
             where: {
-                id: postId
+                id: req.params.id
             }
         })
-        .then(allDeleted => {
-            if (allDeleted == 1) {
-                res.status(200).json({
-                    message: "Post supprimé"
-                });
-            } else {
-                res.send({
-                    message: "Suppression impossible - une erreur est survenue"
-                });
-            }
+        .then((post) => {
+            Post.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                })
+                .then(() => res.status(200).json({
+                    message: 'Le post a été supprimé'
+                }))
+                .catch(error => res.status(400).json({
+                    error
+                }));
         })
-        .catch(err => {
-            console.log(err);
-        });
-
-};
-
-// Afficher tout par Users
-exports.filterUser = (req, res) => {
-    const posterId = req.params.posterId;
-
-    Post.findAll({
-            where: {
-                posterId: posterId
-            },
-            include: [{
-                all: true
-            }]
-        })
-        .then((user) => {
-            res.send(user)
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        .catch(error => res.status(500).json({
+            error
+        }));
 };
