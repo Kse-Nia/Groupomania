@@ -87,52 +87,29 @@ exports.findUser = (req, res) => {
 exports.deleteUser = (req, res) => {
     const id = req.params.id;
 
-    // cherche User + images
+    // cherche User
     Users.findOne({
             where: {
                 id: id
             }
         })
         .then((user) => {
-            const Image = user.avatar.split('/images/')[1];
-            if (Image != 'avatar.png') {
-                fs.unlink(`images/${Image}`, () => {
-                    user.destroy()
-                        .then(number => {
-                            if (number == 1) {
-                                res.status(200).json({
-                                    message: "Compte supprimé!"
-                                });
-                            } else {
-                                res.send({
-                                    message: "Suppression impossible"
-                                });
-                            }
-                        })
-                        .catch(err => {
-                            res.status(500).send({
-                                message: "Suppression impossible"
-                            });
+            user.destroy()
+                .then(user => {
+                    if (user) {
+                        res.status(200).json({
+                            message: "Compte supprimé"
                         });
+                    }
                 })
-            } else {
-                user.destroy()
-                    .then(user => {
-                        if (user) {
-                            res.status(200).json({
-                                message: "Compte supprimé"
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Suppression impossible"
-                        });
+                .catch(err => {
+                    res.status(404).send({
+                        message: "Impossible de supprimer le compte"
                     });
-            }
+                });
         })
         .catch(err => {
-            res.status(500).send({
+            res.status(404).send({
                 message: "Suppression impossible",
                 err
             });
