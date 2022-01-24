@@ -12,6 +12,7 @@ const pipeline = promisify(require("stream").pipeline);
 
 router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
+router.delete('/:id', userCtrl.deleteUser);
 
 /* router.post('/upload', postCtr.upload); */
 

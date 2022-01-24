@@ -3,7 +3,6 @@ const cors = require("cors")
 const path = require("path");
 
 const sequelize = require("./config/database");
-const Model = require("./models");
 
 // Routes
 const userRoutes = require("./Router/user.routes");
@@ -17,6 +16,7 @@ app.use(cors());
 
 
 // Headers CORS
+app.options('*', cors())
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -24,9 +24,12 @@ app.use((req, res, next) => {
     next();
 });
 
+
 // Sequelize
 
-sequelize.sync()
+sequelize.sync({
+        force: true
+    })
     .then((result) => {
         console.log(result)
     }).catch((err) => {

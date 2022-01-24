@@ -3,38 +3,51 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
 
+const Users = require("../models/user.model");
+const Comment = require("../models/comments.model.");
 
 // Création modèle Post
 
-module.exports = (sequelize, Sequelize) => {
-    const Post = sequelize.define("Post", {
-        userId: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            references: {
-                key: 'id',
-                model: 'Users',
-            }
-        },
-        title: {
-            title: Sequelize.STRING,
-        },
-        content: {
-            type: Sequelize.BLOB('long'),
-            allowNull: false
-        }
-    });
-
-    Post.associate = function (models) {
-        Post.belongsTo(models.Users, {
-            foreignKey: 'postId',
-            as: 'user',
-            onDelete: 'CASCADE',
-        });
-        Post.hasMany(models.Comment, {
-            foreignKey: 'postId',
-            as: 'comment',
-        });
+const Post = sequelize.define('Post', {
+    type: {
+        type: Sequelize.STRING
+    },
+    content: {
+        type: Sequelize.TEXT
+    },
+    username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    userId: {
+        type: Sequelize.INTEGER
     }
-    return Post;
+});
+
+// Association
+
+/* Post.associate = (models) => {
+    Post.belongsTo(models.Users, {
+        foreignKey: 'postId',
+        as: 'user',
+        onDelete: 'CASCADE',
+    });
+    Post.hasMany(models.Comment, {
+        foreignKey: 'postId',
+        as: 'comment',
+    });
+}; */
+
+Post.associate = (models) => {
+    Post.belongsTo(models.Users, {
+        foreignKey: 'postId',
+        as: 'Post'
+    });
+    Post.hasMany(models.Comment, {
+        foreignKey: 'postId',
+        as: 'comment',
+    });
 };
+
+
+module.exports = Post;
