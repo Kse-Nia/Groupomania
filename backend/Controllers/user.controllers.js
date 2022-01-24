@@ -3,16 +3,54 @@ const {
 } = require("../models");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 
 /* --- Partie register --- */
-exports.register = async (req, res) => {
-    const userData = {
-        username: req.body.username,
-        useremail: req.body.useremail,
-        userpassword: req.body.userpassword,
-        isadmin: false,
+exports.register = (req, res, next) => {
+    if (req.body.useremail == null || req.body.userpassword == null) {
+        return res.status(400).json({
+            'error': 'Données incomplètes'
+        });
     }
+
+    Users.findOne({
+            attributes: ['username'],
+            where: {
+                username: req.body.username
+            }
+        })
+        .then((user) => {
+            if (!user) {
+                bcrypt.hash(req.body.password, 10) //Fonction pour hash pass 10 fois
+                    .then(hash => {
+                        console.log(hash)
+                        const sign = User.create({
+                                useremail: req.body.useremail,
+                                username: req.body.username,
+                                userpassword: hash,
+                                isAdmin: req.body.isAdmin
+                            })
+                            .then((user) => {
+                                console.log(user)
+                                res.status(201).json({
+                                    message: 'Compte créé'
+                                })
+                            });
+                    })
+                    .catch(error => res.status(400).json({
+                        error
+                    }));
+            }
+        })
+
+        .catch(error => res.status(500).json({
+            message: 'Utilisateur existant'
+        }));
+};
+
+
+/* --- Partie login --- */
+
+exports.login = (req, res, next) => {
     Users.findOne({
             where: {
                 username: req.body.username
@@ -20,55 +58,36 @@ exports.register = async (req, res) => {
         })
         .then(user => {
             if (!user) {
-                bcrypt.hash(req.body.userpassword, 10, (err, hash) => {
-                    userData.userpassword = hash;
-                    Users.create(userData)
-                        .then(user => {
-                            res.json({
-                                status: user.username + 'Enregistré'
-                            })
-                        })
-                        .catch(err => {
-                            res.send('erreur: ' + err)
-                        })
-                })
-            } else {
-                res.json({
-                    error: "Compte existe déjà"
-                })
+                return res.status(401).json({
+                    error: 'Utilisateur introuvable'
+                });
             }
+            bcrypt.compare(req.body.userpassword, user.userpassword)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({
+                            error: 'Mot de passe incorrect'
+                        });
+                    }
+                    res.status(200).json({
+                        userId: user.id,
+                        token: jwt.sign({
+                                userId: user.id
+                            },
+                            'RANDOM_TOKEN_SECRET', {
+                                expiresIn: '48h'
+                            }
+                        ),
+                        isAdmin: user.isAdmin // Rajout Admin //
+                    });
+                })
+                .catch(error => res.status(500).json({
+                    error
+                }));
         })
-        .catch(err => {
-            res.send('Erreur: ' + err)
-        })
-};
-
-
-/* --- Partie login --- */
-
-exports.login = async (req, res) => {
-    Users.findOne({
-        where: {
-            username: req.body.username
-        }
-    }).then(valid => {
-        if (!valid) {
-            return res.status(401).json({
-                error: "mot de pass incorrecte"
-            });
-        }
-        res.status(200).json({
-            userId: user.id,
-            token: jwt.sign({
-                userId: user.id
-            }, 'RANDOM_TOKEN_SECRET', {
-                expiresIn: '24h'
-            }),
-            isAdmin: user.isAdmin
-        });
-    }).catch(err => res.status(500).json({
-        err
-    }))
+        .catch(error => res.status(500).json({
+            error
+        }));
 };
 
 // Afficher un User
@@ -84,34 +103,27 @@ exports.findUser = (req, res) => {
 };
 
 // Delete user account
-exports.deleteUser = (req, res) => {
-    const id = req.params.id;
 
-    // cherche User
+exports.deleteUser = (req, res, next) => {
     Users.findOne({
             where: {
-                id: id
+                id: req.params.id
             }
         })
         .then((user) => {
-            user.destroy()
-                .then(user => {
-                    if (user) {
-                        res.status(200).json({
-                            message: "Compte supprimé"
-                        });
+            Users.destroy({
+                    where: {
+                        id: req.params.id
                     }
                 })
-                .catch(err => {
-                    res.status(404).send({
-                        message: "Impossible de supprimer le compte"
-                    });
-                });
+                .then(() => res.status(200).json({
+                    message: 'Compte utilisateur supprimé'
+                }))
+                .catch(error => res.status(400).json({
+                    error
+                }));
         })
-        .catch(err => {
-            res.status(404).send({
-                message: "Suppression impossible",
-                err
-            });
-        })
-}
+        .catch(error => res.status(500).json({
+            error
+        }));
+};

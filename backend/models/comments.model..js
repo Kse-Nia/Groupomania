@@ -22,14 +22,14 @@ const Comment = sequelize.define('Comment', {
     }
 })
 
-/*     Comment.associate = function (models) {
-        Comment.belongsTo(models.Users, {
-            foreignKey: 'userId',
-        });
-        Comment.belongsTo(models.Post, {
-            foreignKey: 'postId',
-            onDelete: 'CASCADE',
-        });
-    } */
+Comment.associate = function (models) {
+    Comment.belongsTo(models.Users, {
+        foreignKey: 'userId',
+    });
+    Comment.belongsTo(models.Post, {
+        foreignKey: 'postId',
+        onDelete: 'CASCADE',
+    });
+}
 
 module.exports = Comment;

@@ -24,19 +24,6 @@ const Post = sequelize.define('Post', {
     }
 });
 
-// Association
-
-/* Post.associate = (models) => {
-    Post.belongsTo(models.Users, {
-        foreignKey: 'postId',
-        as: 'user',
-        onDelete: 'CASCADE',
-    });
-    Post.hasMany(models.Comment, {
-        foreignKey: 'postId',
-        as: 'comment',
-    });
-}; */
 
 Post.associate = (models) => {
     Post.belongsTo(models.Users, {
