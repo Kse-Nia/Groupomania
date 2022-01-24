@@ -11,21 +11,34 @@ import "./pages.css";
 
 function Register() {
   // Hook states
-  const [username, setUsername] = useState(""); // String
+  const [username, setUsername] = useState("");
   const [useremail, setUseremail] = useState("");
   const [userpassword, setUserPassword] = useState("");
 
-  const register = () => {
+  const register = (e) => {
+    e.preventDefault();
     console.log(username);
     console.log(userpassword);
 
-    Axios.post("http://localhost:7001/user/register", {
-      username: username,
-      useremail: useremail,
-      userpassword: userpassword,
-    }).then((response) => {
-      console.log(response);
-    });
+    Axios.post(
+      "http://localhost:7001/user/register",
+      {
+        username: username,
+        useremail: useremail,
+        userpassword: userpassword,
+      },
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   return (
@@ -46,8 +59,8 @@ function Register() {
                 onChange={(event) => {
                   setUsername(event.target.value);
                 }}
-              />{" "}
-            </Grid>{" "}
+              />
+            </Grid>
             <Grid>
               <Input
                 bordered
@@ -60,8 +73,8 @@ function Register() {
                 onChange={(event) => {
                   setUseremail(event.target.value);
                 }}
-              />{" "}
-            </Grid>{" "}
+              />
+            </Grid>
             <Grid>
               <Input.Password
                 bordered
@@ -69,9 +82,9 @@ function Register() {
                 onChange={(event) => {
                   setUserPassword(event.target.value);
                 }}
-              />{" "}
-            </Grid>{" "}
-          </Grid.Container>{" "}
+              />
+            </Grid>
+          </Grid.Container>
           <Spacer y={1} /> <Button onClick={register}> S'enregistrer </Button>
         </form>{" "}
       </Card>{" "}
