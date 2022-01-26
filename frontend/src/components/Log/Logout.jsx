@@ -1,7 +1,6 @@
 import React from "react";
-import cookie from "js-cookie";
 import axios from "axios";
-import Logout from "../Assets/logout.svg";
+import cookie from "js-cookie";
 
 const Logout = () => {
   const removeCookie = (key) => {
@@ -13,7 +12,7 @@ const Logout = () => {
   const logout = async () => {
     await axios({
       method: "get",
-      url: `${process.env.REACT_APP_API_URL}/user/logout`,
+      url: "http://localhost:7001/user/logout",
       withCredentials: true,
     })
       .then(() => removeCookie("jwt"))
@@ -24,7 +23,7 @@ const Logout = () => {
 
   return (
     <li onClick={logout}>
-      <img src={Logout} alt="logout" />
+      <img src="./img/icons/logout.svg" alt="logout" />
     </li>
   );
 };

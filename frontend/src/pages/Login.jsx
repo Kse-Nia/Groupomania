@@ -11,23 +11,34 @@ import "./pages.css";
 
 function Login() {
   const [username, setUsername] = useState("");
-  const [userpassword, setUserpassword] = useState("");
+  const [userpassword, setUserPassword] = useState("");
 
-  const login = () => {
-    // Partie POST - insértion des données
-    Axios.post("http://localhost:7001/user/login", {
-      username: username,
-      userpassword: userpassword,
-    }).then((response) => {
-      if (response.data) {
-        localStorage.setItem("loggedIn", true);
-        localStorage.setItem("username", username);
-        localStorage.getItem("username", response.data.username);
-        console.log(username);
-      } else {
-        console.log(Error);
-      }
-    });
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const usernameError = document.querySelector(".username.error");
+    const userpasswordError = document.querySelector(".userpassword.error");
+
+    Axios({
+      method: "post",
+      url: "http://localhost:7001/user/login",
+      withCredentials: true,
+      data: {
+        username,
+        userpassword,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.data.errors) {
+          usernameError.innerHTML = res.data.errors.username;
+          userpasswordError.innerHTML = res.data.errors.userpassword;
+        } else {
+          window.location = "/";
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -35,6 +46,7 @@ function Login() {
       <Card className="Card login" width="60%">
         <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>{" "}
         <form>
+          <div className="username error"></div>
           <Input
             rounded
             bordered
@@ -43,25 +55,24 @@ function Login() {
             label="Pseudo"
             placeholder="Entrez un pseudo"
             name="username"
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />{" "}
-          <Spacer y={1} />{" "}
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+          />
+          <Spacer y={1} />
           <Grid>
+            <div className="userpassword error"></div>
             <Input
               rounded
               bordered
               label="Mot de passe"
               type="password"
               placeholder="Entrez un mot de passe"
-              onChange={(e) => {
-                setUserpassword(e.target.value);
-              }}
+              onChange={(e) => setUserPassword(e.target.value)}
+              value={userpassword}
             />
           </Grid>
           <Spacer y={1} /> <Spacer y={1} />
-          <Button onClick={login}> Se connecter </Button> <p> </p>
+          <Button onClick={handleLogin}> Se connecter </Button> <p> </p>
         </form>
       </Card>
     </div>

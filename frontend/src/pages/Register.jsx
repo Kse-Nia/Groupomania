@@ -29,7 +29,8 @@ function Register() {
       },
       {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
       }
     )
@@ -45,9 +46,11 @@ function Register() {
     <div className="wrapcontainer">
       <Card className="Card" width="60%">
         <Text h1> Groupomania </Text> <Text h2> Créer un nouveau compte </Text>
+        <Spacer y={1} />
         <form>
           <Grid.Container gap={4}>
             <Grid>
+              <div className="username error"></div>
               <Input
                 bordered
                 className="form-control"
@@ -62,6 +65,7 @@ function Register() {
               />
             </Grid>
             <Grid>
+              <div className="email error"></div>
               <Input
                 bordered
                 className="form-control"
@@ -76,6 +80,7 @@ function Register() {
               />
             </Grid>
             <Grid>
+              <div className="password error"></div>
               <Input.Password
                 bordered
                 labelPlaceholder="Mot de passe"

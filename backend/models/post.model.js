@@ -3,8 +3,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
 
-const Users = require("../models/user.model");
-const Comment = require("../models/comments.model.");
 
 // Création modèle Post
 

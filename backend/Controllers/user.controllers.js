@@ -2,40 +2,56 @@ const {
     Users
 } = require("../models");
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+
+const cookieParser = require("cookie-parser");
+const {
+    createTokens,
+    validateToken
+} = require("../JWT");
 
 /* --- Partie register --- */
 
 exports.register = async (req, res) => {
-    const {
-        username,
-        useremail,
-        userpassword
-    } = req.body;
+    const userData = {
+        username: req.body.username,
+        useremail: req.body.useremail,
+        userpassword: req.body.userpassword,
+    }
 
-    bcrypt.hash(userpassword, 10).then((hash) => { // hash du pass 10 fois
-        Users.create({
-                username: username,
-                useremail: useremail,
-                userpassword: hash,
-            })
-            .then(() => {
-                res.json("Enregistré");
-            })
-            .catch((err) => {
-                if (err) {
-                    res.status(400).json({
-                        error: err,
-                    });
-                }
-            });
-    });
+    Users.findOne({
+            where: {
+                useremail: req.body.useremail
+            }
+        })
+        .then(user => {
+            if (!user) {
+                bcrypt.hash(req.body.userpassword, 10, (err, hash) => { // hash du pass 10 fois
+                    userData.userpassword = hash
+                    Users.create(userData)
+                        .then(user => {
+                            res.json({
+                                status: user.useremail + 'Enregistré'
+                            })
+                        })
+                        .catch(err => {
+                            res.send('Erreur: ' + err)
+                        })
+                })
+            } else {
+                res.json({
+                    error: "Compte existant"
+                })
+            }
+        })
+        .catch(err => {
+            res.send('Erreur: ' + err)
+        })
 };
 
 
 /* --- Partie login --- */
 
-exports.login = async (req, res) => {
+/* exports.login = async (req, res) => {
     const {
         username,
         userpassword
@@ -75,6 +91,111 @@ exports.login = async (req, res) => {
         .catch(error => res.status(500).json({
             error
         }));
+}; */
+
+/* 
+exports.login = async (req, res) => {
+    const {
+        username,
+        userpassword
+    } = req.body;
+
+    const user = await Users.findOne({
+        where: {
+            username: username
+        }
+    });
+
+    if (!user) res.status(400).json({
+        error: "User introuvable"
+    });
+
+    const dbPassword = user.userpassword;
+    bcrypt.compare(userpassword, dbPassword).then((match) => {
+        if (!match) {
+            res
+                .status(400)
+                .json({
+                    error: "Mauvais combo pass/pseudo"
+                });
+        } else {
+            const accessToken = createTokens(user);
+
+            res.cookie("access-token", accessToken, {
+                maxAge: 60 * 60 * 24 * 30 * 1000,
+                httpOnly: true,
+            });
+
+            res.json("Logged");
+        }
+    });
+}; */
+
+exports.login = async (req, res) => {
+    const {
+        username,
+        user_password: clearPassword
+    } = req.body;
+
+    db.query(sql, [user_email], async (err, results) => {
+        if (err) {
+            return res.status(404).json({
+                err
+            });
+        }
+
+        if (results[0] && results[0].active === 1) {
+            try {
+                const {
+                    user_password: hashedPassword,
+                    user_id
+                } = results[0];
+                const match = await bcrypt.compare(clearPassword, hashedPassword);
+                if (match) {
+                    // If match, generate JWT token
+                    const maxAge = 1 * (24 * 60 * 60 * 1000);
+                    const token = jwt.sign({
+                        user_id
+                    }, process.env.JWT_TOKEN, {
+                        expiresIn: maxAge,
+                    });
+
+                    // httpOnly: true,
+                    // maxAge,
+                    // sameSite: true,
+                    // secure: true,
+
+                    // remove the password key of the response
+                    delete results[0].user_password;
+
+                    res.cookie("jwt", token);
+                    res.status(200).json({
+                        user: results[0],
+                        token: jwt.sign({
+                            userId: user_id
+                        }, process.env.JWT_TOKEN, {
+                            expiresIn: "24h",
+                        }),
+                    });
+                }
+            } catch (err) {
+                console.log(err);
+                return res.status(400).json({
+                    err
+                });
+            }
+        } else if (results[0] && results[0].active === 0) {
+            res.status(200).json({
+                error: true,
+                message: "Votre compte a été désactivé",
+            });
+        } else if (!results[0]) {
+            res.status(200).json({
+                error: true,
+                message: "Mauvaise combinaison email / mot de passe"
+            })
+        }
+    });
 };
 
 
@@ -151,4 +272,11 @@ exports.modifyAccount = (req, res, next) => {
         .catch(error => res.status(500).json({
             error
         }));
+};
+
+// LogOut
+
+exports.logout = (req, res) => {
+    res.clearCookie("jwt");
+    res.status(200).json("Deconected");
 };

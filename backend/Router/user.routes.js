@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const rateLimit = require("express-rate-limit");
+const auth = require("../middleware/auth");
 const userCtrl = require('../Controllers/user.controllers');
 const multer = require('../middleware/multer-config');
 
@@ -10,12 +11,22 @@ const {
 } = require("util");
 const pipeline = promisify(require("stream").pipeline);
 
-router.post('/register', userCtrl.register); // register
+
+// Limitation tentatives Register
+const createAccountLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1h window
+    max: 50, // blocage après 5 tentatives
+    message: "Too many accounts created from this IP, please try again after an hour",
+});
+
+
+router.post('/register', createAccountLimiter, userCtrl.register); // register
 router.post('/login', userCtrl.login); // login
+
 router.put('/modify', userCtrl.modifyAccount); // Modif info User
-router.get('/profile', userCtrl.getOneUser); // afficher un seul User
-router.get('/wall', userCtrl.getAllUsers); // afficher tous les Users
-router.delete('/:id', userCtrl.deleteUser); // Suppression du compte User
+router.get('/profile', auth, userCtrl.getOneUser); // afficher un seul User
+router.get('/wall', auth, userCtrl.getAllUsers); // afficher tous les Users
+router.get('/:id', auth, userCtrl.deleteUser); // Suppression du compte User
 
 
 /* router.post('/upload', postCtr.upload); */
