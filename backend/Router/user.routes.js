@@ -19,9 +19,14 @@ const createAccountLimiter = rateLimit({
     message: "Too many accounts created from this IP, please try again after an hour",
 });
 
+// Partie sécurité login - limiter nbr tentatives Login
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+});
 
 router.post('/register', createAccountLimiter, userCtrl.register); // register
-router.post('/login', userCtrl.login); // login
+router.post('/login', apiLimiter, userCtrl.login); // login
 
 router.put('/modify', userCtrl.modifyAccount); // Modif info User
 router.get('/profile', auth, userCtrl.getOneUser); // afficher un seul User

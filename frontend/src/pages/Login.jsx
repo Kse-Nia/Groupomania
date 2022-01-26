@@ -18,15 +18,19 @@ function Login() {
     const usernameError = document.querySelector(".username.error");
     const userpasswordError = document.querySelector(".userpassword.error");
 
-    Axios({
-      method: "post",
-      url: "http://localhost:7001/user/login",
-      withCredentials: true,
-      data: {
-        username,
-        userpassword,
+    Axios.post(
+      "http://localhost:7001/user/login",
+      {
+        username: username,
+        userpassword: userpassword,
       },
-    })
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         console.log(res);
         if (res.data.errors) {

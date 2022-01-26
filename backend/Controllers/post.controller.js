@@ -1,6 +1,7 @@
 const {
     Post
 } = require("../models");
+const multer = require('multer')
 
 
 // Création d'un post
@@ -10,6 +11,12 @@ exports.createPost = (req, res, next) => {
         title: req.body.title,
         content: req.body.content
     };
+    const imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+
+    if (req.body.image === "null") {
+        return next(new HttpError("Veuillez choisir un fichier image", 400));
+    }
+
     Post.create(post)
         .then(() => res.status(201).json({
             message: "Post créé!"
@@ -18,6 +25,7 @@ exports.createPost = (req, res, next) => {
             error
         }));
 };
+
 
 // Afficher tous posts
 exports.getAllPosts = (req, res) => {

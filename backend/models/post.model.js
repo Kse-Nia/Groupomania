@@ -8,7 +8,11 @@ const sequelize = require("../config/database");
 
 const Post = sequelize.define('Post', {
     type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+
+        }
     },
     content: {
         type: Sequelize.TEXT

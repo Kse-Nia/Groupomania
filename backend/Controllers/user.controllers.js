@@ -51,7 +51,7 @@ exports.register = async (req, res) => {
 
 /* --- Partie login --- */
 
-/* exports.login = async (req, res) => {
+exports.login = async (req, res) => {
     const {
         username,
         userpassword
@@ -91,10 +91,10 @@ exports.register = async (req, res) => {
         .catch(error => res.status(500).json({
             error
         }));
-}; */
+};
 
-/* 
-exports.login = async (req, res) => {
+
+/* exports.login = async (req, res) => {
     const {
         username,
         userpassword
@@ -130,75 +130,49 @@ exports.login = async (req, res) => {
         }
     });
 }; */
+/*
+exports.login = (req, res) => {
+        const {
+            username,
+            userpassword
+        } = req.body;
+        /*    const {
+               username,
+               userpassword: clearPassword
+           } = req.body; 
 
-exports.login = async (req, res) => {
-    const {
-        username,
-        user_password: clearPassword
-    } = req.body;
+        Users.findOne({
+            where: username
+        }).then((user) => {
 
-    db.query(sql, [user_email], async (err, results) => {
-        if (err) {
-            return res.status(404).json({
-                err
-            });
-        }
-
-        if (results[0] && results[0].active === 1) {
-            try {
-                const {
-                    user_password: hashedPassword,
-                    user_id
-                } = results[0];
-                const match = await bcrypt.compare(clearPassword, hashedPassword);
-                if (match) {
-                    // If match, generate JWT token
-                    const maxAge = 1 * (24 * 60 * 60 * 1000);
-                    const token = jwt.sign({
-                        user_id
-                    }, process.env.JWT_TOKEN, {
-                        expiresIn: maxAge,
-                    });
-
-                    // httpOnly: true,
-                    // maxAge,
-                    // sameSite: true,
-                    // secure: true,
-
-                    // remove the password key of the response
-                    delete results[0].user_password;
-
-                    res.cookie("jwt", token);
-                    res.status(200).json({
-                        user: results[0],
-                        token: jwt.sign({
-                            userId: user_id
-                        }, process.env.JWT_TOKEN, {
-                            expiresIn: "24h",
-                        }),
-                    });
-                }
-            } catch (err) {
+            if (!user) {
+                return res.status(401).json({
+                    error: 'Utilisateur introuvable'
+                });
+            }
+            bcrypt.compare(req.body.userpassword, user.userpassword)
+        }).then((valid) => {
+            if (!valid) {
+                return res.status(401).json({
+                    error: 'Mot de passe incorrect'
+                });
+            }
+            res.cookie("jwt", token);
+            res.status(200).json({
+                user: results[0],
+                token: jwt.sign({
+                    userId: id
+                }, process.env.JWT_TOKEN, {
+                    expiresIn: "24h",
+                }),
+            }).catch(err) {
                 console.log(err);
                 return res.status(400).json({
                     err
                 });
             }
-        } else if (results[0] && results[0].active === 0) {
-            res.status(200).json({
-                error: true,
-                message: "Votre compte a été désactivé",
-            });
-        } else if (!results[0]) {
-            res.status(200).json({
-                error: true,
-                message: "Mauvaise combinaison email / mot de passe"
-            })
-        }
-    });
-};
-
-
+        })
+*/
 // Afficher un User
 
 exports.getOneUser = (req, res, next) => {
