@@ -94,85 +94,6 @@ exports.login = async (req, res) => {
 };
 
 
-/* exports.login = async (req, res) => {
-    const {
-        username,
-        userpassword
-    } = req.body;
-
-    const user = await Users.findOne({
-        where: {
-            username: username
-        }
-    });
-
-    if (!user) res.status(400).json({
-        error: "User introuvable"
-    });
-
-    const dbPassword = user.userpassword;
-    bcrypt.compare(userpassword, dbPassword).then((match) => {
-        if (!match) {
-            res
-                .status(400)
-                .json({
-                    error: "Mauvais combo pass/pseudo"
-                });
-        } else {
-            const accessToken = createTokens(user);
-
-            res.cookie("access-token", accessToken, {
-                maxAge: 60 * 60 * 24 * 30 * 1000,
-                httpOnly: true,
-            });
-
-            res.json("Logged");
-        }
-    });
-}; */
-/*
-exports.login = (req, res) => {
-        const {
-            username,
-            userpassword
-        } = req.body;
-        /*    const {
-               username,
-               userpassword: clearPassword
-           } = req.body; 
-
-        Users.findOne({
-            where: username
-        }).then((user) => {
-
-            if (!user) {
-                return res.status(401).json({
-                    error: 'Utilisateur introuvable'
-                });
-            }
-            bcrypt.compare(req.body.userpassword, user.userpassword)
-        }).then((valid) => {
-            if (!valid) {
-                return res.status(401).json({
-                    error: 'Mot de passe incorrect'
-                });
-            }
-            res.cookie("jwt", token);
-            res.status(200).json({
-                user: results[0],
-                token: jwt.sign({
-                    userId: id
-                }, process.env.JWT_TOKEN, {
-                    expiresIn: "24h",
-                }),
-            }).catch(err) {
-                console.log(err);
-                return res.status(400).json({
-                    err
-                });
-            }
-        })
-*/
 // Afficher un User
 
 exports.getOneUser = (req, res, next) => {
@@ -186,7 +107,6 @@ exports.getOneUser = (req, res, next) => {
             error
         }));
 };
-
 
 // Afficher tous les Users
 
