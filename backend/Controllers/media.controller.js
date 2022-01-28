@@ -7,7 +7,7 @@ const Users = require("../models/user.model");
 // Création Post image
 exports.createMedia = (req, res, next) => {
     Image.create({
-            user_id: req.body.userid,
+            user_id: req.body.user_id,
             media: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
         })
         .then((media) => res.status(201).json(media))
@@ -28,11 +28,9 @@ exports.deleteMedia = (req, res, next) => {
             const filename = media.media.split("/images/")[1];
             console.log(filename);
             fs.unlink("images/" + filename, () => {
-                console.log("tata");
                 media
                     .destroy()
                     .then(() => {
-                        console.log("tutu");
                         res.status(204).json();
                     })
                     .catch((error) => res.status(400).json({
@@ -70,7 +68,7 @@ exports.modifyMedia = (req, res, next) => {
                     })
                     .then(() => {
                         res.status(201).json({
-                            message: "post image mis à jour"
+                            message: "Post Image update"
                         });
                     })
                     .catch((error) => {
