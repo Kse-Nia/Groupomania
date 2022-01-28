@@ -5,7 +5,7 @@ const Users = require("../models/user.model");
 
 
 // Register
-exports.register = (req, res) => {
+exports.register = async (req, res) => {
     useremail = null;
     if (!req.body.useremail.includes(("@" && ".com") || ".fr" || ".net")) {
         return res.status(401).json({
@@ -43,7 +43,7 @@ exports.register = (req, res) => {
 };
 
 // Login
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     Users.findOne({
             where: {
                 useremail: MD5(req.body.useremail).toString(),
