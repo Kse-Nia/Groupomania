@@ -1,7 +1,7 @@
-const Image = require("../models/mediapost-model");
-const media = require("../routes/mediapost-route");
+const Image = require("../models/image.model");
+const media = require("../Router/Image.routes");
 const fs = require("fs");
-const Users = require("../models/user-model");
+const Users = require("../models/user.model");
 
 
 // Création Post image

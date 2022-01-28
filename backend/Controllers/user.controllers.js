@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     Users.findOne({
             where: {
-                useremail: req.body.useremail,
+                username: req.body.username,
             },
         })
         .then((user) => {
@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
                         });
                     }
                     res.status(200).json({
-                        user_id: user.id,
+                        userid: user.id,
                         isAdmin: user.isAdmin,
                         token: jwt.sign({
                             userId: user.id
@@ -103,11 +103,10 @@ exports.modifyUser = (req, res) => {
             }
         })
         .then((user) => {
-            lastName = req.body.lastName;
-            firstName = req.body.firstName;
+            username = req.body.username;
             Users.update()
                 .then(() => res.status(201).json({
-                    message: " Compte modifié !"
+                    message: " Compte mis à jour"
                 }))
                 .catch(() => res.status(400).json({
                     error
@@ -130,7 +129,7 @@ exports.deleteUser = (req, res) => {
                     where: {
                         id: req.params.id
                     }
-                }) // Méthode //
+                })
                 .then(() => res.status(200).json({
                     message: "Compte supprimé"
                 }))

@@ -1,6 +1,6 @@
-const CommentMedia = require("../models/commentMedia-model");
-const commentMedia = require("../routes/commentMedia-route");
-const User = require("../models/user-model");
+const CommentMedia = require("../models/comments.model.");
+const commentMedia = require("../Router/ImageComment.routes");
+const User = require("../models/user.model");
 
 CommentMedia.belongsTo(User, {
     foreignKey: "user_id"

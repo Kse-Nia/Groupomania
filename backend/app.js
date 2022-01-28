@@ -7,7 +7,9 @@ const cookieParser = require("cookie-parser");
 // Routes
 const userRoutes = require("./Router/user.routes");
 const postRoutes = require("./Router/Posts.routes");
+const imageRoute = require("./Router/Image.routes");
 const commentRouter = require("./Router/Comments.routes");
+const imageCommentRoute = require("./Router/ImageComment.routes");
 
 const app = express();
 
@@ -43,7 +45,7 @@ app.use("/posts", postRoutes);
 app.use("/comment", commentRouter);
 
 
-app.use('./upload', express.static(path.join(__dirname, './images')));
+app.use("/images", express.static(path.join(__dirname, "images"))); // Upload fichiers dans dossier images
 
 // Partie chargement image
 /* app.use("/upload", userRoutes); */

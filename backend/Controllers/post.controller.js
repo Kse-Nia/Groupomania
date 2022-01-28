@@ -2,9 +2,7 @@ const {
     Post
 } = require("../models/post.model");
 const Users = require('../models/user.model');
-
 const path = require('path');
-const multer = require('multer')
 
 
 // Création Post
@@ -63,7 +61,7 @@ exports.modifyPost = (req, res, next) => {
                 })
                 .then(() => {
                     res.status(201).json({
-                        message: "votre post a été mis à jour"
+                        message: "Post a été mis à jour"
                     });
                 })
                 .catch((error) => {
