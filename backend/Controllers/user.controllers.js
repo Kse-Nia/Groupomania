@@ -1,127 +1,135 @@
-const {
-    Users
-} = require("../models");
-const bcrypt = require('bcrypt');
+const MD5 = require("crypto-js/md5");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const Users = require("../models/user-model");
 
-const cookieParser = require("cookie-parser");
-const {
-    createTokens,
-    validateToken
-} = require("../JWT");
-
-/* --- Partie register --- */
-
-exports.register = async (req, res) => {
-    const userData = {
-        username: req.body.username,
-        useremail: req.body.useremail,
-        userpassword: req.body.userpassword,
-    }
-
-    Users.findOne({
-            where: {
-                useremail: req.body.useremail
-            }
-        })
-        .then(user => {
-            if (!user) {
-                bcrypt.hash(req.body.userpassword, 10, (err, hash) => { // hash du pass 10 fois
-                    userData.userpassword = hash
-                    Users.create(userData)
-                        .then(user => {
-                            res.json({
-                                status: user.useremail + 'Enregistré'
-                            })
-                        })
-                        .catch(err => {
-                            res.send('Erreur: ' + err)
-                        })
-                })
-            } else {
-                res.json({
-                    error: "Compte existant"
-                })
-            }
-        })
-        .catch(err => {
-            res.send('Erreur: ' + err)
-        })
-};
-
-
-/* --- Partie login --- */
-
-exports.login = async (req, res) => {
-    const {
-        username,
-        userpassword
-    } = req.body;
-
-    if (username == null || userpassword == null) {
-        return res.status(400).json({
-            error: "Veillez entrer toutes les données"
+exports.signup = (req, res) => {
+    useremail = null;
+    if (!req.body.useremail.includes(("@" && ".com") || ".fr" || ".net")) {
+        return res.status(401).json({
+            error: "email incorrect"
         });
-    };
-
-    const user = await Users.findOne({
-            where: {
-                username: username
-            }
-        }).then(user => {
-            if (!user) {
-                return res.status(401).json({
-                    error: 'Utilisateur non trouvé !'
-                });
-            }
-            bcrypt.compare(req.body.userpassword, user.userpassword)
-                .then(valid => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            error: 'Mot de passe incorrect !'
-                        });
-                    }
-                    res.status(200).json({
-                        userId: user.id
-                    });
+    } else {
+        useremail = req.body.useremail;
+    }
+    Users.findOne({
+        attributes: ["email"],
+        where: {
+            useremail: MD5(req.body.useremail).toString()
+        },
+    });
+    bcrypt
+        .hash(req.body.userpassword, 10)
+        .then((hash) => {
+            Users.create({
+                    useremail: MD5(req.body.useremail).toString(),
+                    userpassword: hash,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    isAdmin: req.body.isAdmin,
                 })
-                .catch(error => res.status(500).json({
+                .then(() => res.status(201).json({
+                    message: "Compte utilisateur créé"
+                }))
+                .catch((error) => res.status(400).json({
                     error
                 }));
         })
-        .catch(error => res.status(500).json({
+        .catch((error) => res.status(500).json({
+            error
+        }));
+};
+
+//---fonction login - vérifie si un utilisateur existe déjà ---
+exports.login = (req, res) => {
+    Users.findOne({
+            where: {
+                useremail: MD5(req.body.useremail).toString(),
+            },
+        })
+        .then((user) => {
+            if (!user) {
+                res.statusMessage = "utilisateur introuvable";
+            }
+            bcrypt
+                .compare(req.body.userpassword, user.userpassword)
+                .then((valid) => {
+                    if (!valid) {
+                        return res.status(401).json({
+                            error: "Mot de passe incorrect"
+                        });
+                    }
+                    res.status(200).json({
+                        user_id: user.id,
+                        isAdmin: user.isAdmin,
+                        token: jwt.sign({
+                            userId: user._id
+                        }, "RANDOM_TOKEN_SECRET", {
+                            expiresIn: "24h",
+                        }),
+                    });
+                })
+                .catch((error) => res.status(400).json({
+                    error
+                }));
+        })
+        .catch((error) => res.status(500).json({
+            error
+        }));
+};
+
+// Recup compte User
+exports.getOneUser = (req, res) => {
+    Users.findOne({
+            where: {
+                id: req.params.id,
+            },
+        })
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch((error) => {
+            res.status(404).json({
+                error: error,
+            });
+        });
+};
+
+// recup tous les Users
+exports.getAllUsers = (req, res) => {
+    Users.findAll({})
+        .then((users) => res.status(200).json(users))
+        .catch((error) => res.status(400).json({
             error
         }));
 };
 
 
-// Afficher un User
-
-exports.getOneUser = (req, res, next) => {
+// Update User
+exports.modifyUser = (req, res) => {
     Users.findOne({
             where: {
                 id: req.params.id
             }
         })
-        .then((user) => res.status(200).json(user))
-        .catch(error => res.status(404).json({
+        .then((user) => {
+            lastName = req.body.lastName;
+            firstName = req.body.firstName;
+            Users.update()
+                .then(() => res.status(201).json({
+                    message: " Compte modifié !"
+                }))
+                .catch(() => res.status(400).json({
+                    error
+                }));
+        })
+        .catch((error) => res.status(500).json({
             error
         }));
 };
 
-// Afficher tous les Users
-
-exports.getAllUsers = (req, res, next) => {
-    Users.findAll()
-        .then((users) => res.status(200).json(users))
-    console.log(users)
-        .catch(error => res.status(400).json({
-            error
-        }));
-};
-
-// Delete user account
-
-exports.deleteUser = (req, res, next) => {
+// Suppression compte
+exports.deleteUser = (req, res) => {
     Users.findOne({
             where: {
                 id: req.params.id
@@ -132,45 +140,15 @@ exports.deleteUser = (req, res, next) => {
                     where: {
                         id: req.params.id
                     }
-                })
+                }) // Méthode //
                 .then(() => res.status(200).json({
-                    message: 'Compte utilisateur supprimé'
+                    message: "Compte supprimé"
                 }))
-                .catch(error => res.status(400).json({
+                .catch((error) => res.status(400).json({
                     error
                 }));
         })
-        .catch(error => res.status(500).json({
+        .catch((error) => res.status(500).json({
             error
         }));
-};
-
-// Modification User
-
-exports.modifyAccount = (req, res, next) => {
-    Users.findOne({
-            where: {
-                id: req.params.id
-            }
-        })
-        .then((user) => {
-            username = req.body.username;
-            Users.update()
-                .then(() => res.status(201).json({
-                    message: 'Info utilisateur modifiés'
-                }))
-                .catch(error => res.status(400).json({
-                    error
-                }));
-        })
-        .catch(error => res.status(500).json({
-            error
-        }));
-};
-
-// LogOut
-
-exports.logout = (req, res) => {
-    res.clearCookie("jwt");
-    res.status(200).json("Deconected");
 };

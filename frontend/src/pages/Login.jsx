@@ -6,6 +6,7 @@ import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 import Axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import "./pages.css";
 
@@ -33,11 +34,13 @@ function Login() {
     )
       .then((res) => {
         console.log(res);
-        if (res.data.errors) {
-          usernameError.innerHTML = res.data.errors.username;
-          userpasswordError.innerHTML = res.data.errors.userpassword;
+        if (res.data) {
+          localStorage.setItem("loggedIn", true);
+          localStorage.setItem("username", username);
+          localStorage.getItem("username", res.data.username);
+          window.location = "user/profile";
         } else {
-          window.location = "/";
+          console.log(Error);
         }
       })
       .catch((err) => {

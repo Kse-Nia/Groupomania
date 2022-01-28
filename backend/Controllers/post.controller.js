@@ -1,17 +1,32 @@
 const {
     Post
 } = require("../models");
+const path = require('path');
 const multer = require('multer')
 
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file, cb) => {
+        console.log(file);
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+const upload = multer({
+    storage: storage
+});
+
 // Création d'un post
-exports.createPost = (req, res, next) => {
+/* exports.createPost = (req, res, next) => {
     const post = {
         userId: req.body.userId,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        image: req.body.image,
     };
-    const imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    const image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
 
     if (req.body.image === "null") {
         return next(new HttpError("Veuillez choisir un fichier image", 400));
@@ -20,6 +35,28 @@ exports.createPost = (req, res, next) => {
     Post.create(post)
         .then(() => res.status(201).json({
             message: "Post créé!"
+        }))
+        .catch(error => res.status(400).json({
+            error
+        }));
+}; */
+
+exports.createPost = (req, res, next) => {
+    const post = {
+        userId: req.body.userId,
+        title: req.body.title,
+        content: req.body.content,
+        image: req.body.image,
+    };
+    const image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+
+    if (req.body.image === "null") {
+        return next(new HttpError("Veuillez choisir un fichier", 400));
+    }
+
+    Post.create(post)
+        .then(() => res.status(201).json({
+            message: "Post créé"
         }))
         .catch(error => res.status(400).json({
             error

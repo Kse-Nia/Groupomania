@@ -42,6 +42,9 @@ app.use("/user", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/comment", commentRouter);
 
+
+app.use('./upload', express.static(path.join(__dirname, './images')));
+
 // Partie chargement image
 /* app.use("/upload", userRoutes); */
 

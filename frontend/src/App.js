@@ -23,7 +23,7 @@ function App() {
         <Route path="/user/register" element={<Register />} />
         <Route path="/user/login" element={<Login />} />
         <Route path="/user/profile" element={<Profile />} />
-        <Route path="/upload" element={<Upload />} />
+        <Route path="/user/upload" element={<Upload />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

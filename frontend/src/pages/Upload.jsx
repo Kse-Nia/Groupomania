@@ -11,7 +11,6 @@ import "./pages.css";
 
 function Upload() {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [file, setFile] = useState();
   let navigate = useNavigate();
 
@@ -21,7 +20,6 @@ function Upload() {
 
     Axios.post("http://localhost:7001/upload", {
       title: title,
-      description: description,
       image: file,
       author: localStorage.getItem("username"),
     }).then((response) => {
@@ -42,30 +40,23 @@ function Upload() {
               onChange={(event) => {
                 setTitle(event.target.value);
               }}
-            />{" "}
-            <Input
-              type="text"
-              placeholder="Description..."
-              onChange={(event) => {
-                setDescription(event.target.value);
-              }}
-            />{" "}
+            />
             <input
               type="file"
-              name="image"
+              name="images"
               accept="image/png, image/jpeg"
               onChange={(event) => {
                 const file = event.target.files[0];
                 setFile(file);
               }}
-            />{" "}
-          </label>{" "}
-          <Spacer y={1} />{" "}
+            />
+          </label>
+          <Spacer y={1} />
         </form>{" "}
         <Button type="submit" onClick={send}>
-          Poster{" "}
-        </Button>{" "}
-      </Card>{" "}
+          Poster
+        </Button>
+      </Card>
     </div>
   );
 }
