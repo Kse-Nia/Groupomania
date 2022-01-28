@@ -1,34 +1,22 @@
-const MD5 = require("crypto-js/md5");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Users = require("../models/user.model");
 
-
 // Register
 exports.register = async (req, res) => {
-    useremail = null;
-    if (!req.body.useremail.includes(("@" && ".com") || ".fr" || ".net")) {
-        return res.status(401).json({
-            error: "email incorrect"
-        });
-    } else {
-        useremail = req.body.useremail;
-    }
     Users.findOne({
-        attributes: ["email"],
+        attributes: ["useremail"],
         where: {
-            useremail: MD5(req.body.useremail).toString()
+            useremail: req.body.useremail
         },
     });
     bcrypt
         .hash(req.body.userpassword, 10)
         .then((hash) => {
             Users.create({
-                    useremail: MD5(req.body.useremail).toString(),
+                    useremail: req.body.useremail,
+                    username: req.body.username,
                     userpassword: hash,
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    isAdmin: req.body.isAdmin,
                 })
                 .then(() => res.status(201).json({
                     message: "Compte utilisateur créé"
@@ -46,7 +34,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     Users.findOne({
             where: {
-                useremail: MD5(req.body.useremail).toString(),
+                useremail: req.body.useremail,
             },
         })
         .then((user) => {

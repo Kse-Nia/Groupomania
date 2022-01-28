@@ -1,40 +1,39 @@
-const {
-    Post
-} = require("../models/post.model");
-const Users = require('../models/user.model');
+const CommentMedia = require("../models/commentMedia-model");
+const commentMedia = require("../routes/commentMedia-route");
+const User = require("../models/user-model");
 
-const path = require('path');
-const multer = require('multer')
+CommentMedia.belongsTo(User, {
+    foreignKey: "user_id"
+});
 
-
-// Création Post
-exports.createPost = (req, res) => {
-    Post.create({
+// création d'un commentaire
+exports.createCommentImage = (req, res, next) => {
+    CommentMedia.create({
             user_id: req.body.user_id,
-            title: req.body.title,
+            mediapost_id: req.body.mediapost_id,
             content: req.body.content,
         })
-        .then((post) => res.status(201).json(post))
+        .then((commentMedia) => res.status(201).json(commentMedia))
         .catch((error) => res.status(400).json({
             error
         }));
 };
 
-// Suppression Post
-exports.deletePost = (req, res) => {
-    Post.destroy({
+// Suppression d'un commentaire //
+exports.deleteCommentImage = (req, res, next) => {
+    CommentMedia.findOne({
             where: {
                 id: req.params.id
             }
         })
-        .then((post) => {
-            Post.destroy({
+        .then((commentMedia) => {
+            CommentMedia.destroy({
                     where: {
                         id: req.params.id
                     }
                 })
                 .then(() => res.status(200).json({
-                    message: "Post supprimé"
+                    message: "commentaire supprimé"
                 }))
                 .catch((error) => res.status(400).json({
                     error
@@ -45,17 +44,16 @@ exports.deletePost = (req, res) => {
         }));
 };
 
-//-----modifier un post-----
-exports.modifyPost = (req, res, next) => {
-    Post.findOne({
+//-----modifier un commentaire-----
+exports.modifyCommentImage = (req, res, next) => {
+    CommentMedia.findOne({
             where: {
                 id: req.params.id
             }
         })
-        .then((post) => {
-            Post.update({
-                    title: req.body.title,
-                    message: req.body.message,
+        .then(() => {
+            CommentMedia.update({
+                    commentMedia: req.body.commentMedia
                 }, {
                     where: {
                         id: req.params.id
@@ -63,7 +61,7 @@ exports.modifyPost = (req, res, next) => {
                 })
                 .then(() => {
                     res.status(201).json({
-                        message: "votre post a été mis à jour"
+                        message: " Commentaire modifié"
                     });
                 })
                 .catch((error) => {
@@ -77,18 +75,18 @@ exports.modifyPost = (req, res, next) => {
         }));
 };
 
-//Recup tous les Posts
-exports.getAllPosts = (req, res) => {
-    Post.findAll({
+//récupérer tous les commentaires.
+exports.getAllCommentsImage = (req, res, next) => {
+    CommentMedia.findAll({
             include: [{
-                model: Users
+                model: User
             }],
             order: [
-                ["createdAt", "DESC"]
+                ["id", "DESC"]
             ],
         })
-        .then((post) => {
-            res.status(200).json(post);
+        .then((commentMedia) => {
+            res.status(200).json(commentMedia);
         })
         .catch((error) => {
             res.status(400).json({
@@ -97,15 +95,15 @@ exports.getAllPosts = (req, res) => {
         });
 };
 
-//récupérer un seul Post
-exports.getOnePost = (req, res) => {
-    Post.findOne({
+//récupérer un commentaire.
+exports.getOneCommentImage = (req, res, next) => {
+    CommentMedia.findOne({
             where: {
                 id: req.params.id
             }
         })
-        .then((post) => {
-            res.status(200).json(post);
+        .then((commentMedia) => {
+            res.status(200).json(commentMedia);
         })
         .catch((error) => {
             res.status(404).json({
