@@ -1,9 +1,11 @@
 const MD5 = require("crypto-js/md5");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Users = require("../models/user-model");
+const Users = require("../models/user.model");
 
-exports.signup = (req, res) => {
+
+// Register
+exports.register = (req, res) => {
     useremail = null;
     if (!req.body.useremail.includes(("@" && ".com") || ".fr" || ".net")) {
         return res.status(401).json({
@@ -40,7 +42,7 @@ exports.signup = (req, res) => {
         }));
 };
 
-//---fonction login - vérifie si un utilisateur existe déjà ---
+// Login
 exports.login = (req, res) => {
     Users.findOne({
             where: {
@@ -63,7 +65,7 @@ exports.login = (req, res) => {
                         user_id: user.id,
                         isAdmin: user.isAdmin,
                         token: jwt.sign({
-                            userId: user._id
+                            userId: user.id
                         }, "RANDOM_TOKEN_SECRET", {
                             expiresIn: "24h",
                         }),
