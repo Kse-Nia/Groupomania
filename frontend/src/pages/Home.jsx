@@ -1,4 +1,7 @@
 import * as React from "react";
+import axios from "axios";
+import Profile from "./Profile";
+import Post from "./Post";
 
 function Home() {
   return (
