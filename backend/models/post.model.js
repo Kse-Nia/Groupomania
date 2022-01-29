@@ -18,9 +18,6 @@ const Post = sequelize.define('Post', {
     content: {
         type: Sequelize.TEXT
     },
-    image: {
-        type: Sequelize.BLOB('long')
-    },
     username: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -33,12 +30,12 @@ const Post = sequelize.define('Post', {
 
 Post.associate = (models) => {
     Post.belongsTo(models.Users, {
-        foreignKey: 'userId',
+        foreignKey: 'user_id',
         as: 'user',
         onDelete: 'CASCADE',
     });
     Post.hasMany(models.Comment, {
-        foreignKey: 'postId',
+        foreignKey: 'post_id',
         as: 'comment',
     });
 };

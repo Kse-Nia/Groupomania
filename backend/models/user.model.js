@@ -31,7 +31,7 @@ const Users = sequelize.define('Users', {
 
 Users.associate = function (models) {
     Users.hasMany(models.Post, {
-        foreignKey: 'userId',
+        foreignKey: 'user_id',
         as: 'Post', // User a plusieurs posts
     });
 }

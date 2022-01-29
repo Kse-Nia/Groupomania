@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./Router/user.routes");
 const postRoutes = require("./Router/Posts.routes");
 const imageRoute = require("./Router/Image.routes");
-const commentRouter = require("./Router/Comments.routes");
+const commentRoutes = require("./Router/Comments.routes");
 const imageCommentRoute = require("./Router/ImageComment.routes");
 
 const app = express();
@@ -36,16 +36,17 @@ sequelize.sync({
         console.log(result)
     }).catch((err) => {
         console.log(err);
-    })
+    });
+
 
 // APP
 
 app.use("/user", userRoutes);
 app.use("/posts", postRoutes);
-app.use("/comment", commentRouter);
-
-
-app.use("/images", express.static(path.join(__dirname, "images"))); // Upload fichiers dans dossier images
+app.use("/comment", commentRoutes);
+app.use("/upload", imageRoute);
+app.use("/commentMedia", imageCommentRoute);
+app.use("/images", express.static(path.join(__dirname, "images"))); // Upload des fichiers
 
 // Partie chargement image
 /* app.use("/upload", userRoutes); */

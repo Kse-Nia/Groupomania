@@ -34,7 +34,7 @@ exports.deleteComment = (req, res, next) => {
                     }
                 })
                 .then(() => res.status(200).json({
-                    message: "commentaire supprimé"
+                    message: "Commentaire supprimé"
                 }))
                 .catch((error) => res.status(400).json({
                     error
@@ -76,9 +76,12 @@ exports.modifyComment = (req, res, next) => {
         }));
 };
 
-//récupérer tous les commentaires.
+//récupérer tous les coms
 exports.getAllComments = (req, res, next) => {
     Comment.findAll({
+            where: {
+                id: req.params.id
+            },
             include: [{
                 model: Users
             }],

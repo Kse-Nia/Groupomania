@@ -15,9 +15,6 @@ const Media = sequelize.define('media', {
     type: {
         type: Sequelize.BLOB('long')
     },
-    content: {
-        type: Sequelize.TEXT
-    },
     username: {
         type: Sequelize.STRING,
         allowNull: false,

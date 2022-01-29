@@ -33,7 +33,7 @@ exports.deleteCommentImage = (req, res, next) => {
                     }
                 })
                 .then(() => res.status(200).json({
-                    message: "commentaire supprimé"
+                    message: "Commentaire supprimé"
                 }))
                 .catch((error) => res.status(400).json({
                     error
@@ -71,7 +71,7 @@ exports.modifyCommentImage = (req, res, next) => {
                 });
         })
         .catch((error) => res.status(500).json({
-            error
+            error,
         }));
 };
 
