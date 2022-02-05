@@ -3,66 +3,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../models');
 const regex = require('../regexTest');
 const fs = require('fs');
-const CryptoJS = require("crypto-js");
-const key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
-const iv = CryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
-
-
-/* exports.register = (req, res, next) => {
-    const user = JSON.parse(req.body.user)
-    delete user.userPhoto;
-    const cryptedMail = CryptoJS.AES.encrypt(user.useremail, key, {
-        iv: iv
-    }).toString();
-    if (!user.useremail) {
-        return res.status(400).json({
-            'error': 'Veuillez renseigner une adresse email'
-        });
-    }
-    if (!user.userpassword) {
-        return res.status(400).json({
-            'error': 'Veuillez renseigner un mot de passe valable'
-        });
-    }
-    if (!user.username) {
-        return res.status(400).json({
-            'error': 'Veuillez choisir un pseudo'
-        });
-    }
-    if (!reg.testMail.test(user.useremail)) {
-        return res.status(400).json({
-            'error': 'Format email non valide'
-        });
-    }
-    if (!reg.testPassword.test(user.userpassword)) {
-        return res.status(400).json({
-            'error': 'Password doit faire au moins 8 caractères et contenir au moins 1 lettre et 1 chiffre'
-        });
-    }
-    bcrypt.hash(user.userpassword, 10)
-        .then(hash => {
-            if (req.file) {
-                db.User.create({
-                        isAdmin: 0,
-                        ...user,
-                        useremail: cryptedMail,
-                        userpassword: hash,
-                        userPhoto: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-                    })
-                    .then(user => res.status(201).json(user))
-                    .catch(e => res.status(500).json("veuillez remplir tous les champs!"))
-            } else if (!req.file) {
-                db.User.create({
-                        isAdmin: 0,
-                        ...user,
-                        userpassword: hash,
-                    })
-                    .then(user => res.status(201).json(user))
-                    .catch(e => res.status(500).json("veuillez remplir tous les champs!"))
-            }
-        })
-        .catch(error => res.status(500).json(error))
-}; */
 
 exports.register = async (req, res) => {
     const userData = {
@@ -99,59 +39,6 @@ exports.register = async (req, res) => {
             res.send('Erreur: ' + err)
         })
 };
-
-/* exports.login = (req, res, next) => {
-    const username = req.body.username;
-
-    if (!req.body.username) {
-        return res.status(400).json({
-            'error': 'Veuillez entrer votre pseudo'
-        });
-    }
-    if (!req.body.userpassword) {
-        return res.status(400).json({
-            'error': 'Veuillez entrer le mot de passe'
-        });
-    }
-    if (!regex.testPassword.test(req.body.userpassword)) {
-        return res.status(400).json({
-            'error': 'Password doit faire au moins 8 caractères et contenir au moins 1 lettre et 1 chiffre'
-        });
-    }
-    db.User.findOne({
-            where: {
-                username: username
-            }
-        })
-        .then(user => {
-            if (!user) {
-                return res.status(401).json({
-                    error: 'Utilisateur non trouvé !'
-                });
-            }
-            bcrypt.compare(req.body.userpassword, user.userpassword)
-                .then(valid => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            error: 'Mot de passe incorrect'
-                        });
-                    }
-                    res.status(200).json({
-                        user,
-                        token: jwt.sign({
-                                userId: user.id
-                            },
-                            process.env.TOKEN, {
-                                expiresIn: '24h'
-                            })
-                    })
-                })
-                .catch(e => res.status(500).json(e))
-        })
-        .catch(error => res.status(500).json({
-            error
-        }))
-}; */
 
 exports.login = (req, res, next) => {
     if (!req.body.username) {
