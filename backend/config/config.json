@@ -1,24 +1,23 @@
 {
-    "development": {
-      "username": "kseniya",
-      "password": "password",
-      "database": "Groupomania",
-      "host": "localhost",
-      "dialect": "mysql"
-    },
-    "test": {
-      "username": "kseniya",
-      "password": "password",
-      "database": "Groupomania",
-      "host": "localhost",
-      "dialect": "mysql"
-    },
-    "production": {
-      "username": "kseniya",
-      "password": "password",
-      "database": "Groupomania",
-      "host": "localhost",
-      "dialect": "mysql"
-    }
+  "development": {
+    "username": "kseniya",
+    "password": "password",
+    "database": "Groupomania",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "kseniya",
+    "password": "password",
+    "database": "Groupomania",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "kseniya",
+    "password": "password",
+    "database": "Groupomania",
+    "host": "localhost",
+    "dialect": "mysql"
   }
-  
+}

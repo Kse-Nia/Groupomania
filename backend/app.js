@@ -2,14 +2,13 @@ const express = require("express");
 const cors = require("cors")
 const path = require("path");
 require('dotenv').config()
-const sequelize = require("./config/database");
+const sequelize = require("./config/config.json");
 const cookieParser = require("cookie-parser");
+
 // Routes
-const userRoutes = require("./Router/user.routes");
-const postRoutes = require("./Router/Posts.routes");
-const imageRoute = require("./Router/Image.routes");
-const commentRoutes = require("./Router/Comments.routes");
-const imageCommentRoute = require("./Router/ImageComment.routes");
+const userRoute = require("./Router/user");
+const postRoutes = require("./Router/post");
+const commentRoutes = require("./Router/comment");
 
 const app = express();
 
@@ -28,7 +27,7 @@ app.use((req, res, next) => {
 
 
 // Sequelize
-
+/* 
 sequelize.sync({
         force: true
     })
@@ -37,18 +36,12 @@ sequelize.sync({
     }).catch((err) => {
         console.log(err);
     });
+ */
 
-
-// APP
-
-app.use("/user", userRoutes);
-app.use("/posts", postRoutes);
-app.use("/comment", commentRoutes);
-app.use("/upload", imageRoute);
-app.use("/commentMedia", imageCommentRoute);
-app.use("/images", express.static(path.join(__dirname, "images"))); // Upload des fichiers
-
-// Partie chargement image
-/* app.use("/upload", userRoutes); */
+// APP routes
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/user', userRoute);
+app.use('/api/posts', postRoutes);
+app.use('/api/coms', commentRoutes);
 
 module.exports = app;

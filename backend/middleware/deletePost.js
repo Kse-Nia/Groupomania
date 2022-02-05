@@ -8,15 +8,19 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.TOKEN);
         const userId = decodedToken.userId;
-        db.User.findOne({
+        db.Post.findOne({
                 where: {
-                    id: userId
+                    id: req.body.postId
                 }
             })
             .then(data => {
-                next()
+                if (data.userId == userId) {
+                    next()
+                } else {
+                    throw 'error'
+                }
             })
-            .catch(e => console.log(e))
+            .catch(error => console.log(error))
     } catch {
         res.status(401).json({
             error: new Error('Invalid request!')

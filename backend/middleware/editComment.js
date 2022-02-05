@@ -8,18 +8,22 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.TOKEN);
         const userId = decodedToken.userId;
-        db.User.findOne({
+        db.Comment.findOne({
                 where: {
-                    id: userId
+                    id: req.body.id
                 }
             })
             .then(data => {
-                next()
+                if (data.userId == userId) {
+                    next()
+                } else {
+                    throw 'erreur'
+                }
             })
-            .catch(e => console.log(e))
+            .catch(error => console.log(error))
     } catch {
         res.status(401).json({
-            error: new Error('Invalid request!')
+            error: new Error('Invalid')
         });
     }
 };
