@@ -10,7 +10,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Upload from "./pages/Upload";
 
 function App() {

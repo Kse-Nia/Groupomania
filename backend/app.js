@@ -39,9 +39,11 @@ sequelize.sync({
  */
 
 // APP routes
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use("/images", express.static(path.join(__dirname, "images")))
+
+
 app.use('/user', userRoute);
-app.use('/api/posts', postRoutes);
-app.use('/api/coms', commentRoutes);
+app.use('/user/posts', postRoutes);
+app.use('/user/coms', commentRoutes);
 
 module.exports = app;

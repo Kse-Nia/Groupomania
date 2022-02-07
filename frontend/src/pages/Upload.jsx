@@ -9,7 +9,7 @@ import { Button } from "@nextui-org/react";
 
 import "./pages.css";
 
-function Upload() {
+function Upload(props) {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState();
   let navigate = useNavigate();
@@ -18,7 +18,7 @@ function Upload() {
     const formData = new FormData();
     formData.append("file", file[0]);
 
-    Axios.post("http://localhost:7001/upload", {
+    Axios.post("http://localhost:7001/user/posts/upload", {
       title: title,
       image: file,
       author: localStorage.getItem("username"),

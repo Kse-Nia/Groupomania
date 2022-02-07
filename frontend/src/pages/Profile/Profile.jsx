@@ -6,8 +6,6 @@ import { Grid } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
 import { Avatar } from "@nextui-org/react";
 
-import "./pages.css";
-
 function Profile() {
   const profile = () => {
     Axios.get(
