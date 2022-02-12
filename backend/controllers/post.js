@@ -32,16 +32,16 @@ const fs = require('fs');
     }
 } */
 
-exports.createPost = (req, res) => {
+/* exports.createPost = (req, res) => {
     // Decoder user id
     const getTokenUserId = (req) => {
         const token = req.headers.authorization.split(" ")
         const decodedToken = jwt.verify(token[1], secretTokenKey)
         const decodedId = decodedToken.userId
-        return decodedId
+        return decodedId;
     };
 
-    let admin = false
+    let admin = false;
     const checkAdmin = (decodedId) => {
         User.findOne({
             where: {
@@ -76,18 +76,32 @@ exports.createPost = (req, res) => {
         .catch((error) => res.status(500).send({
             error
         }))
-}
+} */
+
+exports.createPost = (req, res, next) => {
+    db.Post.create({
+            content: req.body.content,
+            author: res.locals.userId,
+            image: (req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null)
+        })
+        .then(post => res.status(201).json({
+            post
+        }))
+        .catch(error => res.status(400).json({
+            error
+        }))
+};
 
 
 exports.getAllPosts = (req, res, next) => {
     db.Post.findAll({
             include: [{
                 model: db.User,
-                attributes: ['firstname', 'lastname', 'isAdmin', 'userPhoto', 'email', 'id']
+                attributes: ['username', 'useremail', 'isAdmin', 'id']
             }]
         })
         .then(post => res.status(201).json(post))
-        .catch(e => res.status(500).json(e))
+        .catch(error => res.status(500).json(error))
 }
 
 exports.getOnePost = (req, res) => {
