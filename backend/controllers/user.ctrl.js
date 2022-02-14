@@ -226,10 +226,10 @@ exports.modify = (req, res) => {
                     token: jwt.sign({
                         userId: user.id
                     }, secretTokenKey, {
-                        expiresIn: "2h"
+                        expiresIn: "24h"
                     }),
-                    firstname: user.firstName.charAt(0).toUpperCase() + user.firstname.slice(1).toLowerCase(),
-                    lastname: user.lastName.charAt(0).toUpperCase() + user.lastname.slice(1).toLowerCase(),
+                    firstname: user.firstname,
+                    lastname: user.lastname,
                     email: user.email.toLowerCase(),
                     isAuthenticated: true,
                     isAdmin: user.isAdmin,
