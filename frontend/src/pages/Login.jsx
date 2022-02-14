@@ -52,7 +52,7 @@ function Login() {
   return (
     <div className="wrapcontainer">
       <Card className="Card login" width="60%">
-        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>{" "}
+        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>
         <form>
           <div className="username error"></div>
           <Input

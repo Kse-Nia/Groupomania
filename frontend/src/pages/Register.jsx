@@ -11,21 +11,21 @@ import "./pages.css";
 
 function Register() {
   // Hook states
-  const [username, setUsername] = useState("");
-  const [useremail, setUseremail] = useState("");
-  const [userpassword, setUserPassword] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const register = (e) => {
     e.preventDefault();
-    console.log(username);
-    console.log(userpassword);
 
     Axios.post(
       "http://localhost:7001/user/register",
       {
-        username: username,
-        useremail: useremail,
-        userpassword: userpassword,
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password,
       },
       {
         headers: {
@@ -35,10 +35,10 @@ function Register() {
       }
     )
       .then((response) => {
-        console.log(response);
+        return response;
       })
       .catch((err) => {
-        console.log(err.response);
+        return err;
       });
   };
 
@@ -54,13 +54,27 @@ function Register() {
               <Input
                 bordered
                 className="form-control"
-                id="username"
+                id="firstname"
                 type="text"
-                label="Pseudo"
-                labelPlaceholder="Pseudo"
+                label="Prénom"
+                labelPlaceholder="Prénom"
                 name="username"
                 onChange={(event) => {
-                  setUsername(event.target.value);
+                  setFirstname(event.target.value);
+                }}
+              />
+            </Grid>
+            <Grid>
+              <Input
+                bordered
+                className="form-control"
+                id="lastname"
+                type="text"
+                label="Nom"
+                labelPlaceholder="Nom"
+                name="lastname"
+                onChange={(event) => {
+                  setLastname(event.target.value);
                 }}
               />
             </Grid>
@@ -69,13 +83,13 @@ function Register() {
               <Input
                 bordered
                 className="form-control"
-                id="useremail"
+                id="email"
                 type="text"
                 labelPlaceholder="Adresse mail"
                 name="useremail"
                 // Function for passing Useremail
                 onChange={(event) => {
-                  setUseremail(event.target.value);
+                  setEmail(event.target.value);
                 }}
               />
             </Grid>
@@ -85,14 +99,14 @@ function Register() {
                 bordered
                 labelPlaceholder="Mot de passe"
                 onChange={(event) => {
-                  setUserPassword(event.target.value);
+                  setPassword(event.target.value);
                 }}
               />
             </Grid>
           </Grid.Container>
           <Spacer y={1} /> <Button onClick={register}> S'enregistrer </Button>
-        </form>{" "}
-      </Card>{" "}
+        </form>
+      </Card>
     </div>
   );
 }

@@ -1,64 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Card } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import { Spacer } from "@nextui-org/react";
-import { Text } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import React, { Fragment, useState } from "react";
+
+import UploadFile from "../components/UploadFile";
 
 import "./pages.css";
 
-function Upload(props) {
-  const [title, setTitle] = useState("");
-  const [file, setFile] = useState();
-  let navigate = useNavigate();
-
-  const send = () => {
-    const formData = new FormData();
-    formData.append("file", file[0]);
-
-    Axios.post("http://localhost:7001/user/posts/upload", {
-      title: title,
-      image: file,
-      author: localStorage.getItem("username"),
-    }).then((response) => {
-      navigate.push("/");
-    });
-  };
-
+const Upload = () => {
   return (
-    <div className="wrapcontainer">
-      <Card className="Card" width="80%" height="auto">
-        <Text h1> Créer un nouveau post </Text>
-        <label> Poster votre image: </label>
-        <form method="POST" action="/upload" encType="multipart/form-data">
-          <label>
-            <Input
-              type="text"
-              placeholder="Title..."
-              onChange={(event) => {
-                setTitle(event.target.value);
-              }}
-            />
-            <input
-              type="file"
-              name="images"
-              accept="image/png, image/jpeg"
-              onChange={(event) => {
-                const file = event.target.files[0];
-                setFile(file);
-              }}
-            />
-          </label>
-          <Spacer y={1} />
-        </form>{" "}
-        <Button type="submit" onClick={send}>
-          Poster
-        </Button>
-      </Card>
+    <div>
+      <UploadFile />
     </div>
   );
-}
+};
 
 export default Upload;

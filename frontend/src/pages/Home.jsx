@@ -1,5 +1,4 @@
 import * as React from "react";
-import axios from "axios";
 import Profile from "./Profile/Profile";
 import Post from "./Post";
 

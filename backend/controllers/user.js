@@ -1,43 +1,34 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
+const User = db.User;
 const regex = require('../regexTest');
 const fs = require('fs');
 
-exports.register = async (req, res) => {
-    const userData = {
-        username: req.body.username,
-        useremail: req.body.useremail,
-        userpassword: req.body.userpassword,
+exports.register = (req, res) => {
+
+    if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) {
+        return res.status(401).send("Veillez entrer toutes les données")
     }
-    db.User.findOne({
-            where: {
-                useremail: req.body.useremail
-            }
-        })
-        .then(user => {
-            if (!user) {
-                bcrypt.hash(req.body.userpassword, 10, (err, hash) => { // hash du pass 10 fois
-                    userData.userpassword = hash
-                    db.User.create(userData)
-                        .then(user => {
-                            res.json({
-                                status: user.useremail + 'Enregistré'
-                            })
-                        })
-                        .catch(err => {
-                            res.send('Erreur: ' + err)
-                        })
-                })
-            } else {
-                res.json({
-                    error: "Compte existant"
-                })
-            }
-        })
-        .catch(err => {
-            res.send('Erreur: ' + err)
-        })
+
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hash,
+            isAdmin: req.body.isAdmin
+        }
+
+        db.User.create(user)
+            .then((valid) => {
+                if (!valid) {
+                    return res.status(500).send("Problème survenu lors de la création du compte")
+                }
+                res.status(200).send("Compte utilisateur créé")
+            })
+            .catch(() => res.status(403).send("utilisateur existe déjà."))
+    })
 };
 
 exports.login = (req, res, next) => {

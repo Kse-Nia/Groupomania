@@ -1,8 +1,8 @@
 import React from "react";
 import "../components/Nav.css";
-import { NavLink } from "react-router-dom";
+/* import { NavLink } from "react-router-dom";
 import { UidContext } from "./AppContext.jsx";
-import Logout from "../Assets/logout.svg";
+import Logout from "../Assets/logout.svg"; */
 import Logo from "../Assets/icon.png";
 
 /* import { Spacer } from "@nextui-org/react";
@@ -17,21 +17,18 @@ function Navbar() {
         <input type="checkbox" id="nav-check" />
         <div className="nav-header">
           <img src={Logo} alt="logo" className="logo" />
-        </div>
+        </div>{" "}
         <div className="nav-btn">
           <label htmlFor="nav-check">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span> </span> <span> </span> <span> </span>
           </label>
         </div>
-
         <div className="nav-links">
           <a href="/" target="_blank">
             Accueil
-          </a>
-          <a href="/user/register">S'inscrire</a>
-          <a href="/user/login">Se connecter</a>
+          </a>{" "}
+          <a href="/user/register"> S 'inscrire</a>
+          <a href="/user/login"> Se connecter </a>
         </div>
       </div>
     </header>
