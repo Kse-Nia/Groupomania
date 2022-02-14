@@ -1,11 +1,9 @@
-const http = require('http');
-const app = require('./app');
-const dotenv = require('dotenv');
-dotenv.config({
-    path: './config/.env'
-});
+const http = require("http");
 
-const normalizePort = val => {
+// Import du fichier app.js
+const app = require("./app");
+
+const normalizePort = (val) => {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
@@ -16,22 +14,26 @@ const normalizePort = val => {
     }
     return false;
 };
-const port = normalizePort(process.env.PORT || '7001');
-app.set('port', port);
 
-const errorHandler = error => {
-    if (error.syscall !== 'listen') {
+const port = normalizePort(process.env.PORT || "7001");
+app.set("port", port);
+
+const errorHandler = (error) => {
+    if (error.syscall !== "listen") {
         throw error;
     }
     const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+    const bind =
+        typeof address === "string" ? "pipe " + address : "port: " + port;
     switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges.');
+        case "EACCES":
+            //permission refusée
+            console.error(bind + " requires elevated privileges.");
             process.exit(1);
             break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use.');
+        case "EADDRINUSE":
+            //Port déjà utilisé
+            console.error(bind + " is already in use.");
             process.exit(1);
             break;
         default:
@@ -40,12 +42,13 @@ const errorHandler = error => {
 };
 
 const server = http.createServer(app);
+server.on("error", errorHandler);
 
-server.on('error', errorHandler);
-server.on('listening', () => {
+server.on("listening", () => {
     const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-    console.log('Listening on ' + bind);
+    const bind = typeof address === "string" ? "pipe " + address : "port " + port;
+    // port sur lequel le serveur fonctionnera
+    console.log("Listening on " + bind);
 });
 
 server.listen(port);

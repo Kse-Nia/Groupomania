@@ -1,49 +1,28 @@
 const express = require("express");
-const cors = require("cors")
 const path = require("path");
-require('dotenv').config()
-const sequelize = require("./config/config.json");
-const cookieParser = require("cookie-parser");
-
-// Routes
-const userRoute = require("./Router/user");
-const postRoutes = require("./Router/post");
-const commentRoutes = require("./Router/comment");
+const helmet = require("helmet");
 
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-app.use(cookieParser());
-
-// Headers CORS
-app.options('*', cors())
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader("Access-Control-Allow-Origin", "*"); // On accéde à l'API depuis diverses origines //
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+    );
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    ); // Liste requêtes autorisées //
     next();
 });
 
+const sequelize = require("./config/database");
 
-// Sequelize
-/* 
-sequelize.sync({
-        force: true
-    })
-    .then((result) => {
-        console.log(result)
-    }).catch((err) => {
-        console.log(err);
-    });
- */
-
-// APP routes
-app.use("/images", express.static(path.join(__dirname, "images")))
-
-
-app.use('/user', userRoute);
-app.use('/post', postRoutes);
-app.use('/user/coms', commentRoutes);
+sequelize.sync().then(result => {
+    console.log(result)
+}).catch((err) => {
+    console.log(err)
+});
 
 module.exports = app;
