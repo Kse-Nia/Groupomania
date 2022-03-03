@@ -1,7 +1,6 @@
 import React, { Fragment, useState, Component } from "react";
 import axios from "axios";
 import Message from "./Message";
-import Progress from "./Progress";
 import { Card } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import "../pages/pages.css";

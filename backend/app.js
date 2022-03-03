@@ -18,6 +18,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(express.json());
+
 // Partie config Sequelize
 const sequelize = require("./config/database");
 
@@ -29,7 +31,6 @@ sequelize.sync().then(result => {
 
 
 /// APP
-
 app.use("/user", userRoutes);
 
 module.exports = app;
