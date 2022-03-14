@@ -1,22 +1,19 @@
-const jwt = require("jsonwebtoken")
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
 
-require("dotenv").config()
-secretTokenKey = process.env.TOKEN_SECRET
-
-// check User token
 module.exports = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(" ")[1]
-        const decodedToken = jwt.verify(token, secretTokenKey)
-        const userId = decodedToken.userId
+        const token = req.headers.authorization.split(' ')[1];
+        const decodeToken = jwt.verify(token, config.tokenKey);
+        const userId = decodeToken.userId;
         if (req.body.userId && req.body.userId !== userId) {
-            throw "Invalid user ID"
+            throw 'User ID invalid';
         } else {
-            next()
+            next();
         }
-    } catch {
-        res.status(403).json({
-            error: new Error("Invalid request!"),
-        })
+    } catch (error) {
+        res.status(401).json({
+            error: error | 'Requête non authentifiée'
+        });
     }
 }

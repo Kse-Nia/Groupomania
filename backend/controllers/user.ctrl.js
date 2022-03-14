@@ -39,52 +39,6 @@ const newToken = user => {
     }
 }
 
-// Register
-/* exports.register = (req, res, next) => {
-    User.create({
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            email: req.body.email,
-            password: req.body.password
-        })
-        .then(user => res.status(201).json(newToken(user)))
-        .catch(error => res.status(401).json({
-            error: error
-        }))
-} */
-
-/* exports.register = (req, res) => {
-    // Validate request
-    if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) {
-        return res.status(403).send("Veillez remplir tous les champs")
-    }
-
-      let photo = `${req.protocol}://${req.get("host")}/images/default.jpg` //avatar par defaut
-      if (req.file) {
-          photo = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-      } 
-
-    // crypt password
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        const user = {
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            email: req.body.email,
-            password: hash,
-            photo: photo,
-        }
-
-        User.create(user)
-            .then((valid) => {
-                if (!valid) {
-                    return res.status(500).send("Erreur lors de la création du compte")
-                }
-                res.status(200).send("Compte utilisateur créé avec succès")
-            })
-            .catch(() => res.status(403).send("Erreur"))
-    })
-}; */
-
 exports.register = async (req, res) => {
 
     // Validate request
