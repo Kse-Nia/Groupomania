@@ -7,7 +7,6 @@ import { Grid } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import { Spacer } from "@nextui-org/react";
 import { Text } from "@nextui-org/react";
-import { AuthContext } from "../App";
 
 import "./styleComponents.css";
 
@@ -15,61 +14,29 @@ function LoginForm() {
   const [useremail, setUserEmail] = useState("");
   const [userpassword, setUserPassword] = useState("");
   const navigate = useNavigate();
-  const { dispatchAuthState } = useContext(AuthContext); // authentification
-  const [errorMessage, setErrorMessage] = useState(null); // mesage erreur
-  /*
+
+  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
   const handleLogin = (e) => {
     e.preventDefault();
 
-    Axios.post(
-      "http://localhost:7001/user/login",
-      {
-        useremail: useremail,
-        userpassword: userpassword,
-      },
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        console.log(res);
-        if (res.data) {
-          localStorage.setItem("loggedIn", true);
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("useremail", useremail);
-          localStorage.getItem("username", res.data.username);
-          window.location = "user/profile";
-        } else {
-          console.log(Error);
-        }
+    if (!regexEmail.test(useremail)) {
+      errorDisplay("Veillez saisir une adresse mail valide");
+    } else {
+      axios({
+        method: "post",
+        url: "http://localhost:7001/user/login",
+        data: values,
       })
-      .catch((err) => {
-        console.log(err);
-      });
-  }; */
-  const handleLogin = (values, resetForm) => {
-    axios({
-      method: "post",
-      url: "http://localhost:7001/user/login",
-      data: values,
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          dispatchAuthState({
-            type: "LogedIn",
-            payload: res.data,
-          });
-          setErrorMessage(null);
-          resetForm();
-          navigate.push("/");
-        }
-      })
-      .catch((error) => {
-        return error;
-      });
+        .then((data) => {
+          localStorage.setItem("token", JSON.stringify(data.token));
+          localStorage.setItem("username");
+          navigate.push("/profile");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
