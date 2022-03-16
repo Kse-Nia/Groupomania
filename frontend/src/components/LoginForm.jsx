@@ -16,17 +16,17 @@ function LoginForm() {
   const navigate = useNavigate();
 
   const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  let errorDisplay = document.getElementById("errorDisplay");
 
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (!regexEmail.test(useremail)) {
-      errorDisplay("Veillez saisir une adresse mail valide");
+      errorDisplay.innerHTML = "Veillez saisir une adresse mail valide";
     } else {
       axios({
         method: "post",
         url: "http://localhost:7001/user/login",
-        data: values,
       })
         .then((data) => {
           localStorage.setItem("token", JSON.stringify(data.token));
@@ -56,6 +56,7 @@ function LoginForm() {
             onChange={(e) => setUserEmail(e.target.value)}
             value={useremail}
           />
+          <p id="errorDisplay"></p>
           <Spacer y={1} />
           <Grid>
             <div className="userpassword error"></div>

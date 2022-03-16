@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
+import { CssBaseline } from "@nextui-org/react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -8,23 +8,23 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile/Profile";
-import Upload from "./pages/Upload";
+import UserBoard from "./pages/userBoard";
 import PublicRoute from "./components/Routes/publicRoute";
 import PrivateRoute from "./components/Routes/privateRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <CssBaseline />
+    <div className="App">
       <Routes>
-        <PublicRoute element={<Home />} path="/" />
-        <PublicRoute element={Register} path="/register" />
-        <PublicRoute element={Login} path="/login" />
+        <CssBaseline />
+        <Route element={<Home />} path="/" />
+        <Route element={Register} path="/register" />
+        <Route element={Login} path="/login" />
         <Route path="*" element={<Navigate to="/" />} />
         <PrivateRoute path="/user/profile" element={<Profile />} />
-        {/*  <PrivateRoute component={Dashboard} path="/dashboard" /> */}
+        <PrivateRoute component={UserBoard} path="/dashboard" />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
 
