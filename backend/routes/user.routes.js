@@ -1,17 +1,15 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
+const multer = require('../middleware/multer');
 
-const auth = require("../middleware/auth");
-const userCtrl = require("../controllers/user.ctrl");
+const userCtrl = require('../controllers/user.ctrl');
+const auth = require('../middleware/auth');
 
-// Partie routes
-router.post("/register", userCtrl.register); // Register
-router.post("/login", auth, userCtrl.login); // Login
-router.get("/users", auth, userCtrl.getAllUsers); // Affichage de tous les Users
-router.delete("/:id", auth, userCtrl.deleteOneUser); // Supp un User
-router.delete("/", auth, userCtrl.delete); // Partie admin
-/* router.put("/:id", auth, userCtrl.editUser); */
-router.put("/", auth, userCtrl.modify);
-router.put("/pass", auth, userCtrl.modifyPassword);
+
+router.post('/register', userCtrl.register);
+router.post('/login', userCtrl.login);
+router.get('/profile/:id_user', auth, userCtrl.getUser);
+router.put('/profile/:id_user', auth, multer.avatar, userCtrl.modifyUser);
+router.delete('/profile/:id_user', auth, userCtrl.deleteUser);
 
 module.exports = router;
