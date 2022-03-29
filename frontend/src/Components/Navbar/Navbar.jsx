@@ -2,6 +2,13 @@ import React from "react";
 import "../components/Nav.css";
 import Logo from "../Assets/icon.png";
 
+import Logo from "../Assets/icon.png";
+
+/* import { Spacer } from "@nextui-org/react";
+import { Text } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Container, Row, Col } from "@nextui-org/react"; */
+
 function Navbar() {
   return (
     <header className="header">
@@ -9,18 +16,21 @@ function Navbar() {
         <input type="checkbox" id="nav-check" />
         <div className="nav-header">
           <img src={Logo} alt="logo" className="logo" />
-        </div>{" "}
+        </div>
         <div className="nav-btn">
           <label htmlFor="nav-check">
-            <span> </span> <span> </span> <span> </span>
-          </label>{" "}
-        </div>{" "}
+            <span></span>
+            <span></span>
+            <span></span>
+          </label>
+        </div>
+
         <div className="nav-links">
           <a href="/" target="_blank">
             Accueil
           </a>
-          <a href="/user/register"> S 'inscrire</a>
-          <a href="/user/login"> Se connecter </a>
+          <a href="/user/register">S'inscrire</a>
+          <a href="/user/login">Se connecter</a>
         </div>
       </div>
     </header>
