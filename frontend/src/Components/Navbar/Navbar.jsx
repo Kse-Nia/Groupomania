@@ -1,14 +1,6 @@
 import React from "react";
 import "../components/Nav.css";
-/* import { NavLink } from "react-router-dom";
-import { UidContext } from "./AppContext.jsx";
-import Logout from "../Assets/logout.svg"; */
 import Logo from "../Assets/icon.png";
-
-/* import { Spacer } from "@nextui-org/react";
-import { Text } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import { Container, Row, Col } from "@nextui-org/react"; */
 
 function Navbar() {
   return (
@@ -21,12 +13,12 @@ function Navbar() {
         <div className="nav-btn">
           <label htmlFor="nav-check">
             <span> </span> <span> </span> <span> </span>
-          </label>
-        </div>
+          </label>{" "}
+        </div>{" "}
         <div className="nav-links">
           <a href="/" target="_blank">
             Accueil
-          </a>{" "}
+          </a>
           <a href="/user/register"> S 'inscrire</a>
           <a href="/user/login"> Se connecter </a>
         </div>
