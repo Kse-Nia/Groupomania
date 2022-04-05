@@ -4,7 +4,7 @@ const Admin = () => {
   return (
     <section>
       <h1>Page Administrateur Groupomania</h1>
-      <p>You must have been assigned an Admin role.</p>
+      <p>Vous devez être l'administrateur du site</p>
       <div className="flexGrow">
         <Link to="/">Home</Link>
       </div>
