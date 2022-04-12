@@ -1,7 +1,8 @@
 import "./App.css";
 
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { render } from "react-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Register from "./Components/Register";
 import Login from "./Components/Login";
@@ -12,15 +13,15 @@ import PrivateRoute from "./Routes/PrivateRoute";
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <PublicRoute component={Login} exact path="/" />
-        <PublicRoute component={Login} path="/login" />
-        <PublicRoute component={Register} path="/signup" />
+    <BrowserRouter>
+      <Routes>
+        <PublicRoute element={Login} exact path="/" />
+        <PublicRoute element={Login} path="/login" />
+        <PublicRoute element={Register} path="/register" />
         {/*      <PrivateRoute component={Profile} path='/profile/:id' />
       <PrivateRoute component={Dashboard} path='/dashboard' /> */}
-      </Switch>
-    </Router>
+      </Routes>
+    </BrowserRouter>
   );
 };
 

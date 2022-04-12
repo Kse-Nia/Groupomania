@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import { isLoged } from "../Util/index";
 
 const PublicRoute = ({ component: Component, restricted, ...rest }) => {
@@ -8,7 +8,7 @@ const PublicRoute = ({ component: Component, restricted, ...rest }) => {
       {...rest}
       render={(props) =>
         isLoged() && restricted ? (
-          <Redirect to="/dashboard" />
+          <Navigate to="/dashboard" />
         ) : (
           <Component {...props} />
         )

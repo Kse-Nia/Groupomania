@@ -1,11 +1,11 @@
-import { Suspense } from "react";
+import { Suspense } from "react"; // Faire attendre le chargement des données
 import { Route, Switch } from "react-router-dom";
 import routes from "routes"; // Route list
-/* import Loader from 'sharedComponent/Loader'; */
+/* import Spinner from 'sharedComponent/Loader'; */
 
 const ProtectedRoutes = () => (
   <Switch>
-    <Suspense /* fallback={<Loader />} */>
+    <Suspense /* fallback={<Spinner />} */>
       {routes.map(({ component: Component, path, exact }) => (
         <Route path={`/${path}`} key={path} exact={exact}>
           <Component />
