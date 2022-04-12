@@ -18,7 +18,7 @@ const App = () => {
         <PublicRoute element={Login} exact path="/" />
         <PublicRoute element={Login} path="/login" />
         <PublicRoute element={Register} path="/register" />
-        {/*      <PrivateRoute component={Profile} path='/profile/:id' />
+        {/* <PrivateRoute component={Profile} path='/profile/:id' />
       <PrivateRoute component={Dashboard} path='/dashboard' /> */}
       </Routes>
     </BrowserRouter>
