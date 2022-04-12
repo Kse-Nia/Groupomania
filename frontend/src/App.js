@@ -1,35 +1,44 @@
 import "./App.css";
+import { useEffect, useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom"; // anciennement Switch, History
 
-import React, { useState, useEffect } from "react";
-import { render } from "react-dom";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Auth from "./Pages/Auth";
+import Profile from "./Pages/Profile";
+import Dashboard from "./Pages/Dashboard";
 
-import Register from "./Components/Register";
-import Login from "./Components/Login";
+function App() {
+  const [user, setUser] = useState(null);
 
-// Les routes
-import PublicRoute from "./Routes/PublicRoute";
-import PrivateRoute from "./Routes/PrivateRoute";
+  useEffect(() => {
+    const u = localStorage.getItem("user");
+    u && JSON.parse(u) ? setUser(true) : setUser(false);
+  }, []);
 
-const App = () => {
+  useEffect(() => {
+    localStorage.setItem("user", user);
+  }, [user]);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <PublicRoute element={Login} exact path="/" />
-        <PublicRoute element={Login} path="/login" />
-        <PublicRoute element={Register} path="/register" />
-        {/* <PrivateRoute component={Profile} path='/profile/:id' />
-      <PrivateRoute component={Dashboard} path='/dashboard' /> */}
-      </Routes>
-    </BrowserRouter>
-  );
-};
+    <Routes>
+      {!user && (
+        <Route
+          path="/auth"
+          element={<Auth authenticate={() => setUser(true)} />}
+        />
+      )}
 
-const Navigation = () => (
-  <nav>
-    <Link to="/home"> Home </Link> <Link to="/dashboard"> User Dashboard </Link>{" "}
-    <Link to="/admin"> Admin </Link>{" "}
-  </nav>
-);
+      {user && (
+        <>
+          <Route
+            path="/profile"
+            element={<Profile logout={() => setUser(false)} />}
+          />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </>
+      )}
+      <Route path="*" element={<Navigate to={user ? "/profile" : "/auth"} />} />
+    </Routes>
+  );
+}
 
 export default App;
