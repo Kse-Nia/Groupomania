@@ -6,6 +6,9 @@ import Auth from "./Pages/Auth";
 import Profile from "./Pages/Profile";
 import Dashboard from "./Pages/Dashboard";
 
+// Test
+import Register from "./Pages/Register";
+
 function App() {
   const [user, setUser] = useState(null);
 
@@ -22,7 +25,7 @@ function App() {
     <Routes>
       {!user && (
         <Route
-          path="/auth"
+          path="/login"
           element={<Auth authenticate={() => setUser(true)} />}
         />
       )}
@@ -36,7 +39,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
         </>
       )}
-      <Route path="*" element={<Navigate to={user ? "/profile" : "/auth"} />} />
+      <Route
+        path="*"
+        element={<Navigate to={user ? "/profile" : "/register"} />}
+      />
     </Routes>
   );
 }
