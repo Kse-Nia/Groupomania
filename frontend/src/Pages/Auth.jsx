@@ -20,13 +20,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 
-const Auth = () => {
+const Auth = (authenticate) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate;
 
   const onClick = () => {
-    authentificate();
+    authenticate();
     navigate("profile");
   };
 
