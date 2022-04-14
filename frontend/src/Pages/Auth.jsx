@@ -49,10 +49,9 @@ const Auth = () => {
       .then((res) => {
         console.log(res);
         if (res.data) {
-          localStorage.setItem("loggedIn", true);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("email", email);
-          window.location = "/profile";
+          window.location = "/";
         } else {
           console.log(Error);
         }

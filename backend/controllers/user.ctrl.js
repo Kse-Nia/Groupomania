@@ -1,31 +1,10 @@
 const bcrypt = require('bcrypt'); // hash password
 const jwt = require('jsonwebtoken');
-const config = require('../config/database');
+const db = require("../models");
+const User = db.User;
+const Administrator = db.Administrator;
 const fs = require('fs');
-const User = require('../models/User');
-const Administrator = require('../models/admin');
-
-
-/* exports.register = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10) // hash password 10 fois
-        .then(hash => {
-            User.create({
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    email: req.body.email,
-                    password: hash,
-                })
-                .then(() => res.status(201).json({
-                    message: 'Compte utilisateur créé avec succès'
-                }))
-                .catch((error) => res.status(500).json({
-                    error
-                }));
-        })
-        .catch(error => res.status(500).json({
-            error
-        }));
-}; */
+secretTokenKey = process.env.TOKEN_SECRET;
 
 exports.register = (req, res) => {
     if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
@@ -51,43 +30,30 @@ exports.register = (req, res) => {
     })
 }
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
     User.findOne({
             where: {
                 email: req.body.email
             }
         })
         .then((user) => {
-            if (!user) {
-                return res.status(400).json({
-                    message: 'Utilisateur introuvable'
+            if (!user) return res.status(403).send("Utilisateur introuvabls")
+            // User trouvé, compare password
+            bcrypt.compare(req.body.password, user.password).then((valid) => {
+                if (!valid) return res.status(403).send("Password incorrect")
+                res.status(200).send({
+                    user: user.id,
+                    token: jwt.sign({
+                        userId: user.id
+                    }, `${process.env.TOKEN_SECRET}`, {
+                        expiresIn: "24h"
+                    }),
+                    email: req.body.email,
+                    isAuthenticated: true,
                 })
-            }
-            // Verif password
-            bcrypt
-                .compare(req.body.password, user.password)
-                .then((valid) => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            message: 'Mot de passe incorrecte'
-                        })
-                    }
-                    res.status(200).json({
-                        userId: user.id,
-                        token: jwt.sign({
-                                userId: user.id,
-                            },
-                            process.env.TOKEN_SECRET, {
-                                expiresIn: '12h',
-                            }
-                        ),
-                    })
-                })
-                .catch((error) => res.status(500).json({
-                    error
-                }))
+            })
         })
-        .catch((error) => res.status(500).json({
+        .catch(() => res.status(500).send({
             error
         }))
 }
