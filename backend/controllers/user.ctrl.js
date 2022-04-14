@@ -6,15 +6,14 @@ const User = require('../models/User');
 const Administrator = require('../models/admin');
 
 
-exports.register = (req, res, next) => {
+/* exports.register = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) // hash password 10 fois
         .then(hash => {
             User.create({
-                    firstname: req.body.firstname,
-                    lastname: req.body.lastname,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
                     email: req.body.email,
                     password: hash,
-                    service: req.body.service
                 })
                 .then(() => res.status(201).json({
                     message: 'Compte utilisateur créé avec succès'
@@ -26,7 +25,31 @@ exports.register = (req, res, next) => {
         .catch(error => res.status(500).json({
             error
         }));
-};
+}; */
+
+exports.register = (req, res) => {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
+        return res.status(403).send("Veillez remplir tous les champs")
+    }
+
+    // crypt password
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hash,
+        }
+        User.create(user)
+            .then((valid) => {
+                if (!valid) {
+                    return res.status(500).send("Problème lors de la création du compte")
+                }
+                res.status(200).send("Compte créé avec succès")
+            })
+            .catch(() => res.status(403).send("User existe déjà."))
+    })
+}
 
 exports.login = (req, res, next) => {
     User.findOne({
@@ -40,24 +63,22 @@ exports.login = (req, res, next) => {
                     message: 'Utilisateur introuvable'
                 })
             }
-            // Vérification password
+            // Verif password
             bcrypt
                 .compare(req.body.password, user.password)
                 .then((valid) => {
                     if (!valid) {
                         return res.status(401).json({
-                            message: 'Mot de passe invalide'
+                            message: 'Mot de passe incorrecte'
                         })
                     }
                     res.status(200).json({
                         userId: user.id,
-                        isAdmin: user.isAdmin,
                         token: jwt.sign({
                                 userId: user.id,
-                                isAdmin: user.isAdmin
                             },
-                            process.env.SECRET_KEY, {
-                                expiresIn: '24h',
+                            process.env.TOKEN_SECRET, {
+                                expiresIn: '12h',
                             }
                         ),
                     })

@@ -1,37 +1,65 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // hook, ancien History
+import Axios from "axios";
 
-// Material UI
+// MAterial UI
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { deepOrange } from "@mui/material/colors";
-const validationBtn = deepOrange[500];
-
 const theme = createTheme();
 
-const Auth = ({ authentificate }) => {
+const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onClick = () => {
     authentificate();
     navigate("profile");
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    Axios.post(
+      "http://localhost:7001/user/login",
+      {
+        email: email,
+        password: password,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        console.log(res);
+        if (res.data) {
+          localStorage.setItem("loggedIn", true);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("email", email);
+          window.location = "/profile";
+        } else {
+          console.log(Error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -47,14 +75,14 @@ const Auth = ({ authentificate }) => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <GroupAddIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Se connecter
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleLogin}
             noValidate
             sx={{ mt: 1 }}
           >
@@ -63,20 +91,24 @@ const Auth = ({ authentificate }) => {
               required
               fullWidth
               id="email"
-              label="Mail"
+              label="Email Address"
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Mot de passe"
+              label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -86,15 +118,15 @@ const Auth = ({ authentificate }) => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 2, mb: 2 }}
+              sx={{ mt: 3, mb: 2 }}
+              onClick={handleLogin}
             >
               Se connecter
             </Button>
             <Grid container>
-              <Grid item xs></Grid>
               <Grid item>
                 <Link href="/register" variant="body2">
-                  {"Pas de compte utilisateur? S'enregistrer"}
+                  {"Vous n'avez pas encore de compte? S'enregistrer"}
                 </Link>
               </Grid>
             </Grid>

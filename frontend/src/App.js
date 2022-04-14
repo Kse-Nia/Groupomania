@@ -8,40 +8,44 @@ import Dashboard from "./Pages/Dashboard";
 
 // Test
 import Register from "./Pages/Register";
+import Navbar from "./Components/Navbar/Navbar";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState(null);
 
   useEffect(() => {
-    const u = localStorage.getItem("user");
-    u && JSON.parse(u) ? setUser(true) : setUser(false);
+    const u = localStorage.getItem("email");
+    u && JSON.parse(u) ? setEmail(true) : setEmail(false);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("user", user);
-  }, [user]);
+    localStorage.setItem("email", email);
+  }, [email]);
 
   return (
     <Routes>
-      {!user && (
-        <Route
-          path="/login"
-          element={<Auth authenticate={() => setUser(true)} />}
-        />
+      {!email && (
+        <>
+          <Route
+            path="/user/login"
+            element={<Auth authenticate={() => setEmail(true)} />}
+          />
+          <Route path="/user/register" element={<Register />} />
+        </>
       )}
 
-      {user && (
+      {email && (
         <>
           <Route
             path="/profile"
-            element={<Profile logout={() => setUser(false)} />}
+            element={<Profile logout={() => setEmail(false)} />}
           />
           <Route path="/dashboard" element={<Dashboard />} />
         </>
       )}
       <Route
         path="*"
-        element={<Navigate to={user ? "/profile" : "/register"} />}
+        element={<Navigate to={email ? "/profile" : "/register"} />}
       />
     </Routes>
   );

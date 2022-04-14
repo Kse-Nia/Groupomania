@@ -1,4 +1,6 @@
-import * as React from "react";
+import React, { useState } from "react";
+import Axios from "axios";
+// MAterial UI
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,38 +10,50 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+// Color
+import { deepOrange } from "@mui/material/colors";
+const color = deepOrange[500];
 
 const theme = createTheme();
 
 export default function Register() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  // Hook states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    console.log(email);
+    console.log(password);
+
+    Axios.post(
+      "http://localhost:7001/user/register",
+      {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   return (
@@ -48,73 +62,75 @@ export default function Register() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 6,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+          <Avatar sx={{ m: 2, bgcolor: "secondary.main" }}>
+            <GroupAddIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Créer un nouveau compte
           </Typography>
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleRegister}
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
+                  helperText="Veillez entrer votre prénom"
+                  id="demo-helper-text-misaligned"
+                  label="Prénom"
                   autoComplete="given-name"
                   name="firstName"
-                  required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
                   autoFocus
+                  onChange={(e) => setFirstName(e.target.value)}
+                  value={firstName}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
+                  helperText="Veillez entrer votre nom"
+                  id="demo-helper-text-misaligned"
+                  label="Nom"
+                  autoComplete="given-name"
                   name="lastName"
-                  autoComplete="family-name"
+                  fullWidth
+                  autoFocus
+                  onChange={(e) => setLastName(e.target.value)}
+                  value={lastName}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
+                  helperText="Veillez entrer votre adresse mail"
                   id="email"
-                  label="Email Address"
+                  label="Email"
+                  autoComplete="given-name"
                   name="email"
-                  autoComplete="email"
+                  fullWidth
+                  autoFocus
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
+                  helperText="Veillez choisir un mot de passe"
                   id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  label="Password"
+                  autoComplete="password"
+                  name="password"
+                  fullWidth
+                  autoFocus
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </Grid>
             </Grid>
@@ -123,19 +139,20 @@ export default function Register() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              color="secondary"
+              onClick={handleRegister}
             >
-              Sign Up
+              S'inscrire
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                <Link href="/login" variant="body2">
+                  Vous avez déjà un compte? Se connecter
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );
