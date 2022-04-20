@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
+const cors = require('cors')
 require("dotenv").config();
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
@@ -8,7 +9,8 @@ const commentRoutes = require('./routes/comment.routes');
 
 
 const app = express();
-
+app.use(express.json());
+// CORS
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(
@@ -22,7 +24,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json());
+app.use(cors())
 
 // Partie config Sequelize
 const sequelize = require('./config/database');
@@ -33,10 +35,6 @@ sequelize.sync().then(result => {
     console.log(err)
 });
 
-
-/// APP
-
-app.use(express.json());
 
 
 app.use('/user', userRoutes);

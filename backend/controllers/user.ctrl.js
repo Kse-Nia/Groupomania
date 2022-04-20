@@ -12,22 +12,29 @@ exports.register = (req, res) => {
     }
 
     // crypt password
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        const user = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: hash,
-        }
-        User.create(user)
-            .then((valid) => {
-                if (!valid) {
-                    return res.status(500).send("Problème lors de la création du compte")
-                }
-                res.status(200).send("Compte créé avec succès")
-            })
-            .catch(() => res.status(403).send("User existe déjà."))
-    })
+    bcrypt
+        .hash(req.body.password, 10)
+        .then((hash) => {
+            const user = {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                password: hash,
+            }
+            // Sauvegarde du nouvel utilisateur en bdd
+            User.create(user)
+                .then(() =>
+                    res.status(201).json({
+                        message: 'Compte utilisateur créé avec succès'
+                    })
+                )
+                .catch((error) => res.status(400).json({
+                    error
+                }))
+        })
+        .catch((error) => res.status(500).json({
+            error
+        }))
 }
 
 exports.login = (req, res) => {

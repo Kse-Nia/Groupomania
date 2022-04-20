@@ -12,9 +12,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-/* 
-import { likePost, deletePost } from "../../../actions/posts"; */
-/* import useStyles from "./styles"; */
+
+//MUI
+import Card from "@mui/material/Card";
+import Skeleton from "@mui/material/Skeleton";
 
 const Post = ({ post, setCurrentId }) => {
   const dispatch = useDispatch();

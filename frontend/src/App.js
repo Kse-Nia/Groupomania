@@ -8,7 +8,6 @@ import Dashboard from "./Pages/Dashboard";
 
 // Test
 import Register from "./Pages/Register";
-import Navbar from "./Components/Navbar/Navbar";
 
 function App() {
   const [auth, setAuth] = useState(null);
@@ -37,13 +36,16 @@ function App() {
       {auth && (
         <>
           <Route
-            path="/profile"
+            path="/user/profile"
             element={<Profile logout={() => setAuth(false)} />}
           />
           <Route path="/dashboard" element={<Dashboard />} />
         </>
       )}
-      <Route path="*" element={<Navigate to={auth ? "/profile" : "/auth"} />} />
+      <Route
+        path="*"
+        element={<Navigate to={auth ? "/profile" : "/user/login"} />}
+      />
     </Routes>
   );
 }

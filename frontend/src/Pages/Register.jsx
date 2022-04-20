@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import Axios from "axios";
+
+import Navbar from "../Components/Navbar/Navbar";
+
 // MAterial UI
+import Card from "@mui/material/Card";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -58,6 +62,7 @@ export default function Register() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Navbar />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // hook, ancien History
 import Axios from "axios";
+import Navbar from "../Components/Navbar/Navbar";
 
 // MAterial UI
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -47,22 +47,26 @@ const Auth = (authenticate) => {
       }
     )
       .then((res) => {
-        console.log(res);
-        if (res.data) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("email", email);
-          window.location = "/";
+        if (res.status === 200) {
+          return res.json();
+        } else if (res.status === 400) {
+          errorDisplay("Compte utilisateur introuvable");
+        } else if (res.status === 401) {
+          errorDisplay("Mot de passe incorrecte");
         } else {
-          console.log(Error);
+          errorDisplay("Error");
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .then((data) => {
+        localStorage.setItem("token", JSON.stringify(data.token));
+        history.push("/dashboard");
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <Navbar />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
