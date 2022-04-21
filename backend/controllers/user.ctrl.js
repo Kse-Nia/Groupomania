@@ -1,19 +1,13 @@
+require("dotenv").config()
 const bcrypt = require('bcrypt'); // hash password
 const jwt = require("jsonwebtoken")
 const db = require("../models");
 const User = db.User;
 const Administrator = db.Administrator;
 const fs = require('fs');
-require("dotenv").config()
 
 
 // Partie sécurité
-const getTokenUserId = (req) => {
-    const token = req.headers.authorization.split(" ")
-    const decodedToken = jwt.verify(token[1], secretTokenKey)
-    const decodedId = decodedToken.userId
-    return decodedId
-}
 
 let admin = false;
 const checkAdmin = (decodedId) => {
@@ -50,7 +44,6 @@ exports.register = (req, res) => {
     })
 }
 
-
 exports.login = (req, res) => {
     const {
         email,
@@ -69,25 +62,32 @@ exports.login = (req, res) => {
         .then((user) => {
             if (!user) return res.status(403).send("Utilisateur introuvable")
 
-            bcrypt.compare(req.body.password, user.password).then((valid) => {
-                if (!valid) return res.status(403).send("Mot de passe incorrect")
-                // send user data
-                res.status(200).send({
-                    user: user.id,
-                    token: jwt.sign({
-                        userId: user.id
-                    }, process.env.JWT_KEY, {
-                        expiresIn: "5h"
-                    }),
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    isAuthenticated: true,
-                    isAdmin: user.isAdmin,
+            bcrypt
+                .compare(req.body.password, user.password)
+                .then((valid) => {
+                    if (!valid) {
+                        return res.status(401).json({
+                            message: 'Mot de passe non valide'
+                        })
+                    }
+                    res.status(200).json({
+                        userId: user.id,
+                        isAdmin: user.isAdmin,
+                        token: jwt.sign({
+                                userId: user.id,
+                                isAdmin: user.isAdmin
+                            },
+                            process.env.SECRET_KEY, {
+                                expiresIn: '24h',
+                            }
+                        ),
+                    })
                 })
-            })
+                .catch((error) => res.status(500).json({
+                    error
+                }))
         })
-        .catch(() => res.status(500).send({
+        .catch((error) => res.status(500).json({
             error
         }))
 }

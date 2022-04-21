@@ -129,8 +129,7 @@ const Dashboard = () => {
               const createComment = async (e) => {
                 e.preventDefault();
                 const commentChecker = () => {
-                  const textRegex =
-                    /^[\w'\-,.][^_¡÷¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,500}$/i;
+                  const textRegex = /[0-9a-zA-Z]{6,}/; // Min 6 caractères
                   if (textRegex.test(comment)) {
                     return true;
                   } else {

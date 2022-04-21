@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // hook, ancien History
+import { useHistory } from "react-router-dom"; // hook, ancien History
 import Axios from "axios";
 import Navbar from "../Components/Navbar/Navbar";
 
@@ -23,12 +23,7 @@ const theme = createTheme();
 const Auth = (authenticate) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate;
-
-  const onClick = () => {
-    authenticate();
-    navigate("profile");
-  };
+  const history = useHistory;
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -46,22 +41,11 @@ const Auth = (authenticate) => {
         },
       }
     )
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        } else if (res.status === 400) {
-          errorDisplay("Compte utilisateur introuvable");
-        } else if (res.status === 401) {
-          errorDisplay("Mot de passe incorrecte");
-        } else {
-          errorDisplay("Error");
-        }
-      })
       .then((data) => {
         localStorage.setItem("token", JSON.stringify(data.token));
         history.push("/dashboard");
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error.response.data));
   };
 
   return (

@@ -1,132 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom"; // hook, ancien History
+import { Card } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
+import { Grid } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Spacer } from "@nextui-org/react";
+import { Text } from "@nextui-org/react";
 import Axios from "axios";
-import Navbar from "../Components/Navbar/Navbar";
 
-// MAterial UI
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import "./pages.css";
 
-const theme = createTheme();
+function Login() {
+  const [username, setUsername] = useState("");
+  const [userpassword, setUserpassword] = useState("");
 
-const Login = (props) => {
-  // Hook states
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const history = useHistory();
+  const login = () => {
+    // Partie POST - insértion des données
+    Axios.post("http://localhost:7001/user/login", {
+      username: username,
+      userpassword: userpassword,
+    }).then((response) => {
+      if (response.data) {
+        // Enregistrement dans le localstorage
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("username", username);
+        localStorage.getItem("username", response.data.username);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log(email);
-    console.log(password);
-
-    Axios.post(
-      "http://localhost:7001/user/login",
-      {
-        email: user.email,
-        password: user.password,
-      },
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+        // Envoi vers la page profile
+        window.location = "/user/profile";
+      } else {
+        console.log(Error);
       }
-    )
-      .then((data) => {
-        localStorage.setItem("token", JSON.stringify(data.token));
-        history.push("/dashboard");
-      })
-      .catch((error) => console.log(error));
+    });
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Navbar />
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <GroupAddIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Se connecter
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={(values, { resetForm }) => {
-              handleLogin(values);
+    <div className="wrapcontainer">
+      <Card className="Card login" width="60%">
+        <Text h1> Groupomania </Text> <Text h2> Se connecter </Text>{" "}
+        <form>
+          <Input
+            rounded
+            bordered
+            className="form-control"
+            type="text"
+            label="Pseudo"
+            placeholder="Entrez un pseudo"
+            name="username"
+            onChange={(e) => {
+              setUsername(e.target.value);
             }}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
+          />
+          <Spacer y={1} />
+          <Grid>
+            <Input
+              rounded
+              bordered
+              label="Mot de passe"
               type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              placeholder="Entrez un mot de passe"
+              onChange={(e) => {
+                setUserpassword(e.target.value);
+              }}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Se souvenir de moi"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={handleLogin}
-            >
-              Se connecter
-            </Button>
-            <Grid container>
-              <Grid item>
-                <Link href="/register" variant="body2">
-                  {"Vous n'avez pas encore de compte? S'enregistrer"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+          </Grid>
+          <Spacer y={1} /> <Spacer y={1} />
+          <Button onClick={login}> Se connecter </Button> <p> </p>
+        </form>
+      </Card>
+    </div>
   );
-};
+}
 
 export default Login;
