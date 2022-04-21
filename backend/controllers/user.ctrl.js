@@ -58,7 +58,7 @@ exports.login = (req, res) => {
     } = req.body;
 
     if (!email && !password) {
-        return next(new HttpError("Veuillez remplir tous les champs"));
+        return "Veuillez remplir tous les champs";
     }
 
     User.findOne({

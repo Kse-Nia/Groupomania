@@ -1,9 +1,9 @@
-import React from "react"
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 
 import "./App.css";
 
-//Pages 
+//Pages
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
@@ -15,46 +15,15 @@ import { initialAuth, AuthReducer } from "./Utils/auth";
 // sauvegarde de la data user
 export const AuthContext = React.createContext();
 
-
 function App() {
-  
-  const [AuthState, dispatchAuthState] = React.useReducer(AuthReducer, initialAuth)
-const routes
- 
-if (AuthState.isAuthenticated) {
-  routes = (
-      <Switch>
-        <Route path="/" exact component={HomePage} />
-        <Route path="/login" exact component={LoginPage} />
-        <Route path="/articles" exact component={ArticlePage} />
-        <Route path="/profile" exact component={ProfilePage} />
-        <Route path="/members" exact component={MembersPage} />
-        <Route component={NotFoundPage} />
-      </Switch>
-  )
-} else {
-  routes = (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/login" exact component={LoginPage} />
-        <Redirect to='/login' component={LoginPage}  />
-        <Route component={NotFoundPage} />
-      </Switch>
-    </BrowserRouter>
-  )
+  return (
+    <Switch>
+      <Route exact path="/user/register" component={Register} />
+      <Route exact path="/user/login" component={Login} />
+      <Route exact path="/profile" component={Profile} />
+      <Route exact path="/dashboard" component={Dashboard} />
+    </Switch>
+  );
 }
-
-return (
-  <AuthContext.Provider
-    value={{
-      AuthState,
-      dispatchAuthState,
-    }}
-  >
-    {routes}
-  </AuthContext.Provider>
-)
-}
-
 
 export default App;

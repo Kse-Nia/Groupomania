@@ -20,27 +20,33 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 
-const Login = (authenticate) => {
+const Login = (props) => {
+  // Hook states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory;
+  const history = useHistory();
 
-  const handleLogin = (e, value) => {
+  const handleLogin = (e) => {
     e.preventDefault();
+    console.log(email);
+    console.log(password);
 
-    axios({
-      method: "post",
-      url: "http://localhost:7001/user/login",
-      data: value,
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          dispatchAuthState({
-            type: "LOGIN",
-            payload: res.data,
-          });
-          history.push("/");
-        }
+    Axios.post(
+      "http://localhost:7001/user/login",
+      {
+        email: user.email,
+        password: user.password,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((data) => {
+        localStorage.setItem("token", JSON.stringify(data.token));
+        history.push("/dashboard");
       })
       .catch((error) => console.log(error));
   };

@@ -1,11 +1,9 @@
 export let initialAuth = {};
-
 const hours = 4;
-let saved = localStorage.getItem("savedAt");
+let savedAccount = localStorage.getItem("savedAt");
 
-if (saved && new Date().getTime() - saved > hours * 60 * 60 * 1000) {
+if (savedAccount && new Date().getTime() - saved > hours * 60 * 60 * 1000) {
   localStorage.clear();
-
   initialAuth = {
     isAuthenticated: false,
     isAdmin: false,

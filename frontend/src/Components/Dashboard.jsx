@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../Components/Navbar/NavbarLog";
+import Navbar from "./Navbar/Navbar";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -30,7 +30,7 @@ const Dashboard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const postChecker = () => {
-      const textRegex = /^.{6,}$/; // minimum 6 charactères
+      const textRegex = /^[\w'\-,.][^_¡÷¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,500}$/i;
       if (textRegex.test(content)) {
         return true;
       } else {
