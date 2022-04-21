@@ -1,53 +1,60 @@
-import "./App.css";
-import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom"; // anciennement Switch, History
+import React from "react"
+import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 
-import Auth from "./Pages/Auth";
+import "./App.css";
+
+//Pages 
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import Dashboard from "./Pages/Dashboard";
 
-// Test
-import Register from "./Pages/Register";
+//Utils
+import { initialAuth, AuthReducer } from "./Utils/auth";
+
+// sauvegarde de la data user
+export const AuthContext = React.createContext();
+
 
 function App() {
-  const [auth, setAuth] = useState(null);
-
-  useEffect(() => {
-    let user = localStorage.getItem("email");
-    user && JSON.parse(user) ? setAuth(true) : setAuth(false);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("email", auth);
-  }, [auth]);
-
-  return (
-    <Routes>
-      {!auth && (
-        <>
-          <Route path="/user/register" element={<Register />} />
-          <Route
-            path="/user/login"
-            element={<Auth authenticate={() => setAuth(true)} />}
-          />
-        </>
-      )}
-
-      {auth && (
-        <>
-          <Route
-            path="/user/profile"
-            element={<Profile logout={() => setAuth(false)} />}
-          />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </>
-      )}
-      <Route
-        path="*"
-        element={<Navigate to={auth ? "/profile" : "/user/login"} />}
-      />
-    </Routes>
-  );
+  
+  const [AuthState, dispatchAuthState] = React.useReducer(AuthReducer, initialAuth)
+const routes
+ 
+if (AuthState.isAuthenticated) {
+  routes = (
+      <Switch>
+        <Route path="/" exact component={HomePage} />
+        <Route path="/login" exact component={LoginPage} />
+        <Route path="/articles" exact component={ArticlePage} />
+        <Route path="/profile" exact component={ProfilePage} />
+        <Route path="/members" exact component={MembersPage} />
+        <Route component={NotFoundPage} />
+      </Switch>
+  )
+} else {
+  routes = (
+    <BrowserRouter>
+      <Switch>
+        <Route path="/login" exact component={LoginPage} />
+        <Redirect to='/login' component={LoginPage}  />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </BrowserRouter>
+  )
 }
+
+return (
+  <AuthContext.Provider
+    value={{
+      AuthState,
+      dispatchAuthState,
+    }}
+  >
+    {routes}
+  </AuthContext.Provider>
+)
+}
+
 
 export default App;

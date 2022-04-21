@@ -1,10 +1,30 @@
 const bcrypt = require('bcrypt'); // hash password
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken")
 const db = require("../models");
 const User = db.User;
 const Administrator = db.Administrator;
 const fs = require('fs');
-secretTokenKey = process.env.TOKEN_SECRET;
+require("dotenv").config()
+
+
+// Partie sécurité
+const getTokenUserId = (req) => {
+    const token = req.headers.authorization.split(" ")
+    const decodedToken = jwt.verify(token[1], secretTokenKey)
+    const decodedId = decodedToken.userId
+    return decodedId
+}
+
+let admin = false;
+const checkAdmin = (decodedId) => {
+    User.findOne({
+        where: {
+            id: decodedId
+        }
+    }).then((user) => (admin = user.isAdmin))
+    return admin
+}
+
 
 exports.register = (req, res) => {
     if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
@@ -12,51 +32,58 @@ exports.register = (req, res) => {
     }
 
     // crypt password
-    bcrypt
-        .hash(req.body.password, 10)
-        .then((hash) => {
-            const user = {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                password: hash,
-            }
-            // Sauvegarde du nouvel utilisateur en bdd
-            User.create(user)
-                .then(() =>
-                    res.status(201).json({
-                        message: 'Compte utilisateur créé avec succès'
-                    })
-                )
-                .catch((error) => res.status(400).json({
-                    error
-                }))
-        })
-        .catch((error) => res.status(500).json({
-            error
-        }))
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hash,
+        }
+        User.create(user)
+            .then((valid) => {
+                if (!valid) {
+                    return res.status(500).send("Problème lors de la création du compte")
+                }
+                res.status(200).send("Compte créé")
+            })
+            .catch(() => res.status(403).send("User déjà existant"))
+    })
 }
 
+
 exports.login = (req, res) => {
+    const {
+        email,
+        password
+    } = req.body;
+
+    if (!email && !password) {
+        return next(new HttpError("Veuillez remplir tous les champs"));
+    }
+
     User.findOne({
             where: {
                 email: req.body.email
             }
         })
         .then((user) => {
-            if (!user) return res.status(403).send("Utilisateur introuvabls")
-            // User trouvé, compare password
+            if (!user) return res.status(403).send("Utilisateur introuvable")
+
             bcrypt.compare(req.body.password, user.password).then((valid) => {
-                if (!valid) return res.status(403).send("Password incorrect")
+                if (!valid) return res.status(403).send("Mot de passe incorrect")
+                // send user data
                 res.status(200).send({
                     user: user.id,
                     token: jwt.sign({
                         userId: user.id
-                    }, `${process.env.TOKEN_SECRET}`, {
-                        expiresIn: "24h"
+                    }, process.env.JWT_KEY, {
+                        expiresIn: "5h"
                     }),
-                    email: req.body.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
                     isAuthenticated: true,
+                    isAdmin: user.isAdmin,
                 })
             })
         })
@@ -154,3 +181,33 @@ exports.getAdministrator = (req, res, next) => {
             error
         }));
 };
+
+exports.deleteOneUser = (req, res) => {
+    const decodedId = getTokenUserId(req) // get id User
+
+    // Recherche User
+    User.findOne({
+            where: {
+                email: req.params.email
+            }
+        })
+        .then((user) => {
+            //check if user is admin
+            if (checkAdmin(decodedId)) {
+                User.destroy({
+                        where: {
+                            id: user.id
+                        }
+                    })
+                    .then(() => res.status(200).send("Utilisateur supprimé avec succès"))
+                    .catch((error) => res.status(500).send({
+                        error
+                    }))
+            } else {
+                res.status(403).send("Erreur auth")
+            }
+        })
+        .catch((error) => res.status(500).send({
+            error
+        }))
+}
