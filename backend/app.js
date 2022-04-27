@@ -11,7 +11,10 @@ const commentRoutes = require('./routes/comment.routes');
 
 const app = express();
 app.use(express.json());
-// CORS
+// CORS, allow different access control
+app.use(cors());
+app.use(helmet());
+
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(
@@ -25,9 +28,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(cors())
-
-// Partie config Sequelize
+// Partie config BDD
 const sequelize = require('./config/database');
 
 sequelize.sync().then(result => {
@@ -38,7 +39,7 @@ sequelize.sync().then(result => {
 
 
 
-app.use('/user', userRoutes);
+app.use('/home', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));

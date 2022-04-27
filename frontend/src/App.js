@@ -1,24 +1,41 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
+require("dotenv").config();
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import axios from "axios";
 
-import "./App.css";
+// Components
+import Navbar from "./Components/Navbar/Navbar";
+import Log from "./Components/Log/Log";
 
-//Pages
-import Register from "./Pages/Register";
-/* import Login from "./Pages/Login"; */
-import Auth from "./Pages/Auth";
-import Profile from "./Pages/Profile";
-import Dashboard from "./Pages/Dashboard";
+//partie auth
+import { UidContext } from "./Components/AppContext";
 
-function App() {
+const App = () => {
+  const [uid, setUid] = React.useState(null);
+
+  useEffect(async () => {
+    const fetchToken = async () => {
+      await axios({
+        methode: "get",
+        url: `${process.env.REACT_APP_UR}jwtid`,
+        withCredentials: true,
+      })
+        .then((res) => {
+          console.log(res), setUid(res.data);
+        })
+        .catch((err) => console.log("Pas de token"));
+    };
+    fetchToken();
+  }, []); // Callback vide
+
   return (
-    <Switch>
-      <Route exact path="/user/register" component={Register} />
-      <Route exact path="/user/login" component={Auth} />
-      <Route exact path="/dashboard" component={Dashboard} />
-      <Route exact path="/profile" component={Profile} />
-    </Switch>
+    <Router>
+      <UidContext.Provider value={uid}>
+        <Navbar />
+        <Route path="/" component={Log} />
+      </UidContext.Provider>
+    </Router>
   );
-}
+};
 
 export default App;

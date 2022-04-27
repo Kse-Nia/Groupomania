@@ -1,14 +1,15 @@
 import React from "react";
 import "../Navbar/Navbar.css";
+import Logo from "./logob.png";
 
 function Navbar() {
   return (
     <header className="header">
       <div className="nav">
         <input type="checkbox" id="nav-check" />
-        {/*  <div className="nav-header">
+        <div className="nav-header">
           <img src={Logo} alt="logo" className="logo" />
-        </div> */}
+        </div>
         <div className="nav-btn">
           <label htmlFor="nav-check">
             <span></span>

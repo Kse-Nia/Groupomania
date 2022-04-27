@@ -1,49 +1,21 @@
-import Error from "../Assets/404.svg";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import React, { useContext } from "react";
+import Log from "../Components/Log/Log";
+import { UidContext } from "../Components/AppContext";
 
-function Profil({ props }) {
-  let firstName = localStorage.getItem("firstName");
-  let lastName = localStorage.getItem("lastName");
-  /*   let userAvatar = localStorage.getItem("userPhoto"); */
+const Profile = () => {
+  const uid = useContext(UidContext); // import Hook
 
-  return firstname ? (
-    <div className="container">
-      <div className="profile">
-        <h5 className="name">
-          Bonjour {firstName} {lastName}
-        </h5>
-      </div>
-      <div>
-        <div>
-          <Button
-            size="medium"
-            onClick={() => {
-              props.history.push("/post");
-            }}
-            type="submit"
-            className="btn"
-          >
-            Poster
-          </Button>
+  return (
+    <div className="page-profile">
+      {uid ? (
+        <h1>Update Page</h1>
+      ) : (
+        <div className="logContainer">
+          <Log signin={false} signup={true} />
         </div>
-        <div>
-          <Button
-            onClick={() => {
-              props.history.push("/editprofil");
-            }}
-            type="submit"
-          >
-            Modifier son profil
-          </Button>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <div>
-      <img src={Error} className="picture Error" alt="error message"></img>
+      )}
     </div>
   );
-}
+};
 
-export default Profil;
+export default Profile;
