@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const postCtrl = require('../controllers/post.ctrl')
-const auth = require('../middleware/auth');
-const multer = require('../middleware/multer');
+const multer = require("../middleware/multer");
+const auth = require("../middleware/auth");
+const postCtrl = require("../controllers/post.ctrl");
 
-router.post('/', auth, multer.posts, postCtrl.createPost);
-router.get('/', auth, postCtrl.getAllPost);
-router.get('/:id_post', auth, postCtrl.getOnePost);
-router.put('/:id_post', auth, postCtrl.modifyPost);
-router.delete('/:id_post', auth, postCtrl.deletePost);
-router.post('/:id_post/administrate', auth, postCtrl.adminPost);
+// Les routes
+router.post("/new", auth, multer, postCtrl.createPost);
+router.get("/getPosts", auth, multer, postCtrl.getAllPosts);
+router.get("/user/:id", auth, multer, postCtrl.getPostProfile);
+router.put("/:id/moderate", postCtrl.moderatePost);
+router.delete("/:id", auth, multer, postCtrl.deletePost);
 
 module.exports = router;

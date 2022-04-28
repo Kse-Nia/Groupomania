@@ -1,101 +1,96 @@
-const jwt = require("jsonwebtoken");
-const db = require('../models');
-const User = db.User;
-const Comment = db.Comment;
+const fs = require("fs");
+const models = require("../models");
 
-// Partie Sécurité
-require("dotenv").config()
-secretToken = process.env.TOKEN_SECRET
+exports.createComment = async (req, res) => {
+    try {
+        let comments = req.body.comments;
+        const newCom = await models.Comment.create({
+            comments: comments,
+            UserId: req.user.id,
+            PostId: req.params.id
+        });
 
-// Recup Sser ID by token
-const getTokenUserId = (req) => {
-    const token = req.headers.authorization.split(" ");
-    const decodedToken = jwt.verify(token[1], secretToken);
-    const decodedId = decodedToken.userId;
-    return decodedId;
-}
-
-// Check Admin ou pas
-let admin = false
-const checkAdmin = (decodedId) => {
-    User.findOne({
-        where: {
-            id: decodedId
+        if (newCom) {
+            res.status(201).json({
+                message: "Commentaire posté",
+                newCom
+            });
+        } else {
+            throw new Error("Erreur, impossible de poster le commentaire");
         }
-    }).then((user) => (admin = user.isAdmin))
-    return admin
-}
-
-// Nouveau com
-exports.createComment = (req, res) => {
-    if (!req.body) return res.status(403).send("Erreur");
-    const decodedId = getTokenUserId(req) // recupération id
-
-    // Création comm
-    const comment = {
-        text: req.body.body,
-        UserId: decodedId,
-        CommentId: req.params.id
+    } catch (error) {
+        res.status(400).json({
+            error: error.message
+        });
     }
+};
 
-    Comment.create(comment)
-        .then(() => {
-            res.send("Commentaire posté")
-        })
-        .catch((error) => res.status(500).send({
-            error
-        }))
-}
-
-// Affiche tous les comm
-exports.getAllComments = (req, res) => {
-    Comment.findAll({
-            where: {
-                CommentId: req.params.id
-            },
-            order: [
-                ["createdAt", "DESC"]
+exports.getComments = async (req, res) => {
+    try {
+        const order = req.query.order;
+        const comments = await models.Comment.findAll({
+            attributes: [
+                "id",
+                "comments",
+                "UserId",
+                "PostId",
+                "createdAt",
+                "updatedAt"
             ],
+            order: [order != null ? order.split(":") : ["createdAt", "DESC"]],
+            where: {
+                postId: req.params.id
+            },
             include: [{
-                model: User,
-                attributes: ["firstName", "lastName", "avatar"]
-            }],
-        })
-        .then((comment) => {
-            res.status(200).send(comment)
-        })
-        .catch((error) => res.status(500).send({
-            error
-        }))
+                model: models.User,
+                attributes: ["username"]
+            }]
+        });
+        if (comments) {
+            res.status(200).send({
+                message: comments
+            });
+        } else {
+            throw new Error("Aucun commentaire à afficher");
+        }
+    } catch (error) {
+        res.status(400).json({
+            error: error.message
+        });
+    }
+};
 
-}
-
-// Suppression 1 comm
-exports.deleteComment = (req, res) => {
-    const decodedId = getTokenUserId(req) // recup id
-
-    Comment.findOne({
+exports.deleteComment = async (req, res) => {
+    try {
+        const commentFound = await models.Comment.findOne({
+            attributes: [
+                "id",
+                "comments",
+                "UserId",
+                "PostId",
+                "createdAt",
+                "updatedAt"
+            ],
             where: {
                 id: req.params.id
             }
-        })
-        .then((comment) => {
-            //check if user is the author of the article or is admin
-            if (comment.UserId === decodedId || checkAdmin(decodedId)) {
-                Comment.destroy({
-                        where: {
-                            id: req.params.id
-                        }
-                    })
-                    .then(() => res.status(200).send("Commentaire supprimé avec succès"))
-                    .catch((error) => res.status(500).send({
-                        error
-                    }))
-            } else {
-                res.status(403).send("Erreur authentification")
+        });
+
+        if (!commentFound) {
+            throw new Error("Erreur, aucun commentaire");
+        }
+
+        await models.Comment.destroy({
+            where: {
+                id: req.params.id
             }
-        })
-        .catch((error) => res.status(500).send({
-            error
-        }))
-}
+        });
+        res.status(200).json({
+            message: "Supprimé ! "
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: error.message
+        });
+    }
+};

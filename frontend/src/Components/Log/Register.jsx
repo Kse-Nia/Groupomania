@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Axios from "axios";
+
+import { UserContext } from "../Context";
 
 // Material UI
 import Avatar from "@mui/material/Avatar";
@@ -15,49 +17,41 @@ import Container from "@mui/material/Container";
 
 const Register = () => {
   // Hook states
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [ctrlPassword, setCtrlPassword] = useState("");
+
+  const [redirect, setRedirect] = useState(false);
+  const { setProfile, handleAlert } = useContext(UserContext);
 
   const handleRegister = async (event) => {
     event.preventDefault();
     const fieldError = document.querySelector(".fieldError");
     const passConfirmError = document.querySelector(".passConfirmError");
 
+    function redirect() {
+      history.push("/login");
+    }
+
     fieldError.innerHTML = "";
     passConfirmError.innerHTML = "";
 
-    if (
-      password !== ctrlPassword ||
-      firstName == null ||
-      lastName == null ||
-      email == null
-    ) {
+    if (password !== ctrlPassword || username == null || email == null) {
       if (password !== ctrlPassword) {
         passConfirmError.innerHTML =
           "Veillez entrer des mots de passe identifiques";
       }
-      if (firstName == null || lastName == null || email == null) {
+      if (username == null || lastName == null || email == null) {
         fieldError.innerHTML = "Veillez remplir toutes les données";
       } else {
-        await Axios({
-          method: "post",
-          url: "http://localhost:7001/home/register",
-          data: {
-            firstName,
-            lastName,
-            email,
-            password,
-          },
-        })
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+        Axios.post("http://localhost:7001/home/register", {
+          username: username,
+          email: email,
+          password: password,
+        }).then((response) => {
+          redirect();
+        });
       }
     }
   };
@@ -66,6 +60,7 @@ const Register = () => {
     <div>
       <CssBaseline />
       <Box
+        onSubmit={handleRegister}
         sx={{
           marginTop: 8,
           display: "flex",
@@ -79,12 +74,7 @@ const Register = () => {
         <Typography component="h1" variant="h5">
           S'inscrire
         </Typography>
-        <Box
-          component="form"
-          onSubmit={handleRegister}
-          noValidate
-          sx={{ mt: 1 }}
-        >
+        <Box component="form" noValidate sx={{ mt: 1 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -93,24 +83,12 @@ const Register = () => {
                 required
                 fullWidth
                 id="firstName"
-                label="Prénom"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
+                label="Pseudo"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
                 autoFocus
               />
               <div className="fieldError"></div>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="lastName"
-                label="Nom"
-                name="lastName"
-                autoComplete="family-name"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
-              />
             </Grid>
             <Grid item xs={12}>
               <TextField

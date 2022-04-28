@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Axios from "axios";
+import { UserContext } from "../Context";
+
+// Material UI
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,17 +16,18 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 const Login = () => {
+  const [login, setLogin] = useState({ email: "", password: "" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setProfile, handleAlert } = useContext(UserContext);
+  const [redirect, setRedirect] = useState(false);
 
-  const handleLogin = (event) => {
-    event.preventDefault(); // prévenir le rechargement page
-    /*  const emailError = document.querySelector(".email.error");
-    const passwordError = document.querySelector(".password.error"); */
+  const handleLogin = (e) => {
+    e.preventDefault();
 
     Axios({
       method: "post",
-      url: `${process.env.REACT_APP_URL}home/login`,
+      url: `${process.env.REACT_APP_URL}/api/users//login`,
       withCredentials: true,
       data: {
         email,
@@ -31,18 +35,12 @@ const Login = () => {
       },
     })
       .then((res) => {
-        if (res.data.errors) {
-          emailError.innerHTML = res.data.errors.email;
-          passwordError.innerHTML = res.data.errors.password;
-        } else {
-          window.location = "/";
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("firstName", user.firstName);
-          localStorage.setItem("lastName", user.lastName);
-        }
+        localStorage.setItem("token", res.data.token);
+        setProfile(res.data.user);
+        setRedirect(true);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        handleAlert("Error!", error.response.data.error);
       });
   };
 
@@ -87,8 +85,8 @@ const Login = () => {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={(e) => setPassword(e.target.value)}
             value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <div className="password errors"></div>
           <Button

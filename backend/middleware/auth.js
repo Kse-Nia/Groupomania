@@ -1,19 +1,23 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/database');
+const jwt = require("jsonwebtoken");
+const models = require("../models");
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodeToken = jwt.verify(token, config.tokenKey);
-        const userId = decodeToken.userId;
-        if (req.body.userId && req.body.userId !== userId) {
-            throw 'User ID invalid';
-        } else {
-            next();
+        const token = req.headers.authorization.split(" ")[1];
+        const decodedToken = jwt.verify(token, "SECRET_KEY");
+        const user = await models.User.findOne({
+            where: {
+                id: decodedToken.id
+            }
+        });
+        if (!user) {
+            throw new Error("invalid");
         }
-    } catch (error) {
+        req.user = user;
+        next();
+    } catch (err) {
         res.status(401).json({
-            error: error | 'Requête non authentifiée'
+            error: "A token must be provided"
         });
     }
-}
+};

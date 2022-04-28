@@ -8,17 +8,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id_post: {
-        type: Sequelize.UUID
-      },
       title: {
         type: Sequelize.STRING
       },
-      body: {
+      content: {
         type: Sequelize.STRING
       },
-      id_user: {
-        type: Sequelize.UUID
+      isModerate: {
+        type: Sequelize.BOOLEAN
+      },
+      attachment: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
