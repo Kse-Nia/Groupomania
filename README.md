@@ -6,7 +6,7 @@ L'objectif est de réaliser le frontend et le backend d'un réseau social pour l
 HTML / SASS / NodeJs / Express / Sequelize /
 Framework: REACT :atom_symbol:
 
-## Installation du projet
+## Lancement du projet
 
 - dans le dossier backend: nodemon server
 - dans le dossier frontend: npm start
