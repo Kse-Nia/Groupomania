@@ -1,31 +1,33 @@
-const express = require("express");
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const app = express()
+app.use(cors());
+
+
+app.use(helmet());
+app.use(express.json());
+
+const userRoutes = require('./Routes/user.routes');
+const postRoutes = require('./Routes/post.routes');
+const commentRoutes = require('./Routes/comment.routes');
 const path = require("path");
-const helmet = require("helmet");
-require("dotenv").config();
-const userRoutes = require('./routes/user.routes');
-const postRoutes = require('./routes/post.routes');
-const commentRoutes = require('./routes/comment.routes');
 
 
-const app = express();
+const {
+    Sequelize
+} = require('sequelize');
 
+// CORS
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-    );
-    res.setHeader(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    ); // Liste requêtes autorisées //
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
 
-app.use(express.json());
-
-// Partie config Sequelize
-const sequelize = require('./config/database');
+// Partie config BDD
+const sequelize = require('./config/DB');
 
 sequelize.sync().then(result => {
     console.log(result)
@@ -33,15 +35,13 @@ sequelize.sync().then(result => {
     console.log(err)
 });
 
+// file route
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
-/// APP
-
-app.use(express.json());
-
-
-app.use('/user', userRoutes);
+// Routes
+app.use('/home', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 module.exports = app;

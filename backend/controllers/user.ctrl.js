@@ -1,15 +1,69 @@
-const bcrypt = require('bcrypt'); // hash password
-const jwt = require('jsonwebtoken');
-const db = require("../models");
-const User = db.User;
-const Administrator = db.Administrator;
-const fs = require('fs');
-secretTokenKey = process.env.TOKEN_SECRET;
+require("dotenv").config();
+const DB = require("../models");
+const User = DB.User;
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
-exports.register = (req, res) => {
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
+secretToken = process.env.TOKEN_SECRET;
+
+// Recup User Id token
+const getTokenUserId = (req) => {
+    const token = req.headers.authorization.split(" ");
+    const decodedToken = jwt.verify(token[1], secretToken);
+    const decodedId = decodedToken.userId;
+    return decodedId;
+}
+
+//Check admin/user
+let admin = false;
+const checkAdmin = (decodedId) => {
+    User.findOne({
+        where: {
+            id: decodedId
+        }
+    }).then((user) => (admin = user.isAdmin))
+    return admin
+}
+
+/* exports.register = async (req, res) => {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.passwordConfirm) {
+        return res.status(403).send("Veillez remplir toutes les données")
+    }
+
+       let imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+       if (!req.file) {
+           imageUrl = `${req.protocol}://${req.get("host")}/images/defaultProfile.png`;
+       }
+
+    // Hash password 10 fois
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hash,
+              imageUrl: imageUrl,
+        }
+
+        User.create(user)
+            .then((valid) => {
+                if (!valid) {
+                    return res.status(500).send("Error")
+                }
+                res.status(200).send("Compte créé")
+            })
+            .catch(() => res.status(403).send("Cet email est déjà utilisé"))
+    })
+} 
+*/
+
+exports.register = async (req, res) => {
+    if (!req.body.firstName && !req.body.lastName && !req.body.email && !req.body.password && !req.body.controlPassword) {
         return res.status(403).send("Veillez remplir tous les champs")
     }
+
+    let imageUrl = `${req.protocol}://${req.get("host")}/images/efaultProfile.png`;
 
     // crypt password
     bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -18,132 +72,249 @@ exports.register = (req, res) => {
             lastName: req.body.lastName,
             email: req.body.email,
             password: hash,
+            imageUrl: imageUrl,
         }
+
         User.create(user)
-            .then((valid) => {
-                if (!valid) {
-                    return res.status(500).send("Problème lors de la création du compte")
-                }
-                res.status(200).send("Compte créé avec succès")
+            .then(() => {
+                res.status(201).json({
+                    message: "Compte créé"
+                })
             })
-            .catch(() => res.status(403).send("User existe déjà."))
+            .catch(error => res.status(400).json({
+                error
+            }));
     })
 }
 
-exports.login = (req, res) => {
+exports.login = (req, res, next) => {
     User.findOne({
             where: {
                 email: req.body.email
             }
         })
         .then((user) => {
-            if (!user) return res.status(403).send("Utilisateur introuvabls")
-            // User trouvé, compare password
+            if (!user) return res.status(403).send("Can't find Account")
+
+            // Compare hash
             bcrypt.compare(req.body.password, user.password).then((valid) => {
-                if (!valid) return res.status(403).send("Password incorrect")
+                if (!valid) return res.status(403).send("Wrong password")
                 res.status(200).send({
-                    user: user.id,
+                    UserId: user.id,
                     token: jwt.sign({
-                        userId: user.id
-                    }, `${process.env.TOKEN_SECRET}`, {
-                        expiresIn: "24h"
+                        UserId: user.id
+                    }, secretToken, {
+                        expiresIn: "3h"
                     }),
-                    email: req.body.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    isAdmin: user.isAdmin,
                     isAuthenticated: true,
                 })
             })
         })
-        .catch(() => res.status(500).send({
+        .catch((error) => res.status(500).send({
             error
         }))
 }
 
-exports.getUser = (req, res, next) => {
-    User.findOne({
-            where: {
-                id: req.params.id
-            }
+
+// Recup Users
+exports.getAllUsers = (req, res) => {
+    User.findAll({
+            order: [
+                ["firstName", "ASC"]
+            ],
         })
-        .then((user) => res.status(200).json(user))
-        .catch((error) =>
-            res.status(400).json({
-                message: "Utilisateur introuvable " + error,
-            })
-        )
+        .then((users) => {
+            let result = []
+            for (i in users) {
+                let firstName = users[i].firstName;
+                let lastName = users[i].lastName;
+                let email = users[i].email;
+                let imageUrl = users[i].imageUrl;
+                result.push({
+                    firstName,
+                    lastName,
+                    email,
+                    imageUrl
+                })
+            }
+            res.status(200).json(result)
+        })
+        .catch((err) => res.status(500).send({
+            err
+        }))
 }
-
-exports.modifyUser = (req, res, next) => {
-    if (req.file) { //si on reçois un fichier, on verifie l'existence d'un précédent et on le supprime
-        User.findByPk(req.params.id_user)
-            .then(user => {
-                if (user.avatar) {
-                    const filename = user.avatar.split('/images/avatars/')[1];
-                    fs.unlink(`images/avatars/${filename}`, () => {
-                        console.log('Image supprimée')
-                    });
-                }
-            })
-            .catch(error => res.status(400).json({
-                error
-            }));
-    };
-
-    const user = req.file ? {
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        service: req.body.service,
-        avatar: `${req.protocol}://${req.get('host')}/images/avatars/${req.file.filename}`
-    } : {
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        service: req.body.service
-    };
-
-    User.update(user, {
-            where: {
-                id_user: req.params.id_user
-            }
-        })
-        .then(() => res.status(200).json({
-            message: 'Compte utilisateur modifié !'
-        }))
-        .catch((error) => res.status(500).json({
-            error
-        }));
-};
-
-// Suppression du compte
-exports.deleteUser = (req, res, next) => {
-    User.destroy({
-            where: {
-                id_user: req.params.id_user
-            }
-        })
-        .then(() => res.status(200).json({
-            message: 'Compte supprimé avec succès'
-        }))
-        .catch((error) => res.status(500).json({
-            error
-        }));
-};
 
 // Partie Admin
-exports.getAdministrator = (req, res, next) => {
-    Administrator.findOne({
+exports.deleteOneUser = (req, res) => {
+    const decodedId = getTokenUserId(req);
+    User.findOne({
             where: {
-                id_user: req.params.id_user
+                email: req.params.email
             }
         })
-        .then(administrator => {
-            if (administrator) {
-                res.status(200).json({
-                    administrator: true
-                });
-            } else res.status(200).json({
-                administrator: false
-            });
+        .then((user) => {
+            // Check Admin/User
+            if (checkAdmin(decodedId)) {
+                const filename = user.imageUrl.split("/images/")[1] //Delete avatar
+                if (!filename === "defaultProfile.png") {
+                    fs.unlink(`./images/${filename}`, () => {})
+                }
+                User.destroy({
+                        where: {
+                            id: user.id
+                        }
+                    })
+                    .then(() => res.status(200).send("Compte supprimé"))
+                    .catch((error) => res.status(500).send({
+                        error
+                    }))
+            } else {
+                res.status(403).send("Error")
+            }
         })
-        .catch(error => res.status(400).json({
-            error
-        }));
-};
+        .catch((err) => res.status(500).send({
+            err
+        }))
+}
+
+exports.delete = (req, res) => {
+    const decodedId = getTokenUserId(req) // Recup id
+
+    User.findOne({
+            where: {
+                id: decodedId
+            }
+        })
+        .then((user) => {
+            if (user.id === decodedId && !checkAdmin(decodedId)) {
+                const filename = user.imageUrl.split("/images/")[1]
+                if (!filename === "defaultProfile.png") {
+                    fs.unlink(`./images/${filename}`, () => {})
+                }
+                User.destroy({
+                        where: {
+                            id: user.id
+                        }
+                    })
+                    .then(() => res.status(200).send("Compte supprimé.."))
+                    .catch((err) => res.status(500).send({
+                        err
+                    }))
+            } else {
+                res.status(403).send("Error")
+            }
+        })
+        .catch((err) => res.status(500).send({
+            err
+        }))
+}
+
+exports.modifyProfile = (req, res) => {
+    if (!req.body.firstName || !req.body.lastName) {
+        return res.status(403).send("Veillez saisir au moins une donnée");
+    }
+
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        User.findOne({
+                where: {
+                    id: req.body.id
+                }
+            })
+            .then((user) => {
+                // Data
+                let newUser = {
+                    ...req.body
+                }
+                if (req.imageUrl) {
+                    // delete old picture
+                    const oldFilename = user.imageUrl.split("/images/")[1]
+                    if (oldFilename !== "defaultProfile.png") {
+                        fs.unlink(`./images/${oldFilename}`, () => {})
+                    }
+                    newUser = {
+                        ...newUser,
+                        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.imageUrl.filename}`
+                    }
+                }
+                return newUser;
+            })
+            .then((newUser) => {
+                return User.update({
+                    ...newUser,
+                }, {
+                    where: {
+                        id: decodedId
+                    }
+                }).catch((err) => res.status(500).send({
+                    err
+                }))
+            })
+            .then(() => {
+                return User.findOne({
+                    where: {
+                        id: decodedId
+                    }
+                })
+            })
+            .then((user) => {
+                res.status(200).send({
+                    user: user.id,
+                    token: jwt.sign({
+                        UserId: user.id
+                    }, secretToken, {
+                        expiresIn: "3h"
+                    }),
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    imageUrl: user.imageUrl,
+                    isAdmin: user.isAdmin,
+                    isAuthenticated: true,
+                })
+            })
+            .catch((err) => res.status(500).send({
+                err
+            }))
+    })
+}
+
+exports.modifyPass = (req, res) => {
+    if (!req.body.oldPassword || !req.body.password || !req.body.controlPassword) {
+        return res.status(403).send("Veillez saisir toutes les données")
+    };
+
+    const decodedId = getTokenUserId(req);
+
+    User.findOne({
+            where: {
+                id: decodedId
+            }
+        })
+        .then((user) => {
+            if (!user) return res.status(403).send("Compte introuvable")
+            bcrypt
+                .compare(req.body.oldPassword, user.password)
+                .then((valid) => {
+                    if (!valid) return res.status(403).send("Mauvais mot de passe")
+                    bcrypt.hash(req.body.controlPassword, 10, (err, hash) => {
+                        User.update({
+                                password: hash,
+                            }, {
+                                where: {
+                                    id: decodedId
+                                }
+                            })
+                            .then(() => {
+                                return res.status(200).send("Mot de passe modifié!")
+                            })
+                            .catch((err) => console.log(err))
+                    })
+                })
+                .catch((err) => console.log(err))
+        })
+        .catch((err) => res.status(500).send(err))
+}

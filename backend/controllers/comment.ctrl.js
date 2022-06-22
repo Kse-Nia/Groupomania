@@ -1,21 +1,19 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const db = require('../models');
-const User = db.User;
-const Comment = db.Comment;
+const models = require("../models");
+const User = models.User;
+const Comment = models.Comment;
+secretTokenKey = process.env.TOKEN_SECRET;
 
-// Partie Sécurité
-require("dotenv").config()
-secretToken = process.env.TOKEN_SECRET
-
-// Recup Sser ID by token
+// Get Token User
 const getTokenUserId = (req) => {
-    const token = req.headers.authorization.split(" ");
-    const decodedToken = jwt.verify(token[1], secretToken);
-    const decodedId = decodedToken.userId;
-    return decodedId;
+    const token = req.headers.authorization.split(" ")
+    const decodedToken = jwt.verify(token[1], secretTokenKey)
+    const decodedId = decodedToken.userId
+    return decodedId
 }
 
-// Check Admin ou pas
+// Check Admin/User
 let admin = false
 const checkAdmin = (decodedId) => {
     User.findOne({
@@ -26,39 +24,40 @@ const checkAdmin = (decodedId) => {
     return admin
 }
 
-// Nouveau com
+// Create Com
 exports.createComment = (req, res) => {
     if (!req.body) return res.status(403).send("Erreur");
-    const decodedId = getTokenUserId(req) // recupération id
+    const decodedId = getTokenUserId(req) // recup ID
 
-    // Création comm
+    // Create comment
     const comment = {
-        text: req.body.body,
+        text: req.body.text,
         UserId: decodedId,
-        CommentId: req.params.id
+        PostId: req.params.id
     }
 
     Comment.create(comment)
         .then(() => {
-            res.send("Commentaire posté")
+            res.send("Commentaire créé")
         })
         .catch((error) => res.status(500).send({
             error
         }))
 }
 
-// Affiche tous les comm
+// Get all comments
 exports.getAllComments = (req, res) => {
+    // Recup Comment avec info User
     Comment.findAll({
             where: {
-                CommentId: req.params.id
+                PostId: req.params.id
             },
             order: [
                 ["createdAt", "DESC"]
             ],
             include: [{
                 model: User,
-                attributes: ["firstName", "lastName", "avatar"]
+                attributes: ["username"]
             }],
         })
         .then((comment) => {
@@ -70,9 +69,9 @@ exports.getAllComments = (req, res) => {
 
 }
 
-// Suppression 1 comm
+// Delete Com
 exports.deleteComment = (req, res) => {
-    const decodedId = getTokenUserId(req) // recup id
+    const decodedId = getTokenUserId(req); // recup Id
 
     Comment.findOne({
             where: {
@@ -80,19 +79,18 @@ exports.deleteComment = (req, res) => {
             }
         })
         .then((comment) => {
-            //check if user is the author of the article or is admin
             if (comment.UserId === decodedId || checkAdmin(decodedId)) {
                 Comment.destroy({
                         where: {
                             id: req.params.id
                         }
                     })
-                    .then(() => res.status(200).send("Commentaire supprimé avec succès"))
+                    .then(() => res.status(200).send("Commentaire supprimé"))
                     .catch((error) => res.status(500).send({
                         error
                     }))
             } else {
-                res.status(403).send("Erreur authentification")
+                res.status(403).send("Erreur")
             }
         })
         .catch((error) => res.status(500).send({

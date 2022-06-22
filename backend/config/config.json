@@ -1,23 +1,23 @@
 {
-  "development": {
+	"development": {
+	  "username": "kseniya",
+	  "password": "password",
+	  "database": "MERN3",
+	  "host": "localhost",
+	  "dialect": "mysql"
+	},
+	"test": {
     "username": "kseniya",
-    "password": "password",
-    "database": "MERN",
-    "host": "localhost",
-    "dialect": "mysql"
-  },
-  "test": {
+	  "password": "password",
+	  "database": "MERN3",
+	  "host": "localhost",
+	  "dialect": "mysql"
+	},
+	"production": {
     "username": "kseniya",
-    "password": "password",
-    "database": "MERN",
-    "host": "localhost",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "kseniya",
-    "password": "password",
-    "database": "MERN",
-    "host": "localhost",
-    "dialect": "mysql"
+	  "password": "password",
+    "database": "MERN3",
+	  "host": "localhost",
+	  "dialect": "mysql"
+	}
   }
-}

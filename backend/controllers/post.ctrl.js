@@ -1,115 +1,134 @@
-const User = require('../models/user');
-const Post = require('../models/post');
-const PostAdmin = require('../models/admin');
+require("dotenv").config()
+secretTokenKey = process.env.TOKEN_SECRET;
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
+const models = require("../models");
+const Post = models.Post;
+const User = models.User;
 
-exports.getAllPost = (req, res, next) => { // Ordr décroissant date de publication
-    Post.findAll({
-            where: {
-                id_post: {
-                    [Op.notIn]: sequelize.literal(`(SELECT id_post FROM posts_admin)`)
-                }
-            },
-            include: [{
-                model: User,
-                attributes: ['id_user', 'firstname', 'lastname', 'service', 'avatar']
-            }],
-            order: [
-                ['createdAt', 'DESC']
-            ]
-        })
-        .then(posts => res.status(200).json(posts))
-        .catch(error => res.status(400).json({
-            error
-        }));
+// Get UserId by token
+const getTokenId = (req) => {
+    const token = req.headers.authorization.split(" ");
+    const decodedToken = jwt.verify(token[1], secretTokenKey);
+    const decodedId = decodedToken.userId;
+    return decodedId
 };
 
-exports.getOnePost = (req, res, next) => {
+/* const getTokenId = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+}; */
+
+
+// Check Admin/User
+let admin = false;
+const checkAdmin = (decodedId) => {
+    User.findOne({
+        where: {
+            id: decodedId
+        }
+    }).then((user) => (admin = user.isAdmin))
+    return admin;
+}
+
+// Create Post
+exports.createPost = (req, res) => {
+    const decodedId = getTokenId(req);
+    if (!req.body) return res.status(403).send("Erreur, aucune donnée");
+
+    // Verif s'il y a une image
+    let picturePost = "";
+    if (req.file) {
+        picturePost = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    }
+
+    const post = {
+        UserId: req.body.UserId,
+        author: decodedId,
+        text: req.body.text,
+        picture: picturePost,
+    }
+
+    Post.create(post)
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((error) => res.status(500).send({
+            error
+        }))
+}
+
+// Get all Posts
+exports.getAllPosts = (req, res) => {
+    // Recup Posts + info User
+    Post.findAll({
+            order: [
+                ["createdAt", "DESC"]
+            ],
+            include: [{
+                model: User,
+                attributes: ["firstName", "lastName", "photo"]
+            }],
+        })
+        .then((posts) => {
+            res.status(200).send(posts)
+        })
+        .catch((error) => res.status(500).send({
+            error
+        }))
+}
+
+// Get One Post
+exports.getOnePost = (req, res) => {
     Post.findOne({
             where: {
-                id_post: req.params.id_post
+                id: req.params.id
             },
             include: [{
                 model: User,
-                attributes: ['id_user', 'firstname', 'lastname', 'service', 'avatar']
-            }]
+                attributes: ["firstName", "lastName", "photo"]
+            }],
         })
-        .then(post => res.status(200).json(post))
-        .catch(error => res.status(400).json({
+        .then((post) => {
+            res.send(post)
+        })
+        .catch((error) => res.status(500).send({
             error
-        }));
-};
-
-
-// Créer Post
-exports.createPost = (req, res, next) => {
-    Post.create({
-            title: req.body.title,
-            image_url: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`,
-            id_user: req.body.id_user
-        })
-        .then(() => res.status(201).json({
-            message: 'Post publié'
         }))
-        .catch((error) => res.status(500).json({
-            error
-        }));
-};
+}
 
-exports.modifyPost = (req, res, next) => {
-    Post.update({
-            title: req.body.title
-        }, {
+// Delete Post
+exports.deletePost = (req, res) => {
+    const decodedId = getTokenId(req) // get ID
+    Post.findOne({
             where: {
-                id_post: req.params.id_post
+                id: req.params.id
             }
         })
-        .then(() => res.status(200).json({
-            message: 'Post modifié'
-        }))
-        .catch((error) => res.status(500).json({
-            error
-        }));
-};
-
-// Suppression
-exports.deletePost = (req, res, next) => {
-    Post.destroy({
-            where: {
-                id_post: req.params.id_post
+        .then((post) => {
+            if (post.id === decodedId || checkAdmin(decodedId)) {
+                const filename = post.picture.split("/images/")[1] // Suppression File si suppression du Post
+                fs.unlink(`./images/${filename}`, () => {
+                    Post.destroy({
+                            where: {
+                                id: req.params.id
+                            }
+                        })
+                        .then(() => res.status(200).send("Post supprimé"))
+                        .catch((error) => res.status(403).send({
+                            error
+                        }))
+                })
+            } else {
+                res.status(403).send("Erreur")
             }
         })
-        .then(() => res.status(200).json({
-            message: 'Post supprimé'
-        }))
-        .catch((error) => res.status(500).json({
+        .catch((error) => res.status(500).send({
             error
-        }));
-};
+        }))
 
-// Partie Admin
-exports.adminPost = (req, res, next) => {
-    if (req.body.admin) {
-        PostAdmin.create({
-                id_post: req.params.id_post
-            })
-            .then(() => res.status(201).json({
-                message: 'Post modéré'
-            }))
-            .catch((error) => res.status(500).json({
-                error
-            }));
-    } else {
-        PostAdmin.destroy({
-                where: {
-                    id_post: req.params.id_post
-                }
-            })
-            .then(() => res.status(200).json({
-                message: 'Supprimé'
-            }))
-            .catch((error) => res.status(500).json({
-                error
-            }));
-    };
-};
+}
