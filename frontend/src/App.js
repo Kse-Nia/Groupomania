@@ -1,50 +1,57 @@
+import * as React from "react";
+import { Routes, Route } from "react-router-dom";
+
 import "./App.css";
-import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom"; // anciennement Switch, History
 
-import Auth from "./Pages/Auth";
-import Profile from "./Pages/Profile";
-import Dashboard from "./Pages/Dashboard";
+// Pages
+import {
+  Home,
+  Dashboard,
+  MissingPage,
+  MembersPage,
+  ProfilePage,
+  PostPage,
+} from "./Pages/index";
 
-// Test
-import Register from "./Pages/Register";
-import Navbar from "./Components/Navbar/Navbar";
+import { initialAuth, AuthReducer } from "./Utils/Auth";
+export const AuthContext = React.createContext();
 
 function App() {
-  const [auth, setAuth] = useState(null);
+  const [AuthState, dispatchAuthState] = React.useReducer(
+    AuthReducer,
+    initialAuth
+  );
 
-  useEffect(() => {
-    let user = localStorage.getItem("email");
-    user && JSON.parse(user) ? setAuth(true) : setAuth(false);
-  }, []);
+  let routes;
 
-  useEffect(() => {
-    localStorage.setItem("email", auth);
-  }, [auth]);
+  if (AuthState.isAuthenticated) {
+    routes = (
+      <Routes>
+        <Route path="/dashboard" exact element={<Dashboard />} />
+        <Route path="/profile" exact element={<ProfilePage />} />
+        <Route path="/members" exact element={<MembersPage />} />
+        <Route path="/posts" exact element={<PostPage />} />
+        <Route path="*" element={<MissingPage />} />
+      </Routes>
+    );
+  } else {
+    routes = (
+      <Routes>
+        <Route path="/home" exact element={<Home />} />
+        <Route path="*" exact element={<MissingPage />} />
+      </Routes>
+    );
+  }
 
   return (
-    <Routes>
-      {!auth && (
-        <>
-          <Route path="/user/register" element={<Register />} />
-          <Route
-            path="/user/login"
-            element={<Auth authenticate={() => setAuth(true)} />}
-          />
-        </>
-      )}
-
-      {auth && (
-        <>
-          <Route
-            path="/profile"
-            element={<Profile logout={() => setAuth(false)} />}
-          />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </>
-      )}
-      <Route path="*" element={<Navigate to={auth ? "/profile" : "/auth"} />} />
-    </Routes>
+    <AuthContext.Provider
+      value={{
+        AuthState,
+        dispatchAuthState,
+      }}
+    >
+      {routes}{" "}
+    </AuthContext.Provider>
   );
 }
 

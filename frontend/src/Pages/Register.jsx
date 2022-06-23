@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Axios from "axios";
+
 // MAterial UI
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,10 +15,6 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-// Color
-import { deepOrange } from "@mui/material/colors";
-const color = deepOrange[500];
 
 const theme = createTheme();
 
@@ -34,7 +31,7 @@ export default function Register() {
     console.log(password);
 
     Axios.post(
-      "http://localhost:7001/user/register",
+      "http://localhost:7001/home/register",
       {
         firstName: firstName,
         lastName: lastName,

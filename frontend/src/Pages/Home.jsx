@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from "react";
+import LogModal from "../Components/Log/LogModal";
 
 const Home = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return (
+    <div>
+      <LogModal />
+    </div>
+  );
 };
 
 export default Home;
