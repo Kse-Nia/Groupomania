@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import api from "../../API/index";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -72,7 +73,7 @@ const Register = (props) => {
             });
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           if (error.response) {
             // Request made and server responded
             console.log(error.response.data);
