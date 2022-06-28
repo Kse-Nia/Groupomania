@@ -40,17 +40,17 @@ exports.createPost = (req, res) => {
     const decodedId = getTokenId(req);
     if (!req.body) return res.status(403).send("Erreur, aucune donnée");
 
-    // Verif s'il y a une image
-    let picturePost = "";
+    // Verif si image
+    let imageUrl = "";
     if (req.file) {
-        picturePost = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     }
 
     const post = {
         UserId: req.body.UserId,
-        author: decodedId,
-        text: req.body.text,
-        picture: picturePost,
+        /*    author: decodedId, */
+        content: req.body.content,
+        imageUrl: imageUrl,
     }
 
     Post.create(post)
@@ -71,7 +71,7 @@ exports.getAllPosts = (req, res) => {
             ],
             include: [{
                 model: User,
-                attributes: ["firstName", "lastName", "photo"]
+                attributes: ["firstName", "lastName", "imageUrl"]
             }],
         })
         .then((posts) => {
@@ -90,7 +90,7 @@ exports.getOnePost = (req, res) => {
             },
             include: [{
                 model: User,
-                attributes: ["firstName", "lastName", "photo"]
+                attributes: ["firstName", "lastName", "imageUrl"]
             }],
         })
         .then((post) => {
@@ -111,7 +111,7 @@ exports.deletePost = (req, res) => {
         })
         .then((post) => {
             if (post.id === decodedId || checkAdmin(decodedId)) {
-                const filename = post.picture.split("/images/")[1] // Suppression File si suppression du Post
+                const filename = post.imageUrl.split("/images/")[1] // Suppression File si suppression du Post
                 fs.unlink(`./images/${filename}`, () => {
                     Post.destroy({
                             where: {

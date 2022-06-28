@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
+
 //  CSS
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -19,18 +20,16 @@ import { AuthContext } from "../../App";
 import Navbar from "../Navbar/Navbar";
 
 const TestPost = (props) => {
-  const { AuthState } = useContext(AuthContext); // use global state of authContext
-  const [media, setMedia] = useState(null); // state of media input choice
-  const [selectedFile, setSelectedFile] = useState(); // state of uploaded file
-  const [errorMessage, setErrorMessage] = useState(null); // set error message
+  const { AuthState } = useContext(AuthContext);
+  const [imageUrl, setImageUrl] = useState(); // File state
+  const [errorMessage, setErrorMessage] = useState(null); // Error message
 
-  // personalize the welcome message text input with user name
-  const [placeHolderText, setPlaceHolderText] = useState("Quoi de neuf ?");
+  const [content, setContent] = useState("Ecrire quelques mots..");
   useEffect(() => {
-    setPlaceHolderText(`Quoi de neuf ${AuthState.firstName} ?`);
+    setContent("Ecrire quelques mots...");
   }, [AuthState]);
 
-  // submit the form and request
+  // Submit
   function handleFormSubmit(values, resetForm) {
     const formData = new FormData();
     formData.append("author", AuthState.user);
@@ -40,8 +39,8 @@ const TestPost = (props) => {
       method: "post",
       url: "http://localhost:8080/api/posts/post",
       data: {
-        placeHolderText,
-        selectedFile,
+        content,
+        imageUrl,
       },
       headers: {
         "Content-Type": "multipart/form-data",
@@ -51,21 +50,17 @@ const TestPost = (props) => {
       .then(() => {
         resetForm();
         setErrorMessage(null);
-        setSelectedFile();
-        setMedia("default");
-        props.setArticlesRefresh(true);
+        setImageUrl();
+        props.setPostRefresh(true);
       })
-      .catch(function (error) {
+      .catch(function(error) {
         if (error.response) {
-          // Request made and server responded
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log("Error", error.message);
         }
       });
@@ -75,11 +70,11 @@ const TestPost = (props) => {
     <div>
       <Navbar />
       <Card>
-        <h1>Nouveau Post</h1>
+        <Typography variant="h4">Créer un nouveau Post</Typography>
         <Formik
           initialValues={{ text: "" }}
           onSubmit={(values, { resetForm }) => {
-            if (values.text === "" && !selectedFile) {
+            if (values.content === "" && !imageUrl) {
               setErrorMessage("Veuillez remplir au moins 1 champs");
               return;
             }
@@ -91,7 +86,7 @@ const TestPost = (props) => {
               <Field
                 name="text"
                 type="textarea"
-                placeholder={placeHolderText}
+                placeholder={content}
                 style={{ height: "70px" }}
               />
               <ErrorMessage
@@ -104,7 +99,7 @@ const TestPost = (props) => {
               <div>
                 <Field
                   name="picture"
-                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                  onChange={(e) => setImageUrl(e.target.files[0])}
                   type="file"
                   accept=".jpg, .jpeg, .png, .gif"
                 />
@@ -115,9 +110,10 @@ const TestPost = (props) => {
                 className="errorInput"
               />
             </div>
-
             <button
               type="submit"
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
               title="Envoyer les données"
               aria-label="valider le post"
             >

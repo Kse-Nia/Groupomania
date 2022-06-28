@@ -38,7 +38,7 @@ const Login = () => {
             type: "Login",
             payload: res.data,
           });
-          navigate.push("/profile");
+          navigate.push("/dashboard");
         }
       })
       .catch((error) => {

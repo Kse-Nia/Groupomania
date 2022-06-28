@@ -3,13 +3,18 @@
   text-decoration: none;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .App {
   min-width: 100%;
   min-height: 100%;
-  background-image: linear-gradient(-60deg, #ff5858 0%, #f09819 100%);
 }
 
 body {
+  color: #2a2a2a;
+  background-color: #eff0f3;
   min-height: 100%;
 }
 
@@ -62,8 +67,9 @@ body {
 }
 
 .formContainer ul li {
-  background: blue;
-  color: white;
+  background: #eff0f3;
+  border: solid 1 px #283593;
+  text-align: center;
   width: 50%;
   min-height: 40px;
   padding: 0;
@@ -75,11 +81,11 @@ body {
 }
 
 .formContainer ul li:hover {
-  background: red;
+  background: #4753b2;
 }
 
 .formContainer .active-btn {
-  background: red;
+  background: #3542a7;
 }
 
 .formContainer form {
