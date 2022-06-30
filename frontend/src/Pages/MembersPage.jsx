@@ -1,13 +1,13 @@
 import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
-import UserMap from "../Components/Members/UserMap";
+import Users from "../Components/Members/Users";
 
 const MembersPage = () => {
   return (
     <React.Fragment>
       <Navbar />
       <main>
-        <UserMap />
+        <Users />
       </main>
     </React.Fragment>
   );

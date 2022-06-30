@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-
 //  CSS
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -17,19 +16,19 @@ import { Avatar, Card } from "@mui/material";
 
 // Components
 import { AuthContext } from "../../App";
-import Navbar from "../Navbar/Navbar";
 
 const TestPost = (props) => {
   const { AuthState } = useContext(AuthContext);
-  const [imageUrl, setImageUrl] = useState(); // File state
-  const [errorMessage, setErrorMessage] = useState(null); // Error message
+  const [media, setMedia] = useState(null);
+  const [imageUrl, setImageUrl] = useState();
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const [content, setContent] = useState("Ecrire quelques mots..");
+  // personalize the welcome message text input with user name
+  const [content, setContent] = useState("Quoi de neuf ?");
   useEffect(() => {
-    setContent("Ecrire quelques mots...");
+    setContent(`Rédiger quelques mots ${AuthState.firstName} ..`);
   }, [AuthState]);
 
-  // Submit
   function handleFormSubmit(values, resetForm) {
     const formData = new FormData();
     formData.append("author", AuthState.user);
@@ -37,10 +36,10 @@ const TestPost = (props) => {
 
     axios({
       method: "post",
-      url: "http://localhost:8080/api/posts/post",
+      url: "http://localhost:8080/api/create",
       data: {
         content,
-        imageUrl,
+        //imageUrl,
       },
       headers: {
         "Content-Type": "multipart/form-data",
@@ -51,7 +50,7 @@ const TestPost = (props) => {
         resetForm();
         setErrorMessage(null);
         setImageUrl();
-        props.setPostRefresh(true);
+        //props.setPostRefresh(true);
       })
       .catch(function(error) {
         if (error.response) {
@@ -68,14 +67,13 @@ const TestPost = (props) => {
 
   return (
     <div>
-      <Navbar />
       <Card>
-        <Typography variant="h4">Créer un nouveau Post</Typography>
+        <h1>Créer un nouveau Post</h1>
         <Formik
-          initialValues={{ text: "" }}
+          initialValues={{ content: "", imageUrl: "" }}
           onSubmit={(values, { resetForm }) => {
-            if (values.content === "" && !imageUrl) {
-              setErrorMessage("Veuillez remplir au moins 1 champs");
+            if (!values.content) {
+              setErrorMessage("Veuillez remplir le champs");
               return;
             }
             handleFormSubmit(values, resetForm);
@@ -84,7 +82,7 @@ const TestPost = (props) => {
           <Form>
             <div>
               <Field
-                name="text"
+                name="content"
                 type="textarea"
                 placeholder={content}
                 style={{ height: "70px" }}
@@ -95,7 +93,7 @@ const TestPost = (props) => {
                 className="errorInput"
               />
             </div>
-            <div>
+            {/*    <div>
               <div>
                 <Field
                   name="picture"
@@ -105,15 +103,14 @@ const TestPost = (props) => {
                 />
               </div>
               <ErrorMessage
-                name="picture"
+                name="imageUrl"
                 component="div"
                 className="errorInput"
               />
-            </div>
+            </div> */}
+
             <button
               type="submit"
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
               title="Envoyer les données"
               aria-label="valider le post"
             >

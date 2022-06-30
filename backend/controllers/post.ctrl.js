@@ -36,7 +36,7 @@ const checkAdmin = (decodedId) => {
 }
 
 // Create Post
-exports.createPost = (req, res) => {
+/* exports.createPost = (req, res) => {
     const decodedId = getTokenId(req);
     if (!req.body) return res.status(403).send("Erreur, aucune donnée");
 
@@ -48,7 +48,7 @@ exports.createPost = (req, res) => {
 
     const post = {
         UserId: req.body.UserId,
-        /*    author: decodedId, */
+        author: decodedId,
         content: req.body.content,
         imageUrl: imageUrl,
     }
@@ -60,6 +60,37 @@ exports.createPost = (req, res) => {
         .catch((error) => res.status(500).send({
             error
         }))
+} */
+
+exports.createPost = (req, res, next) => {
+
+    if (!req.body.content) return res.status(403).send("Aucun contenu");
+
+    const decodedId = getTokenId(req); // recup iD user
+
+    /*    let imageUrl = ""
+       if (req.file) {
+           imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+       } */
+
+    // Création Post
+    const post = {
+        author: decodedId,
+        content: req.body.content,
+        //imageUrl: imageUrl,
+    }
+
+    Post.create(post)
+        .then(() => {
+            res.status(201).json({
+                message: 'Post enregistré !'
+            })
+        })
+        .catch(error => {
+            res.status(400).json({
+                error
+            })
+        })
 }
 
 // Get all Posts

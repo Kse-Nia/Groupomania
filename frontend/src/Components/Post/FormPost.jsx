@@ -44,7 +44,7 @@ const FormPost = () => {
 
     axios({
       method: "post",
-      url: "http://localhost:8080/api/posts/post",
+      url: "http://localhost:8080/api/create",
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -70,7 +70,7 @@ const FormPost = () => {
           },
         });
       })
-      .catch(function (error) {
+      .catch(function(error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
