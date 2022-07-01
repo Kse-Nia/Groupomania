@@ -19,16 +19,15 @@ const Input = styled("input")({
 });
 
 const FormProfile = (props) => {
-  const { AuthState, dispatchAuthState } = useContext(AuthContext); // use authentication global state
-  const MySwal = withReactContent(Swal); // custom alert button
-  const [imageUrl, setImageUrl] = useState(); // state of uploaded file
-  const [errorMessage, setErrorMessage] = useState(null); // set error message from server
+  const { AuthState, dispatchAuthState } = useContext(AuthContext);
+  const reactSwal = withReactContent(Swal);
+  const [imageUrl, setImageUrl] = useState();
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleFormSubmit = (values, resetForm) => {
     if (!values.firstName || !values.lastName || !imageUrl)
       return setErrorMessage("Veuillez remplir au moins 1 champs");
 
-    // set data object to send
     const formData = new FormData();
     for (let i in values) {
       if (!values[i]) {
@@ -40,7 +39,6 @@ const FormProfile = (props) => {
         );
     }
 
-    // add file if exist and validated
     if (imageUrl) {
       formData.append("image", imageUrl);
     }
@@ -55,8 +53,7 @@ const FormProfile = (props) => {
       },
     })
       .then((res) => {
-        // launch authentication action
-        if (res.status === 200) {
+        if (res.status(200)) {
           dispatchAuthState({
             type: "Login",
             payload: res.data,
@@ -65,7 +62,7 @@ const FormProfile = (props) => {
           resetForm();
         }
       })
-      .catch(function (error) {
+      .catch(function(error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
@@ -85,14 +82,14 @@ const FormProfile = (props) => {
       headers: { Authorization: `Bearer ${AuthState.token}` },
     })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status(200)) {
           dispatchAuthState({
             type: "LogOut",
           });
           console.log("Compte supprimé");
         }
       })
-      .catch(function (error) {
+      .catch(function(error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
@@ -107,126 +104,143 @@ const FormProfile = (props) => {
 
   return (
     <div>
-      <Typography variant="h4">Modifier le compte</Typography>
-      <Formik
-        initialValues={{
-          firstName: "",
-          lastName: "",
-          imageUrl: "",
-        }}
-        onSubmit={(values, { resetForm }) => {
-          if (!values.firstName || !values.lastName || !imageUrl)
-            return setErrorMessage("Veuillez remplir au moins 1 champs");
-
-          let newFirstName = "";
-          let newLastName = "";
-          let newFile = "";
-          if (values.firstName) newFirstName = `Prénom : ${values.firstName}`;
-          if (values.lastName) newLastName = `Nom : ${values.lastName}`;
-          if (imageUrl) newFile = `Photo de profil : ${imageUrl.name}`;
-
-          MySwal.fire({
-            title: "Valider ces modifications ?",
-            showCancelButton: true,
-            confirmButtonText: "Valider",
-            cancelButtonText: "Annuler",
-            buttonsStyling: false,
-            customClass: {
-              confirmButton: "btn",
-              cancelButton: "btn",
-              title: "h5 font",
-              popup: "card",
-            },
-          }).then((result) => {
-            if (result.isConfirmed) {
-              handleFormSubmit(values, resetForm);
-            } else return;
-          });
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          margin: "1em",
         }}
       >
-        <Form>
-          <Field
-            name="firstName"
-            type="text"
-            placeholder={`Prénom actuel : ${AuthState.firstName}`}
-          />
-          <ErrorMessage
-            name="firstName"
-            component="div"
-            className="errorInput"
-          />
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "1em",
+            width: 600,
+            maxWidth: "100%",
+          }}
+        >
+          <Typography variant="h4">Modifier mes informations</Typography>
+          <Formik
+            initialValues={{
+              firstName: "",
+              lastName: "",
+              imageUrl: "",
+            }}
+            onSubmit={(values, { resetForm }) => {
+              if (!values.firstName || !values.lastName || !imageUrl)
+                return setErrorMessage("Veuillez remplir au moins un champs");
 
-          <Field
-            name="lastName"
-            type="text"
-            placeholder={`Nom actuel : ${AuthState.lastName}`}
-          />
-          <ErrorMessage
-            name="lastName"
-            component="div"
-            className="errorInput"
-          />
+              let newFirstName = "";
+              let newLastName = "";
+              let newAvatar = "";
 
-          <Field
-            name="picture"
-            onChange={(e) => setImageUrl(e.target.files[0])}
-            type="file"
-            accept=".jpg, .jpeg, .png,"
-            className="file-input"
-          />
-          <ErrorMessage name="picture" component="div" className="errorInput" />
+              if (values.firstName)
+                newFirstName = `Prénom : ${values.firstName}`;
+              if (values.lastName) newLastName = `Nom : ${values.lastName}`;
+              if (imageUrl) newAvatar = `Avatar : ${imageUrl.name}`;
 
-          <button type="submit" title="Modifier" aria-label="Modifier">
-            Modifier
-          </button>
-
-          <button
-            onClick={() => {
-              props.setProfileRender(props.initialProfileRender);
+              reactSwal
+                .fire({
+                  title: "Valider ces modifications ?",
+                  showCancelButton: true,
+                  confirmButtonText: "Valider",
+                  cancelButtonText: "Annuler",
+                  buttonsStyling: false,
+                  customClass: {
+                    confirmButton: "btn",
+                    cancelButton: "btn",
+                    title: "h4 font",
+                    popup: "card",
+                  },
+                })
+                .then((result) => {
+                  if (result.isConfirmed) {
+                    handleFormSubmit(values, resetForm);
+                  } else return;
+                });
             }}
           >
-            Fermer
-          </button>
+            <Form>
+              <Field
+                name="firstName"
+                type="text"
+                placeholder={`Prénom actuel : ${AuthState.firstName}`}
+              />
+              <ErrorMessage name="firstName" className="errorInput" />
+
+              <Field
+                name="lastName"
+                type="text"
+                placeholder={`Nom actuel : ${AuthState.lastName}`}
+              />
+              <ErrorMessage name="lastName" className="errorInput" />
+
+              <Field
+                name="picture"
+                onChange={(e) => setImageUrl(e.target.files[0])}
+                type="file"
+                accept=".jpg, .jpeg, .png,"
+                className="file-input"
+              />
+              <ErrorMessage name="picture" className="errorInput" />
+
+              <button type="submit" title="Modifier">
+                Valider les modifications
+              </button>
+
+              <button
+                onClick={() => {
+                  props.setProfileRender(props.initialProfileRender);
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() =>
+                  props.setProfileRender(
+                    <Password
+                      setProfileRender={props.setProfileRender}
+                      initialProfileRender={props.initialProfileRender}
+                    />
+                  )
+                }
+                className="btn"
+              >
+                Modifier le mot de passe ?
+              </button>
+            </Form>
+          </Formik>
+          <span>ou</span>
           <button
-            onClick={() =>
-              props.setProfileRender(
-                <Password
-                  setProfileRender={props.setProfileRender}
-                  initialProfileRender={props.initialProfileRender}
-                />
-              )
-            }
-            className="btn"
+            onClick={() => {
+              reactSwal
+                .fire({
+                  icon: "warning",
+                  title: "Valider la suppression du compte ?",
+                  showCancelButton: true,
+                  confirmButtonText: "Valider",
+                  cancelButtonText: "Annuler",
+                  customClass: {
+                    confirmButton: "btn",
+                    cancelButton: "btn ",
+                    title: "h5 font",
+                    popup: "card",
+                  },
+                })
+                .then((result) => {
+                  if (result.isConfirmed) {
+                    handleDeleteAccount();
+                  } else return;
+                });
+            }}
           >
-            Modifier le mot de passe ?
+            Supprimer le compte définitivement ?
           </button>
-        </Form>
-      </Formik>
-      <span className="mt-2 mb-3">ou</span>
-      <button
-        onClick={() => {
-          MySwal.fire({
-            icon: "warning",
-            title: "Valider la suppression du compte ?",
-            showCancelButton: true,
-            confirmButtonText: "Valider",
-            cancelButtonText: "Annuler",
-            buttonsStyling: false,
-            customClass: {
-              confirmButton: "btn",
-              cancelButton: "btn ",
-              title: "h5 font",
-              popup: "card",
-            },
-          }).then((result) => {
-            if (result.isConfirmed) {
-              handleDeleteAccount();
-            } else return;
-          });
-        }}
-      >
-        Supprimer le compte définitivement ?
-      </button>
+        </Card>
+      </Container>
     </div>
   );
 };

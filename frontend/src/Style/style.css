@@ -89,3 +89,17 @@ body {
   height: auto;
   background-color: red
 }
+
+.errorContainer {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorPicture {
+  max-width: 600px;
+  display: block;
+  margin: 0 auto 0;
+}

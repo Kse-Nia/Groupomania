@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import LogModal from "../Components/Log/LogModal";
 
 const Home = () => {

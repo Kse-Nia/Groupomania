@@ -148,6 +148,18 @@ exports.getAllUsers = (req, res) => {
         }))
 }
 
+exports.getOneUser = (req, res) => {
+    User.findOne({
+            where: {
+                id: req.params.id
+            },
+        })
+        .then((user) => res.status(200).json(user))
+        .catch((error) => res.status(400).json({
+            error
+        }));
+};
+
 // Partie Admin
 exports.deleteOneUser = (req, res) => {
     const decodedId = getTokenUserId(req);

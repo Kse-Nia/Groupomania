@@ -19,14 +19,12 @@ import { AuthContext } from "../../App";
 
 const TestPost = (props) => {
   const { AuthState } = useContext(AuthContext);
-  const [media, setMedia] = useState(null);
   const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // personalize the welcome message text input with user name
   const [content, setContent] = useState("Quoi de neuf ?");
   useEffect(() => {
-    setContent(`Rédiger quelques mots ${AuthState.firstName} ..`);
+    setContent("Ecrire quelques mots");
   }, [AuthState]);
 
   function handleFormSubmit(values, resetForm) {
@@ -70,10 +68,10 @@ const TestPost = (props) => {
       <Card>
         <h1>Créer un nouveau Post</h1>
         <Formik
-          initialValues={{ content: "", imageUrl: "" }}
+          initialValues={{ content: "" /* imageUrl: "" */ }}
           onSubmit={(values, { resetForm }) => {
             if (!values.content) {
-              setErrorMessage("Veuillez remplir le champs");
+              setErrorMessage("Veuillez écrire quelque chose");
               return;
             }
             handleFormSubmit(values, resetForm);
@@ -87,11 +85,7 @@ const TestPost = (props) => {
                 placeholder={content}
                 style={{ height: "70px" }}
               />
-              <ErrorMessage
-                name="text"
-                component="div"
-                className="errorInput"
-              />
+              <ErrorMessage name="text" className="errorInput" />
             </div>
             {/*    <div>
               <div>
@@ -109,11 +103,7 @@ const TestPost = (props) => {
               />
             </div> */}
 
-            <button
-              type="submit"
-              title="Envoyer les données"
-              aria-label="valider le post"
-            >
+            <button type="submit" title="Poster">
               Poster
             </button>
             {errorMessage && <div className="errorInput">{errorMessage}</div>}

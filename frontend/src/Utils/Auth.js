@@ -55,7 +55,7 @@ export const AuthReducer = (authState, action) => {
 
             // Avatar
             dataUrl(action.payload.imageUrl).then((dataUrl) => {
-                localStorage.setItem("photo", JSON.stringify(dataUrl))
+                localStorage.setItem("imageUrl", JSON.stringify(dataUrl))
             })
 
             return {

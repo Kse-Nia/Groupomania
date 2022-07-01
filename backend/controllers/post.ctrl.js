@@ -63,21 +63,19 @@ const checkAdmin = (decodedId) => {
 } */
 
 exports.createPost = (req, res, next) => {
-
+    const UserId = req.body.UserId;
     if (!req.body.content) return res.status(403).send("Aucun contenu");
 
-    const decodedId = getTokenId(req); // recup iD user
-
-    /*    let imageUrl = ""
-       if (req.file) {
-           imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-       } */
+    let imageUrl = "";
+    if (req.file) {
+        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    }
 
     // Création Post
     const post = {
-        author: decodedId,
+        author: UserId,
         content: req.body.content,
-        //imageUrl: imageUrl,
+        imageUrl: imageUrl,
     }
 
     Post.create(post)
@@ -93,8 +91,9 @@ exports.createPost = (req, res, next) => {
         })
 }
 
+
 // Get all Posts
-exports.getAllPosts = (req, res) => {
+/* exports.getAllPosts = (req, res) => {
     // Recup Posts + info User
     Post.findAll({
             order: [
@@ -111,7 +110,19 @@ exports.getAllPosts = (req, res) => {
         .catch((error) => res.status(500).send({
             error
         }))
-}
+} */
+
+exports.getAllPosts = (req, res) => {
+    Post.findAll({
+            order: [
+                ["createdAt", "DESC"]
+            ],
+        })
+        .then((posts) => res.status(200).json(posts))
+        .catch((error) => res.status(400).json({
+            error
+        }));
+};
 
 // Get One Post
 exports.getOnePost = (req, res) => {

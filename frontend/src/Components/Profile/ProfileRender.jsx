@@ -36,20 +36,29 @@ const ProfileRender = () => {
           alignItems="center"
           justifyContent="center"
         >
-          <Card>
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: "1em",
+              width: 600,
+              maxWidth: "100%",
+            }}
+          >
             <Grid
               container
-              direction="row"
+              direction="column"
               justifyContent="center"
               alignItems="center"
             >
               {AuthState.isAdmin ? (
                 <Typography variant="h2">Page Administrateur</Typography>
               ) : (
-                <Typography variant="h2">Compte utilisateur</Typography>
+                <Typography variant="h3">Mon Compte</Typography>
               )}
               <div>
-                <ProfileAvatar photo={AuthState.imageUrl} class="" />
+                <ProfileAvatar imageUrl={AuthState.imageUrl} />
                 <Typography>Nom: {AuthState.lastName}</Typography>
                 <Typography>Prénom: {AuthState.firstName}</Typography>
                 <Button
@@ -68,7 +77,7 @@ const ProfileRender = () => {
   }, [
     AuthState.firstName,
     AuthState.lastName,
-    AuthState.photo,
+    AuthState.imageUrl,
     AuthState.isAdmin,
   ]);
 

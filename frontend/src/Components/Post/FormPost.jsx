@@ -18,7 +18,7 @@ import { AuthContext } from "../../App";
 
 const FormPost = () => {
   const { AuthState } = useContext(AuthContext);
-  const [text, setText] = useState("");
+  const [content, setContent] = useState("");
   const [media, setMedia] = useState(null);
   const [selectedFile, setSelectedFile] = useState();
   const ReactSwal = withReactContent(Swal);
@@ -37,7 +37,7 @@ const FormPost = () => {
   function handleSubmit(values, resetForm) {
     const formData = new FormData();
     formData.append("author", AuthState.user);
-    if (values.text) formData.append("text", values.text);
+    if (values.content) formData.append("content", values.content);
     if (selectedFile && selectedFile.size < 2000000) {
       formData.append("picture", selectedFile);
     }
@@ -103,11 +103,11 @@ const FormPost = () => {
             label="Multiline Placeholder"
             multiline
             rows={2}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => setContent(e.target.value)}
             value={text}
             style={{ height: "70px" }}
           />
-          <ErrorMessage name="text" component="div" className="errorInput" />
+          <ErrorMessage name="text" className="errorInput" />
 
           {(() => {
             switch (media) {
