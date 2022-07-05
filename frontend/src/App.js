@@ -50,7 +50,7 @@ function App() {
         dispatchAuthState,
       }}
     >
-      {routes}{" "}
+      {routes}
     </AuthContext.Provider>
   );
 }
