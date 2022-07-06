@@ -19,18 +19,18 @@ import { AuthContext } from "../../App";
 
 const TestPost = (props) => {
   const { AuthState } = useContext(AuthContext);
-  const [imageUrl, setImageUrl] = useState();
+  // const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [content, setContent] = useState("Quoi de neuf ?");
-  useEffect(() => {
+  const [content, setContent] = useState();
+  /*   useEffect(() => {
     setContent("Ecrire quelques mots");
-  }, [AuthState]);
+  }, [AuthState]); */
 
   function handleFormSubmit(values, resetForm) {
     const formData = new FormData();
-    formData.append("author", AuthState.user);
-    if (values.text) formData.append("text", values.text);
+    formData.append("author", AuthState.UserId);
+    if (values.content) formData.append("content", values.content);
 
     axios({
       method: "post",
@@ -47,7 +47,7 @@ const TestPost = (props) => {
       .then(() => {
         resetForm();
         setErrorMessage(null);
-        setImageUrl();
+        // setImageUrl();
         //props.setPostRefresh(true);
       })
       .catch(function(error) {

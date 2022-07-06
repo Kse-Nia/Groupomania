@@ -18,6 +18,7 @@ import { AuthContext } from "../../App";
 
 const FormPost = () => {
   const { AuthState } = useContext(AuthContext);
+
   const [content, setContent] = useState("");
   const [media, setMedia] = useState(null);
   const [selectedFile, setSelectedFile] = useState();
@@ -27,19 +28,17 @@ const FormPost = () => {
     const [media, setMedia] = useState(null); */
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [placeHolderText, setPlaceHolderText] = useState(
-    "Ecrire quelques mots.."
-  );
-  useEffect(() => {
+  const [placeHolderText, setPlaceHolderText] = useState();
+  /*  useEffect(() => {
     setPlaceHolderText("Ecrire quelques mots..");
-  }, [AuthState]);
+  }, [AuthState]); */
 
   function handleSubmit(values, resetForm) {
     const formData = new FormData();
     formData.append("author", AuthState.user);
     if (values.content) formData.append("content", values.content);
-    if (selectedFile && selectedFile.size < 2000000) {
-      formData.append("picture", selectedFile);
+    if (selectedFile) {
+      formData.append("imageUrl", selectedFile);
     }
 
     axios({

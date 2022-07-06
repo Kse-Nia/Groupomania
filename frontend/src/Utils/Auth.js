@@ -69,15 +69,16 @@ export const AuthReducer = (authState, action) => {
                     isAdmin: action.payload.isAdmin,
                     isAuthenticated: action.payload.isAuthenticated,
             }
-            case "LogOut":
-                localStorage.clear();
-                return {
-                    isAuthenticated: false,
-                        isAdmin: false,
-                        UserId: null,
-                        token: null,
-                }
-                default:
-                    return authState
+            break;
+        case "LogOut":
+            localStorage.clear();
+            return {
+                isAuthenticated: false,
+                    isAdmin: false,
+                    UserId: null,
+                    token: null,
+            }
+            default:
+                return authState
     }
 }
