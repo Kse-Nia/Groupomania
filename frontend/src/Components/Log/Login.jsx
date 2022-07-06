@@ -2,8 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import api from "../../API";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../App";
-
+import { useAuth } from "../../Services/useAuth";
 // CSS
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -16,14 +15,17 @@ import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
 
 const Login = () => {
+  const auth = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { dispatchAuthState } = useContext(AuthContext);
+  //const { dispatchAuthState } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
+    auth.login({ email: email, password: password });
 
     axios({
       method: "post",
@@ -36,11 +38,8 @@ const Login = () => {
     })
       .then((res) => {
         if (res.status === 200) {
-          dispatchAuthState({
-            type: "Login",
-            payload: res.data,
-          });
-          navigate.push("/dashboard");
+          auth.login({ email: email, password: password });
+          // navigate.push("/dashboard");
         }
       })
       .catch((error) => {

@@ -244,7 +244,7 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const getJobs = async () => {
+  const getAllPosts = async () => {
     const { page, search, searchStatus, searchType, sort } = state;
 
     let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
