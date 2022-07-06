@@ -1,3 +1,4 @@
+// File Reader API;
 export const dataUrl = (url) =>
     fetch(url)
     .then((response) => response.blob())

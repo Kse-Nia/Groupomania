@@ -20,7 +20,7 @@ if (saved && (new Date().getTime() - saved > hours * 60 * 60 * 1000)) {
 } else if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
     initialAuth = {
         token: JSON.parse(localStorage.getItem("token")),
-        user: JSON.parse(localStorage.getItem("user")),
+        //user: JSON.parse(localStorage.getItem("user")),
         UserId: JSON.parse(localStorage.getItem("UserId")),
         firstName: JSON.parse(localStorage.getItem("firstName")),
         lastName: JSON.parse(localStorage.getItem("lastName")),
