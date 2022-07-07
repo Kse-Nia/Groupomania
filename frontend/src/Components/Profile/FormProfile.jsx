@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
-import { AuthContext } from "../../App";
 import Password from "./Password";
 
 // CSS
@@ -19,8 +18,7 @@ const Input = styled("input")({
 });
 
 const FormProfile = (props) => {
-  const { AuthState, dispatchAuthState } = useContext(AuthContext);
-  const reactSwal = withReactContent(Swal);
+  /*   const reactSwal = withReactContent(Swal);
   const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -241,6 +239,12 @@ const FormProfile = (props) => {
           </button>
         </Card>
       </Container>
+    </div>
+  ); */
+
+  return (
+    <div>
+      <h1>Profile</h1>
     </div>
   );
 };

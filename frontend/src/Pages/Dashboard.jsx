@@ -11,6 +11,8 @@ import Users from "../Components/Members/Users";
 import PostCard from "../Components/Post/PostCard";
 import FormPost from "../Components/Post/FormPost"; */
 
+import TestPost from "../Components/Post/TestPost";
+
 // CSS
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";

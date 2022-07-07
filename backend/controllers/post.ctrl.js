@@ -64,18 +64,18 @@ const checkAdmin = (decodedId) => {
 
 exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
-    if (!req.body.content) return res.status(403).send("Aucun contenu");
+    if (!req.body.content) return res.status(403).send("Aucun contenu à poster");
 
-    /*    let imageUrl = "";
-       if (req.file) {
-           imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-       } */
+    let imageUrl = "";
+    if (req.file) {
+        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    }
 
     // Création Post
     const post = {
         author: UserId,
         content: req.body.content,
-        //imageUrl: imageUrl,
+        imageUrl: imageUrl,
     }
 
     Post.create(post)

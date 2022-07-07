@@ -12,39 +12,31 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Card } from "@mui/material";
+import { Avatar, Card } from "@mui/material";
 
+// Components
 import { AuthContext } from "../../App";
 
-const FormPost = () => {
+const TestPost = (props) => {
   const { AuthState } = useContext(AuthContext);
-
-  const [content, setContent] = useState("");
-  const [media, setMedia] = useState(null);
-  const [selectedFile, setSelectedFile] = useState();
-  const ReactSwal = withReactContent(Swal);
-
-  /*   const [selectedFile, setSelectedFile] = useState();
-    const [media, setMedia] = useState(null); */
+  const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [placeHolderText, setPlaceHolderText] = useState();
-  /*  useEffect(() => {
-    setPlaceHolderText("Ecrire quelques mots..");
-  }, [AuthState]); */
+  const [content, setContent] = useState();
 
-  function handleSubmit(values, resetForm) {
+  function handleFormSubmit(values, resetForm) {
     const formData = new FormData();
-    formData.append("author", AuthState.user);
+    formData.append("author", AuthState.UserId);
     if (values.content) formData.append("content", values.content);
-    if (selectedFile) {
-      formData.append("imageUrl", selectedFile);
-    }
 
     axios({
       method: "post",
       url: "http://localhost:8080/api/create",
-      data: formData,
+      data: {
+        author,
+        content,
+        //imageUrl,
+      },
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${AuthState.token}`,
@@ -53,113 +45,71 @@ const FormPost = () => {
       .then(() => {
         resetForm();
         setErrorMessage(null);
-        setSelectedFile();
-        setMedia("default");
-        props.setPostRefresh(true);
-        console.log("Posté avec succès !");
-        ReactSwal.fire({
-          title: "Posté",
-          icon: "success",
-          showCloseButton: false,
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: "btn",
-            title: "h5 font",
-            popup: "card",
-          },
-        });
+        //setImageUrl();
+        //props.setPostRefresh(true);
       })
       .catch(function(error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
         }
       });
   }
 
   return (
-    <Container>
+    <div>
       <Card>
-        <Typography component="h1" variant="h5">
-          Créer un nouveau poste
-        </Typography>
-        <Box
-          component="form"
-          sx={{
-            mx: "auto",
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-          onSubmit={handleSubmit}
-        >
-          <TextField
-            name="text"
-            type="textarea"
-            id="outlined-textarea"
-            label="Multiline Placeholder"
-            multiline
-            rows={2}
-            onChange={(e) => setContent(e.target.value)}
-            value={text}
-            style={{ height: "70px" }}
-          />
-          <ErrorMessage name="text" className="errorInput" />
-
-          {(() => {
-            switch (media) {
-              case "upload":
-                return (
-                  <div>
-                    <div>
-                      <Field
-                        name="picture"
-                        onChange={(e) => setSelectedFile(e.target.files[0])}
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .gif"
-                      />
-                    </div>
-                    <ErrorMessage
-                      name="picture"
-                      component="div"
-                      className="errorInput"
-                    />
-                  </div>
-                );
-
-              default:
-                return (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => setMedia("upload")}
-                      title="Ajouter une image"
-                      aria-label="Ajouter une photo"
-                    >
-                      Joindre une image
-                    </button>
-                  </div>
-                );
+        <h1>Créer un nouveau Post</h1>
+        <Formik
+          initialValues={{ content: "" /* imageUrl: "" */ }}
+          onSubmit={(values, { resetForm }) => {
+            if (!values.content) {
+              setErrorMessage("Veuillez écrire quelque chose");
+              return;
             }
-          })()}
+            handleFormSubmit(values, resetForm);
+          }}
+        >
+          <Form>
+            <div>
+              <Field
+                name="content"
+                type="textarea"
+                placeholder={content}
+                style={{ height: "70px" }}
+              />
+              <ErrorMessage name="text" className="errorInput" />
+            </div>
+            {/*    <div>
+              <div>
+                <Field
+                  name="picture"
+                  onChange={(e) => setImageUrl(e.target.files[0])}
+                  type="file"
+                  accept=".jpg, .jpeg, .png, .gif"
+                />
+              </div>
+              <ErrorMessage
+                name="imageUrl"
+                component="div"
+                className="errorInput"
+              />
+            </div> */}
 
-          <Button
-            variant="contained"
-            type="submit"
-            className="btn"
-            title="Poster"
-            aria-label="Envoyer les données"
-          >
-            Poster
-          </Button>
-
-          {errorMessage && <div className="errorInput">{errorMessage}</div>}
-        </Box>
+            <button type="submit" title="Poster">
+              Poster
+            </button>
+            {errorMessage && <div className="errorInput">{errorMessage}</div>}
+          </Form>
+        </Formik>
       </Card>
-    </Container>
+    </div>
   );
 };
 
-export default FormPost;
+export default TestPost;

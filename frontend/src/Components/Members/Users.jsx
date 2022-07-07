@@ -6,7 +6,6 @@ import React, {
   useMemo,
 } from "react"; // useMemo hook; permet création d'un tableau de valeurs qui ne sera pas recalculé à chaque modification de la valeur
 import axios from "axios";
-import { AuthContext } from "../../App";
 import ProfileAvatar from "../Profile/ProfileAvatar";
 
 // CSS
@@ -23,22 +22,24 @@ import { Card } from "@mui/material";
 import Input from "@mui/material/Input";
 
 const Users = () => {
-  const { AuthState } = useContext(AuthContext);
-  const reactSwal = withReactContent(Swal);
+  /* const reactSwal = withReactContent(Swal);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState(users);
 
-  const getUsers = useCallback(() => {
-    axios({
-      method: "get",
-      url: "http://localhost:8080/home/",
-      headers: { Authorization: `Bearer ${AuthState.token}` },
-    }).then((res) => {
-      setUsers(res.data);
-      setLoading(false);
-    });
-  }, [AuthState.token]);
+  const getUsers = useCallback(
+    () => {
+      axios({
+        method: "get",
+        url: "http://localhost:8080/home/",
+        // headers: { Authorization: `Bearer ${AuthState.token}` },
+      }).then((res) => {
+        setUsers(res.data);
+        setLoading(false);
+      });
+    }
+    //[AuthState.token]
+  );
   const handleResearch = useCallback(
     (value) => {
       let result = users.filter((user) => {
@@ -227,7 +228,13 @@ function MemberProfile(props) {
         </Button>
       </Card>
     </div>
+  ); */
+
+  return (
+    <div>
+      <h1>All Members</h1>
+    </div>
   );
-}
+};
 
 export default Users;

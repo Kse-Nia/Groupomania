@@ -1,5 +1,4 @@
 import React, { useMemo, useContext, useState, useEffect } from "react";
-import { AuthContext } from "../../App";
 
 import FormProfile from "./FormProfile";
 import ProfileAvatar from "./ProfileAvatar";
@@ -14,9 +13,7 @@ import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
 
 const ProfileRender = () => {
-  const { AuthState } = useContext(AuthContext);
-
-  const initialProfileRender = useMemo(() => {
+  /* const initialProfileRender = useMemo(() => {
     // Affichage Profile ou Modif
     const handleProfile = () => {
       setProfileRender(
@@ -87,7 +84,13 @@ const ProfileRender = () => {
     setProfileRender(initialProfileRender);
   }, [AuthState, initialProfileRender]);
 
-  return profileRender;
+  return profileRender; */
+
+  return (
+    <div>
+      <h1>Profile render</h1>
+    </div>
+  );
 };
 
 export default ProfileRender;

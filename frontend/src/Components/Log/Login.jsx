@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import api from "../../API";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../App";
 
 // CSS
 import Avatar from "@mui/material/Avatar";
@@ -18,7 +17,6 @@ import { Card } from "@mui/material";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { dispatchAuthState } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
@@ -36,10 +34,10 @@ const Login = () => {
     })
       .then((res) => {
         if (res.status === 200) {
-          dispatchAuthState({
+          /*  dispatchAuthState({
             type: "Login",
             payload: res.data,
-          });
+          }); */
           navigate.push("/dashboard");
         }
       })

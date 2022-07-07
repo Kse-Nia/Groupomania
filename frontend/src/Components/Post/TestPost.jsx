@@ -15,21 +15,16 @@ import Container from "@mui/material/Container";
 import { Avatar, Card } from "@mui/material";
 
 // Components
-import { AuthContext } from "../../App";
 
 const TestPost = (props) => {
-  const { AuthState } = useContext(AuthContext);
-  // const [imageUrl, setImageUrl] = useState();
+  const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
   const [content, setContent] = useState();
-  /*   useEffect(() => {
-    setContent("Ecrire quelques mots");
-  }, [AuthState]); */
 
-  function handleFormSubmit(values, resetForm) {
+  function handleFormSubmit(values) {
     const formData = new FormData();
-    formData.append("author", AuthState.UserId);
+    //formData.append("author", AuthState.UserId);
     if (values.content) formData.append("content", values.content);
 
     axios({
@@ -37,17 +32,17 @@ const TestPost = (props) => {
       url: "http://localhost:8080/api/create",
       data: {
         content,
-        //imageUrl,
+        imageUrl,
       },
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${AuthState.token}`,
+        // Authorization: `Bearer ${AuthState.token}`,
       },
     })
-      .then(() => {
-        resetForm();
+      .then((response) => {
+        console.log(response);
         setErrorMessage(null);
-        // setImageUrl();
+        setImageUrl();
         //props.setPostRefresh(true);
       })
       .catch(function(error) {
@@ -68,13 +63,13 @@ const TestPost = (props) => {
       <Card>
         <h1>Créer un nouveau Post</h1>
         <Formik
-          initialValues={{ content: "" /* imageUrl: "" */ }}
-          onSubmit={(values, { resetForm }) => {
+          initialValues={{ content: "", imageUrl: "" }}
+          onSubmit={(values) => {
             if (!values.content) {
               setErrorMessage("Veuillez écrire quelque chose");
               return;
             }
-            handleFormSubmit(values, resetForm);
+            handleFormSubmit(values);
           }}
         >
           <Form>
@@ -83,11 +78,12 @@ const TestPost = (props) => {
                 name="content"
                 type="textarea"
                 placeholder={content}
+                onChange={setContent}
                 style={{ height: "70px" }}
               />
               <ErrorMessage name="text" className="errorInput" />
             </div>
-            {/*    <div>
+            <div>
               <div>
                 <Field
                   name="picture"
@@ -101,7 +97,7 @@ const TestPost = (props) => {
                 component="div"
                 className="errorInput"
               />
-            </div> */}
+            </div>
 
             <button type="submit" title="Poster">
               Poster

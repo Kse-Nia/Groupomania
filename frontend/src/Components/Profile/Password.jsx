@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { AuthContext } from "../../App";
 
 // CSS
 import Swal from "sweetalert2";
@@ -17,7 +16,6 @@ import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
 
 const Password = (props) => {
-  const { AuthState } = useContext(AuthContext); // Auth
   const ReactSwal = withReactContent(Swal);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -28,7 +26,7 @@ const Password = (props) => {
     axios({
       method: "put",
       url: "http://localhost:8080/home/password",
-      headers: { Authorization: `Bearer ${AuthState.token}` },
+      // headers: { Authorization: `Bearer ${AuthState.token}` },
       data: values,
     })
       .then(() => {
@@ -37,7 +35,7 @@ const Password = (props) => {
         resetForm();
         console.log("ok");
       })
-      .catch(function (error) {
+      .catch(function(error) {
         if (error.response) {
           // Request made and server responded
           console.log(error.response.data);
