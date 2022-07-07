@@ -1,50 +1,43 @@
+import * as React from "react";
+import { Router, Routes, Route, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { RequireAuth } from "./Services/RequireAuth";
+import { AuthProvider } from "./Services/useAuth";
 import "./App.css";
-import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom"; // anciennement Switch, History
 
-import Auth from "./Pages/Auth";
-import Profile from "./Pages/Profile";
-import Dashboard from "./Pages/Dashboard";
+const authContext = createContext();
 
-// Test
-import Register from "./Pages/Register";
-import Navbar from "./Components/Navbar/Navbar";
+// Pages
+import {
+  Home,
+  Dashboard,
+  MissingPage,
+  MembersPage,
+  ProfilePage,
+  PostPage,
+} from "./Pages/index";
 
 function App() {
-  const [auth, setAuth] = useState(null);
-
-  useEffect(() => {
-    let user = localStorage.getItem("email");
-    user && JSON.parse(user) ? setAuth(true) : setAuth(false);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("email", auth);
-  }, [auth]);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   return (
-    <Routes>
-      {!auth && (
-        <>
-          <Route path="/user/register" element={<Register />} />
-          <Route
-            path="/user/login"
-            element={<Auth authenticate={() => setAuth(true)} />}
-          />
-        </>
-      )}
-
-      {auth && (
-        <>
-          <Route
-            path="/profile"
-            element={<Profile logout={() => setAuth(false)} />}
-          />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </>
-      )}
-      <Route path="*" element={<Navigate to={auth ? "/profile" : "/auth"} />} />
-    </Routes>
+    <>
+      <Router>
+        <AuthProvider>
+          <Routes>
+            <Route path="/home" element={<Home />} />
+            <RequireAuth>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/post" element={<PostPage />} />
+              <Route path="/members" element={<MembersPage />} />
+            </RequireAuth>
+            <Route path="*" element={<MissingPage />} />
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </>
   );
 }
 

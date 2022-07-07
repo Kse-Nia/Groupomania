@@ -1,7 +1,7 @@
 import React from "react";
 import "../Navbar/Navbar.css";
 
-function Navbar() {
+const Navbar = () => {
   return (
     <header className="header">
       <div className="nav">
@@ -18,15 +18,13 @@ function Navbar() {
         </div>
 
         <div className="nav-links">
-          <a href="/" target="_blank">
-            Accueil
-          </a>
-          <a href="/user/register">S'inscrire</a>
-          <a href="/user/login">Se connecter</a>
+          <a href="/dashboard">Home</a>
+          <a href="/members">Membres</a>
+          <a href="/profile">Mon Compte</a>
+          <a href="/posts">Créer un nouveau post</a>
         </div>
       </div>
     </header>
   );
-}
-
+};
 export default Navbar;

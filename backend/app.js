@@ -40,7 +40,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Routes
 app.use('/home', userRoutes);
-app.use('/api/posts', postRoutes);
+app.use('/api', postRoutes);
 app.use('/api/comments', commentRoutes);
 
 
