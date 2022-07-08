@@ -17,7 +17,7 @@ import { Avatar, Card } from "@mui/material";
 // Components
 import { AuthContext } from "../../App";
 
-const TestPost = (props) => {
+const CreatePost = (props) => {
   const { AuthState } = useContext(AuthContext);
   const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -29,15 +29,15 @@ const TestPost = (props) => {
 
   function handleFormSubmit(values, resetForm) {
     const formData = new FormData();
-    formData.append("author", AuthState.user);
-    if (values.text) formData.append("text", values.text);
+    formData.append("author", AuthState.firstName);
+    if (values.content) formData.append("content", values.content);
+    if (values.imageUrl) formData.append("imageUrl", values.imageUrl);
 
     axios({
       method: "post",
       url: "http://localhost:8080/api/create",
       data: {
-        content,
-        //imageUrl,
+        formData,
       },
       headers: {
         "Content-Type": "multipart/form-data",
@@ -63,7 +63,17 @@ const TestPost = (props) => {
 
   return (
     <div>
-      <Card>
+      <Card
+        sx={{
+          width: "90%",
+          minHeight: "200px",
+          mt: 2,
+          mx: "auto",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <h1>Créer un nouveau Post</h1>
         <Formik
           initialValues={{ content: "" /* imageUrl: "" */ }}
@@ -85,7 +95,7 @@ const TestPost = (props) => {
               />
               <ErrorMessage name="text" className="errorInput" />
             </div>
-            {/*    <div>
+            <div>
               <div>
                 <Field
                   name="picture"
@@ -99,7 +109,7 @@ const TestPost = (props) => {
                 component="div"
                 className="errorInput"
               />
-            </div> */}
+            </div>
 
             <button type="submit" title="Poster">
               Poster
@@ -112,4 +122,4 @@ const TestPost = (props) => {
   );
 };
 
-export default TestPost;
+export default CreatePost;

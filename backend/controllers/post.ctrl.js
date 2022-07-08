@@ -49,7 +49,7 @@ exports.createPost = (req, res, next) => {
     const post = {
         author: UserId,
         content: req.body.content,
-        imageUrl: imageUrl,
+        // imageUrl: imageUrl,
     }
 
     Post.create(post)
