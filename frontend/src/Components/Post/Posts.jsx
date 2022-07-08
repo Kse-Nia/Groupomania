@@ -52,9 +52,7 @@ const Posts = ({ allposts }) => {
                 return dateB - dateA;
               })
               .map((post) => (
-                <Card article={post} key={post.id}>
-                  {/*   <ArticleCard article={post} key={post.id} /> */}
-                </Card>
+                <Card post={post} key={post.id}></Card>
               ))}
           </div>
         </Container>
