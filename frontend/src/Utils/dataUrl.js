@@ -1,4 +1,4 @@
-/* // File Reader API;
+// File Reader API; Ne marche pas...
 export const dataUrl = (url) =>
     fetch(url)
     .then((response) => response.blob())
@@ -10,9 +10,15 @@ export const dataUrl = (url) =>
             reader.onerror = reject
             reader.readAsDataURL(blob)
         })
-    ) */
+    )
+    .catch((error) => {
+        console.log(error)
+    })
+    .then((dataUrl) => {
+        return dataUrl
+    })
 
-const getBase64Image = (img) => {
+/* const getBase64Image = (img) => {
     const canvas = document.createElement("canvas");
     canvas.width = img.width;
     canvas.height = img.height;
@@ -24,4 +30,4 @@ const getBase64Image = (img) => {
 
 const imageUrl = document.getElementById("imageUrl");
 const imgData = getBase64Image(imageUrl);
-localStorage.setItem("imageUrl", imgData);
+localStorage.setItem("imageUrl", imgData); */

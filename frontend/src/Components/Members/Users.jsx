@@ -17,10 +17,12 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
-import Input from "@mui/material/Input";
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
 
 const Users = () => {
   const { AuthState } = useContext(AuthContext);
@@ -43,8 +45,8 @@ const Users = () => {
     (value) => {
       let result = users.filter((user) => {
         if (
-          user.firstName.toLowerCase().search(value) !== -1 ||
-          user.lastName.toLowerCase().search(value) !== -1
+          user.firstName.search(value) !== -1 ||
+          user.lastName.search(value) !== -1
         )
           return true;
         else return false;
@@ -95,15 +97,28 @@ const Users = () => {
           }}
         >
           <Typography variant="h4">Utilisateurs inscrits</Typography>
-          <input
-            type="text"
-            onChange={(event) => handleResearch(event.target.value)}
-            className="search-input"
-            placeholder="Recherche"
-          ></input>
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: 400,
+            }}
+          >
+            {" "}
+            <SearchIcon />
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              type="text"
+              onChange={(event) => handleResearch(event.target.value)}
+              className="search_input"
+              placeholder="Recherche"
+            ></InputBase>
+          </Paper>
           <ul>
             {filteredUsers.map((user, index) => (
-              <div key={index}>
+              <Container key={index}>
                 <li>
                   <Button
                     className="btn"
@@ -122,21 +137,19 @@ const Users = () => {
                         photo={user.imageUrl}
                         className="user_avatar"
                       />
-                      <span>
-                        {user.firstName}
-                        <br /> {user.lastName}
-                      </span>
+                      <Typography>Prénom: {user.firstName}</Typography>
+                      <Typography>Nom: {user.lastName}</Typography>
                     </Card>
                   </Button>
-
-                  {AuthState.isAdmin === true &&
-                  user.firstName !== AuthState.firstName ? (
+                  {AuthState.isAdmin === true ? (
                     <Button
                       type="button"
+                      className="btn"
                       onClick={() => {
                         reactSwal
                           .fire({
-                            title: "❌ Admin : Supprimer cet utilisateur ?",
+                            title:
+                              "Valider la suppression de cet utilisateur ?",
                             showCancelButton: true,
                             confirmButtonText: "Valider",
                             cancelButtonText: "Annuler",
@@ -157,7 +170,7 @@ const Users = () => {
                     ></Button>
                   ) : null}
                 </li>
-              </div>
+              </Container>
             ))}
           </ul>
         </Container>
