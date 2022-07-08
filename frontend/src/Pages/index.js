@@ -5,6 +5,7 @@ import MissingPage from "./MissingPage";
 import ProfilePage from "./ProfilePage";
 import MembersPage from "./MembersPage";
 import PostPage from "./PostPage";
+import AdminPage from "./AdminDashboard";
 
 export {
     Home,
@@ -12,5 +13,6 @@ export {
     MissingPage,
     ProfilePage,
     MembersPage,
-    PostPage
+    PostPage,
+    AdminPage
 };
