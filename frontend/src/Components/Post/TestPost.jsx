@@ -22,9 +22,9 @@ const TestPost = (props) => {
   const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [content, setContent] = useState("Quoi de neuf ?");
+  const [content, setContent] = useState("");
   useEffect(() => {
-    setContent("Ecrire quelques mots");
+    setContent("");
   }, [AuthState]);
 
   function handleFormSubmit(values, resetForm) {
@@ -46,9 +46,7 @@ const TestPost = (props) => {
     })
       .then(() => {
         resetForm();
-        setErrorMessage(null);
         setImageUrl();
-        //props.setPostRefresh(true);
       })
       .catch(function(error) {
         if (error.response) {

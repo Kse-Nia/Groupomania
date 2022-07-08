@@ -40,10 +40,11 @@ exports.createComment = (req, res) => {
         .then(() => {
             res.send("Commentaire créé")
         })
-        .catch((error) => res.status(500).send({
+        .catch((error) => res.status(400).json({
             error
         }))
 }
+
 
 // Get all comments
 exports.getAllComments = (req, res) => {
@@ -61,9 +62,9 @@ exports.getAllComments = (req, res) => {
             }],
         })
         .then((comment) => {
-            res.status(200).send(comment)
+            res.status(200).json(comment)
         })
-        .catch((error) => res.status(500).send({
+        .catch((error) => res.status(400).json({
             error
         }))
 
@@ -86,14 +87,14 @@ exports.deleteComment = (req, res) => {
                         }
                     })
                     .then(() => res.status(200).send("Commentaire supprimé"))
-                    .catch((error) => res.status(500).send({
+                    .catch((error) => res.status(500).json({
                         error
                     }))
             } else {
                 res.status(403).send("Erreur")
             }
         })
-        .catch((error) => res.status(500).send({
+        .catch((error) => res.status(400).json({
             error
         }))
 }

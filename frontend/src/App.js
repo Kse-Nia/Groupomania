@@ -26,18 +26,18 @@ function App() {
   if (AuthState.isAuthenticated) {
     routes = (
       <Routes>
-        <Route path="/dashboard" exact element={<Dashboard />} />
-        <Route path="/profile" exact element={<ProfilePage />} />
-        <Route path="/members" exact element={<MembersPage />} />
-        <Route path="/posts" exact element={<PostPage />} />
-        <Route path="*" element={<MissingPage />} />
+        <Route path="/dashboard" exact element={<Dashboard />} />{" "}
+        <Route path="/profile" exact element={<ProfilePage />} />{" "}
+        <Route path="/members" exact element={<MembersPage />} />{" "}
+        <Route path="/posts" exact element={<PostPage />} />{" "}
+        <Route path="*" element={<MissingPage />} />{" "}
       </Routes>
     );
   } else {
     routes = (
       <Routes>
-        <Route path="/home" exact element={<Home />} />
-        <Route path="*" exact element={<MissingPage />} />
+        <Route path="/" exact element={<Home />} />{" "}
+        <Route path="*" exact element={<MissingPage />} />{" "}
       </Routes>
     );
   }
@@ -49,7 +49,7 @@ function App() {
         dispatchAuthState,
       }}
     >
-      {routes}
+      {routes}{" "}
     </AuthContext.Provider>
   );
 }

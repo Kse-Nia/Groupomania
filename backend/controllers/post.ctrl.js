@@ -35,33 +35,7 @@ const checkAdmin = (decodedId) => {
     return admin;
 }
 
-// Create Post
-/* exports.createPost = (req, res) => {
-    const decodedId = getTokenId(req);
-    if (!req.body) return res.status(403).send("Erreur, aucune donnée");
-
-    // Verif si image
-    let imageUrl = "";
-    if (req.file) {
-        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-    }
-
-    const post = {
-        UserId: req.body.UserId,
-        author: decodedId,
-        content: req.body.content,
-        imageUrl: imageUrl,
-    }
-
-    Post.create(post)
-        .then((data) => {
-            res.send(data)
-        })
-        .catch((error) => res.status(500).send({
-            error
-        }))
-} */
-
+// Créer Post   
 exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
     if (!req.body.content) return res.status(403).send("Aucun contenu");
@@ -91,26 +65,6 @@ exports.createPost = (req, res, next) => {
         })
 }
 
-
-// Get all Posts
-/* exports.getAllPosts = (req, res) => {
-    // Recup Posts + info User
-    Post.findAll({
-            order: [
-                ["createdAt", "DESC"]
-            ],
-            include: [{
-                model: User,
-                attributes: ["firstName", "lastName", "imageUrl"]
-            }],
-        })
-        .then((posts) => {
-            res.status(200).send(posts)
-        })
-        .catch((error) => res.status(500).send({
-            error
-        }))
-} */
 
 exports.getAllPosts = (req, res) => {
     Post.findAll({

@@ -9,7 +9,7 @@ router.post("/register", multer, userCtrl.register);
 router.post("/login", userCtrl.login);
 
 router.get("/", auth, userCtrl.getAllUsers);
-router.put("/", auth, multer, userCtrl.modifyProfile);
+router.put("/:id", auth, multer, userCtrl.modifyProfile);
 router.put("/password", auth, userCtrl.modifyPass);
 router.delete("/", auth, userCtrl.delete);
 router.delete("/user/:email", auth, userCtrl.deleteOneUser);

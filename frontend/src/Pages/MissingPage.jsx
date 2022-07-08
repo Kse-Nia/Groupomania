@@ -1,9 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { styled } from "@mui/material/styles";
 import ErrorPicture from "../Assets/404.jpg";
 import Container from "@mui/material/Container";
-import { Typography } from "@mui/material";
+import Button from "@mui/material/Button";
 
 const MissingPage = () => {
   return (
@@ -13,7 +11,9 @@ const MissingPage = () => {
         alt="page introuvabled"
         className="errorPicture"
       />
-      <a href="/home">Revenir à l'accueil</a>
+      <Button variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <a href="/dashboard">Revenir à l'accueil</a>
+      </Button>
     </Container>
   );
 };

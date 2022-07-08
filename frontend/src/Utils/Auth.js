@@ -5,14 +5,16 @@ import {
 export let initialAuth = {};
 
 // Expiration
-const hours = 3;
-let saved = localStorage.getItem('savedAt');
+let hours = 3;
+let now = new Date().getTime();
+let setupTime = localStorage.getItem('savedAt');
 
-if (saved && (new Date().getTime() - saved > hours * 60 * 60 * 1000)) {
+if (now - setupTime > hours * 60 * 60 * 1000) {
     localStorage.clear();
 
     initialAuth = {
         UserId: null,
+        user: null,
         token: null,
         isAuthenticated: false,
         isAdmin: false,
@@ -34,6 +36,7 @@ if (saved && (new Date().getTime() - saved > hours * 60 * 60 * 1000)) {
     initialAuth = {
         UserId: null,
         token: null,
+        user: null,
         isAuthenticated: false,
         isAdmin: false,
     }
@@ -75,6 +78,7 @@ export const AuthReducer = (authState, action) => {
                     isAuthenticated: false,
                         isAdmin: false,
                         UserId: null,
+                        user: null,
                         token: null,
                 }
                 default:
