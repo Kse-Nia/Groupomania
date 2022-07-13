@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import api from "../../API/index";
-import * as Yup from "yup";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 //CSS
 import Avatar from "@mui/material/Avatar";
@@ -16,16 +14,15 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 const Register = (props) => {
-  require("yup-password")(Yup);
-  const reactSwal = withReactContent(Swal);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [controlPassword, setControlPassword] = useState("");
+  const notify = () => toast("COmpte créé!");
 
-  // validation schema
-  const Schema = Yup.object().shape({
+  // validation schema; prénom, nom, email: obligatoires; Password: au moins 1 chiffre + 1 lettre maj
+  /*   const Schema = Yup.object().shape({
     firstName: Yup.string().required("obligatoire*"),
     lastName: Yup.string().required("obligatoire*"),
     email: Yup.string().required("obligatoire*"),
@@ -37,7 +34,7 @@ const Register = (props) => {
       .required("obligatoire*")
       .minUppercase(1, "au moins 1 lettre majuscule")
       .minNumbers(1, "au moins 1 chiffre"),
-  });
+  }); */
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -59,19 +56,7 @@ const Register = (props) => {
       })
         .then((res) => {
           console.log(res);
-          if (res.status === 200) {
-            reactSwal.fire({
-              title: "Compte créé",
-              icon: "success",
-              showCloseButton: false,
-              buttonsStyling: false,
-              customClass: {
-                confirmButton: "btn btn-primary mx-3",
-                title: "h3 font",
-                popup: "card",
-              },
-            });
-          }
+          toast.success("Request successfull");
         })
         .catch(function(error) {
           if (error.response) {
@@ -109,7 +94,7 @@ const Register = (props) => {
         <Box
           component="form"
           noValidate
-          validationSchema={Schema}
+          //validationSchema={Schema}
           onSubmit={handleRegister}
           sx={{ mt: 3 }}
         >
@@ -179,6 +164,7 @@ const Register = (props) => {
             </Grid>
           </Grid>
           <Button
+            onClick={notify}
             type="submit"
             fullWidth
             variant="contained"
@@ -186,12 +172,17 @@ const Register = (props) => {
           >
             S'inscrire
           </Button>
-          {/*  {messageError && (
-            <div className="text-info">
-              <br />
-              {messageError}
-            </div>
-          )} */}
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </Box>
       </Box>
     </Container>

@@ -19,9 +19,8 @@ import { AuthContext } from "../../App";
 const FormPost = () => {
   const { AuthState } = useContext(AuthContext);
   const [content, setContent] = useState("");
-  const [media, setMedia] = useState(null);
   const [selectedFile, setSelectedFile] = useState();
-  const ReactSwal = withReactContent(Swal);
+  const Swal = withReactContent(Swal);
 
   /*   const [selectedFile, setSelectedFile] = useState();
     const [media, setMedia] = useState(null); */
@@ -58,7 +57,7 @@ const FormPost = () => {
         setMedia("default");
         props.setPostRefresh(true);
         console.log("Posté avec succès !");
-        ReactSwal.fire({
+        Swal.fire({
           title: "Posté",
           icon: "success",
           showCloseButton: false,

@@ -5,8 +5,7 @@ import { AuthContext } from "../../App";
 import Password from "./Password";
 
 // CSS
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2/dist/sweetalert2.js";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -20,11 +19,10 @@ const Input = styled("input")({
 
 const FormProfile = (props) => {
   const { AuthState, dispatchAuthState } = useContext(AuthContext);
-  const reactSwal = withReactContent(Swal);
   const [imageUrl, setImageUrl] = useState();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const handleFormSubmit = (values, resetForm) => {
+  const handleFormSubmit = (values) => {
     if (!values.firstName || !values.lastName || !imageUrl)
       return setErrorMessage("Veuillez remplir au moins 1 champs");
 
@@ -59,7 +57,6 @@ const FormProfile = (props) => {
             payload: res.data,
           });
           setErrorMessage(null);
-          resetForm();
         }
       })
       .catch(function(error) {
@@ -141,26 +138,6 @@ const FormProfile = (props) => {
                 newFirstName = `Prénom : ${values.firstName}`;
               if (values.lastName) newLastName = `Nom : ${values.lastName}`;
               if (imageUrl) newAvatar = `Avatar : ${imageUrl.name}`;
-
-              reactSwal
-                .fire({
-                  title: "Valider ces modifications ?",
-                  showCancelButton: true,
-                  confirmButtonText: "Valider",
-                  cancelButtonText: "Annuler",
-                  buttonsStyling: false,
-                  customClass: {
-                    confirmButton: "btn",
-                    cancelButton: "btn",
-                    title: "h4 font",
-                    popup: "card",
-                  },
-                })
-                .then((result) => {
-                  if (result.isConfirmed) {
-                    handleFormSubmit(values, resetForm);
-                  } else return;
-                });
             }}
           >
             <Form>
@@ -216,25 +193,23 @@ const FormProfile = (props) => {
           <span>ou</span>
           <button
             onClick={() => {
-              reactSwal
-                .fire({
-                  icon: "warning",
-                  title: "Valider la suppression du compte ?",
-                  showCancelButton: true,
-                  confirmButtonText: "Valider",
-                  cancelButtonText: "Annuler",
-                  customClass: {
-                    confirmButton: "btn",
-                    cancelButton: "btn ",
-                    title: "h5 font",
-                    popup: "card",
-                  },
-                })
-                .then((result) => {
-                  if (result.isConfirmed) {
-                    handleDeleteAccount();
-                  } else return;
-                });
+              Swal.fire({
+                icon: "warning",
+                title: "Valider la suppression du compte ?",
+                showCancelButton: true,
+                confirmButtonText: "Valider",
+                cancelButtonText: "Annuler",
+                customClass: {
+                  confirmButton: "btn",
+                  cancelButton: "btn ",
+                  title: "h5 font",
+                  popup: "card",
+                },
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  handleDeleteAccount();
+                } else return;
+              });
             }}
           >
             Supprimer le compte définitivement ?
