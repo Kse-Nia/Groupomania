@@ -4,22 +4,7 @@ import {
 
 export let initialAuth = {};
 
-// Expiration
-let hours = 3;
-let now = new Date().getTime();
-let setupTime = localStorage.getItem('savedAt');
-
-if (now - setupTime > hours * 60 * 60 * 1000) {
-    localStorage.clear();
-
-    initialAuth = {
-        UserId: null,
-        user: null,
-        token: null,
-        isAuthenticated: false,
-        isAdmin: false,
-    }
-} else if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
+if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
     initialAuth = {
         token: JSON.parse(localStorage.getItem("token")),
         //user: JSON.parse(localStorage.getItem("user")),

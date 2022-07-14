@@ -1,7 +1,18 @@
 import React from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import "../Navbar/Navbar.css";
+import Button from "@mui/material/Button";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const Navbar = () => {
+  const navigate = useNavigate;
+
+  function clearStorage() {
+    window.localStorage.clear();
+    window.location.reload();
+    navigate.push("/");
+  }
+
   return (
     <header className="header">
       <div className="nav">
@@ -14,6 +25,7 @@ const Navbar = () => {
             <span></span>
             <span></span>
             <span></span>
+            <span></span>
           </label>
         </div>
 
@@ -22,6 +34,16 @@ const Navbar = () => {
           <a href="/members">Membres</a>
           <a href="/profile">Mon Compte</a>
           <a href="/posts">Créer un nouveau post</a>
+          <div>
+            <Button
+              onClick={clearStorage}
+              variant="contained"
+              startIcon={<LogoutIcon />}
+              aria-label="se déconnecter"
+            >
+              LogOut
+            </Button>
+          </div>
         </div>
       </div>
     </header>
