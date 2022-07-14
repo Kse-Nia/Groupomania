@@ -19,7 +19,7 @@ const Register = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [controlPassword, setControlPassword] = useState("");
-  const notify = () => toast("COmpte créé!");
+  const notify = () => toast("Compte créé avec succès");
 
   // validation schema; prénom, nom, email: obligatoires; Password: au moins 1 chiffre + 1 lettre maj
   /*   const Schema = Yup.object().shape({
@@ -56,9 +56,9 @@ const Register = (props) => {
       })
         .then((res) => {
           console.log(res);
-          toast.success("Request successfull");
+          toast.success("Compte créé avec succès");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response) {
             // Request made and server responded
             console.log(error.response.data);
@@ -172,9 +172,9 @@ const Register = (props) => {
           >
             S'inscrire
           </Button>
-          <ToastContainer
+          {/* <ToastContainer
             position="top-center"
-            autoClose={3000}
+            autoClose={2000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -182,7 +182,7 @@ const Register = (props) => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-          />
+          /> */}
         </Box>
       </Box>
     </Container>
