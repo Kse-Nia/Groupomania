@@ -3,8 +3,9 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 //  CSS
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useFormik } from "formik";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -19,36 +20,46 @@ import { AuthContext } from "../../App";
 
 const CreatePost = (props) => {
   const { AuthState } = useContext(AuthContext);
-  const [imageUrl, setImageUrl] = useState();
-  const [errorMessage, setErrorMessage] = useState(null);
-
   const [content, setContent] = useState("");
+  const [selectedFile, setSelectedFile] = useState();
+
   useEffect(() => {
     setContent("");
   }, [AuthState]);
 
-  function handleFormSubmit(values, resetForm) {
+  function handleSubmit(values) {
     const formData = new FormData();
-    formData.append("author", AuthState.firstName);
+
+    formData.append("author", AuthState.user);
     if (values.content) formData.append("content", values.content);
-    if (values.imageUrl) formData.append("imageUrl", values.imageUrl);
+    if (selectedFile) {
+      formData.append("imageUrl", selectedFile);
+    }
 
     axios({
       method: "post",
       url: "http://localhost:8080/api/create",
-      data: {
-        formData,
-      },
+      data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${AuthState.token}`,
       },
     })
       .then(() => {
-        resetForm();
-        setImageUrl();
+        setSelectedFile();
+        props.setPostRefresh(true);
+        console.log("Posté avec succès !");
+        toast("Posté !", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
@@ -62,63 +73,53 @@ const CreatePost = (props) => {
   }
 
   return (
-    <div>
-      <Card
-        sx={{
-          width: "90%",
-          minHeight: "200px",
-          mt: 2,
-          mx: "auto",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <h1>Créer un nouveau Post</h1>
-        <Formik
-          initialValues={{ content: "" /* imageUrl: "" */ }}
-          onSubmit={(values, { resetForm }) => {
-            if (!values.content) {
-              setErrorMessage("Veuillez écrire quelque chose");
-              return;
-            }
-            handleFormSubmit(values, resetForm);
+    <Container>
+      <Card>
+        <Typography component="h1" variant="h5">
+          Créer un nouveau poste
+        </Typography>
+        <Box
+          component="form"
+          sx={{
+            mx: "auto",
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
+          onSubmit={handleSubmit}
         >
-          <Form>
-            <div>
-              <Field
-                name="content"
-                type="textarea"
-                placeholder={content}
-                style={{ height: "70px" }}
-              />
-              <ErrorMessage name="text" className="errorInput" />
-            </div>
-            <div>
-              <div>
-                <Field
-                  name="picture"
-                  onChange={(e) => setImageUrl(e.target.files[0])}
-                  type="file"
-                  accept=".jpg, .jpeg, .png, .gif"
-                />
-              </div>
-              <ErrorMessage
-                name="imageUrl"
-                component="div"
-                className="errorInput"
-              />
-            </div>
-
-            <button type="submit" title="Poster">
-              Poster
-            </button>
-            {errorMessage && <div className="errorInput">{errorMessage}</div>}
-          </Form>
-        </Formik>
+          <Formik>
+            <TextField
+              name="text"
+              type="textarea"
+              id="outlined-textarea"
+              label="Multiline Placeholder"
+              multiline
+              rows={2}
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+              style={{ height: "70px" }}
+            />
+            <Field
+              name="picture"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              type="file"
+              accept=".jpg, .jpeg, .png, .gif"
+            />
+          </Formik>
+          <Button
+            variant="contained"
+            type="submit"
+            className="btn"
+            title="Poster"
+            aria-label="Envoyer les données"
+          >
+            Poster
+          </Button>
+        </Box>
       </Card>
-    </div>
+    </Container>
   );
 };
 

@@ -26,38 +26,6 @@ const checkAdmin = (decodedId) => {
     return admin
 }
 
-/* exports.register = async (req, res) => {
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.passwordConfirm) {
-        return res.status(403).send("Veillez remplir toutes les données")
-    }
-
-       let imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-       if (!req.file) {
-           imageUrl = `${req.protocol}://${req.get("host")}/images/defaultProfile.png`;
-       }
-
-    // Hash password 10 fois
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        const user = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: hash,
-              imageUrl: imageUrl,
-        }
-
-        User.create(user)
-            .then((valid) => {
-                if (!valid) {
-                    return res.status(500).send("Error")
-                }
-                res.status(200).send("Compte créé")
-            })
-            .catch(() => res.status(403).send("Cet email est déjà utilisé"))
-    })
-} 
-*/
-
 exports.register = async (req, res) => {
     if (!req.body.firstName && !req.body.lastName && !req.body.email && !req.body.password && !req.body.controlPassword) {
         return res.status(403).send("Veillez remplir tous les champs")

@@ -44,9 +44,9 @@ const Posts = ({ allposts }) => {
       <React.Fragment>
         <Container>
           <div>
-            <h3 className="d-none">Tous les postes</h3>
+            <Typography variant="h3">Tous les postes</Typography>
             {postsData
-              .sort(function(a, b) {
+              .sort(function (a, b) {
                 let dateA = new Date(a.createdAt),
                   dateB = new Date(b.createdAt);
                 return dateB - dateA;

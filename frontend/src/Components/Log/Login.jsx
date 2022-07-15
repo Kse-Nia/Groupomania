@@ -41,11 +41,13 @@ const Login = () => {
             payload: res.data,
           });
         } */
-        dispatchAuthState({
-          // Permet un changement de state; Propriété payload qui contient les données;
-          type: "Login",
-          payload: res.data,
-        });
+        if (res.status === 200) {
+          dispatchAuthState({
+            // Permet un changement de state; Propriété payload qui contient les données;
+            type: "Login",
+            payload: res.data,
+          });
+        }
         navigate.push("/dashboard");
       })
       .catch((error) => {

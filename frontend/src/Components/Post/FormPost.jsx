@@ -3,8 +3,8 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 //  CSS
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -16,29 +16,21 @@ import { Card } from "@mui/material";
 
 import { AuthContext } from "../../App";
 
-const FormPost = () => {
+const FormPost = (props) => {
   const { AuthState } = useContext(AuthContext);
   const [content, setContent] = useState("");
   const [selectedFile, setSelectedFile] = useState();
-  const Swal = withReactContent(Swal);
 
-  /*   const [selectedFile, setSelectedFile] = useState();
-    const [media, setMedia] = useState(null); */
-  const [errorMessage, setErrorMessage] = useState(null);
-
-  const [placeHolderText, setPlaceHolderText] = useState(
-    "Ecrire quelques mots.."
-  );
   useEffect(() => {
-    setPlaceHolderText("Ecrire quelques mots..");
+    setContent("");
   }, [AuthState]);
 
-  function handleSubmit(values, resetForm) {
+  function handleSubmit(values) {
     const formData = new FormData();
     formData.append("author", AuthState.user);
     if (values.content) formData.append("content", values.content);
-    if (selectedFile && selectedFile.size < 2000000) {
-      formData.append("picture", selectedFile);
+    if (selectedFile) {
+      formData.append("imageUrl", selectedFile);
     }
 
     axios({
@@ -51,29 +43,28 @@ const FormPost = () => {
       },
     })
       .then(() => {
-        resetForm();
-        setErrorMessage(null);
         setSelectedFile();
-        setMedia("default");
         props.setPostRefresh(true);
         console.log("Posté avec succès !");
-        Swal.fire({
-          title: "Posté",
-          icon: "success",
-          showCloseButton: false,
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: "btn",
-            title: "h5 font",
-            popup: "card",
-          },
+        toast("Posté !", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
         }
       });
   }
@@ -103,48 +94,15 @@ const FormPost = () => {
             multiline
             rows={2}
             onChange={(e) => setContent(e.target.value)}
-            value={text}
+            value={content}
             style={{ height: "70px" }}
           />
-          <ErrorMessage name="text" className="errorInput" />
-
-          {(() => {
-            switch (media) {
-              case "upload":
-                return (
-                  <div>
-                    <div>
-                      <Field
-                        name="picture"
-                        onChange={(e) => setSelectedFile(e.target.files[0])}
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .gif"
-                      />
-                    </div>
-                    <ErrorMessage
-                      name="picture"
-                      component="div"
-                      className="errorInput"
-                    />
-                  </div>
-                );
-
-              default:
-                return (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => setMedia("upload")}
-                      title="Ajouter une image"
-                      aria-label="Ajouter une photo"
-                    >
-                      Joindre une image
-                    </button>
-                  </div>
-                );
-            }
-          })()}
-
+          <Field
+            name="picture"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
+            type="file"
+            accept=".jpg, .jpeg, .png, .gif"
+          />
           <Button
             variant="contained"
             type="submit"
@@ -154,8 +112,6 @@ const FormPost = () => {
           >
             Poster
           </Button>
-
-          {errorMessage && <div className="errorInput">{errorMessage}</div>}
         </Box>
       </Card>
     </Container>

@@ -38,7 +38,9 @@ const checkAdmin = (decodedId) => {
 // Créer Post   
 exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
-    if (!req.body.content) return res.status(403).send("Aucun contenu");
+    if (!req.body.content) {
+        return res.status(403).send("Aucun contenu");
+    }
 
     let imageUrl = "";
     if (req.file) {
@@ -49,7 +51,7 @@ exports.createPost = (req, res, next) => {
     const post = {
         author: UserId,
         content: req.body.content,
-        // imageUrl: imageUrl,
+        imageUrl: imageUrl,
     }
 
     Post.create(post)
