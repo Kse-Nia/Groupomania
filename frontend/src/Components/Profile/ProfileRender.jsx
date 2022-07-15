@@ -5,10 +5,10 @@ import FormProfile from "./FormProfile";
 import ProfileAvatar from "./ProfileAvatar";
 
 // CSS
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Card } from "@mui/material";

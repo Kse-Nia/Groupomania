@@ -34,13 +34,19 @@ const Login = () => {
       },
     })
       .then((res) => {
-        if (res.status === 200) {
+        /*      if (res.status === 200) {
           dispatchAuthState({
+            // Permet un changement de state; Propriété payload qui contient les données;
             type: "Login",
             payload: res.data,
           });
-          navigate.push("/dashboard");
-        }
+        } */
+        dispatchAuthState({
+          // Permet un changement de state; Propriété payload qui contient les données;
+          type: "Login",
+          payload: res.data,
+        });
+        navigate.push("/dashboard");
       })
       .catch((error) => {
         console.error(error);

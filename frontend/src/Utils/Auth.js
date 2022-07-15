@@ -4,7 +4,20 @@ import {
 
 export let initialAuth = {};
 
-if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
+// Expire session
+const nbrHours = 3;
+let savedAt = localStorage.getItem('savedAt')
+
+if (savedAt && (new Date().getTime() - savedAt > nbrHours * 60 * 60 * 1000)) {
+    localStorage.clear()
+    initialAuth = {
+        isAuthenticated: false,
+        isAdmin: false,
+        user: null,
+        token: null,
+    }
+} else if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
+    // Recup données du Back puis conversion en objet JS
     initialAuth = {
         token: JSON.parse(localStorage.getItem("token")),
         //user: JSON.parse(localStorage.getItem("user")),
@@ -17,6 +30,7 @@ if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
         isAuthenticated: JSON.parse(localStorage.getItem("isAuthenticated")),
     }
 } else {
+    // Initial state
     localStorage.clear()
     initialAuth = {
         UserId: null,

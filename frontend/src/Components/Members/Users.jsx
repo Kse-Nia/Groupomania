@@ -4,14 +4,17 @@ import React, {
   useState,
   useCallback,
   useMemo,
-} from "react"; // useMemo hook; permet création d'un tableau de valeurs qui ne sera pas recalculé à chaque modification de la valeur
+} from "react"; // useMemo hook; permet création d'un tableau de valeurs qui ne sera pas recalculé à chaque modification
 import axios from "axios";
 import { AuthContext } from "../../App";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import ProfileAvatar from "../Profile/ProfileAvatar";
 
 // CSS
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+
 import { Oval } from "react-loader-spinner";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -41,7 +44,7 @@ const Users = () => {
       setLoading(false);
     });
   }, [AuthState.token]);
-  const handleResearch = useCallback(
+  const handleSearch = useCallback(
     (value) => {
       let result = users.filter((user) => {
         if (
@@ -56,7 +59,7 @@ const Users = () => {
     [users]
   );
 
-  // Partie Admin: suppression User
+  // Partie réservée Admin: suppression User
   const deleteUser = useCallback(
     (email) => {
       axios({
@@ -70,7 +73,7 @@ const Users = () => {
             console.log("Compte supprimé");
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response) {
             console.log(error.response.data);
             console.log(error.response.status);
@@ -85,7 +88,7 @@ const Users = () => {
     [AuthState.token, getUsers]
   );
 
-  // Render Users
+  // Render All Users
   const initialMembersRender = useMemo(() => {
     return (
       <div>
@@ -96,7 +99,7 @@ const Users = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h4">Utilisateurs inscrits</Typography>
+          <Typography variant="h4">Membres inscrits</Typography>
           <Paper
             component="form"
             sx={{
@@ -111,7 +114,7 @@ const Users = () => {
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               type="text"
-              onChange={(event) => handleResearch(event.target.value)}
+              onChange={(event) => handleSearch(event.target.value)}
               className="search_input"
               placeholder="Recherche"
             ></InputBase>
@@ -176,7 +179,7 @@ const Users = () => {
         </Container>
       </div>
     );
-  }, [AuthState.isAdmin, AuthState.firstName, filteredUsers, handleResearch]);
+  }, [AuthState.isAdmin, AuthState.firstName, filteredUsers, handleSearch]);
 
   const [membersRender, setMembersRender] = useState(initialMembersRender);
 
@@ -206,40 +209,53 @@ const Users = () => {
   else return membersRender;
 };
 
-//User Profile
+//Users Profile
 function MemberProfile(props) {
   return (
-    <div>
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          margin: "1em",
-        }}
+    <Container maxWidth="sm">
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
       >
-        <Box
+        <Card
           sx={{
-            m: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "1em",
+            width: 600,
+            maxWidth: "100%",
           }}
         >
-          <ProfileAvatar photo={props.user.imageUrl} />
-          <div>{props.user.email}</div>
-          <div>
-            {props.user.firstName} {props.user.lastName}
-          </div>
-        </Box>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            props.setMembersRender(props.initialMembersRender);
-          }}
-        >
-          Retour
-        </Button>
-      </Card>
-    </div>
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <div>
+              <Typography variant="h4">Compte utilisateur</Typography>
+              <ProfileAvatar photo={props.user.imageUrl} />
+              <Typography>Prénom : {props.user.firstName}</Typography>
+              <Typography>Nom : {props.user.lastName}</Typography>
+              <Typography>Email : {props.user.email}</Typography>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  props.setMembersRender(props.initialMembersRender);
+                }}
+              >
+                Retour
+              </Button>
+            </div>
+          </Grid>
+        </Card>
+      </Grid>
+    </Container>
   );
 }
 

@@ -21,21 +21,6 @@ const Register = (props) => {
   const [controlPassword, setControlPassword] = useState("");
   const notify = () => toast("Compte créé avec succès");
 
-  // validation schema; prénom, nom, email: obligatoires; Password: au moins 1 chiffre + 1 lettre maj
-  /*   const Schema = Yup.object().shape({
-    firstName: Yup.string().required("obligatoire*"),
-    lastName: Yup.string().required("obligatoire*"),
-    email: Yup.string().required("obligatoire*"),
-    password: Yup.string()
-      .required("obligatoire*")
-      .minUppercase(1, "au moins 1 lettre majuscule")
-      .minNumbers(1, "au moins 1 chiffre"),
-    passwordConfirm: Yup.string()
-      .required("obligatoire*")
-      .minUppercase(1, "au moins 1 lettre majuscule")
-      .minNumbers(1, "au moins 1 chiffre"),
-  }); */
-
   const handleRegister = (e) => {
     e.preventDefault();
 
@@ -94,7 +79,6 @@ const Register = (props) => {
         <Box
           component="form"
           noValidate
-          //validationSchema={Schema}
           onSubmit={handleRegister}
           sx={{ mt: 3 }}
         >
