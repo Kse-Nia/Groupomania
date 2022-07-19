@@ -18,15 +18,44 @@ const Posts = ({ allposts }) => {
 
   const [postsData, setPostsData] = useState(false);
 
-  const getAllPosts = useCallback(() => {
+  /*   const getAllPosts = useCallback(() => {
     axios({
       method: "get",
       url: "http://localhost:8080/api/posts",
       headers: { Authorization: `Bearer ${AuthState.token}` },
-    }).then((res) => {
-      setPostsData(res.data);
-    });
-  }, [AuthState.token]);
+    })
+      .then((res) => {
+        setPostsData(res.data);
+      })
+      .catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+      })
+  }, [AuthState.token]); */
+
+  const getAllPosts = useCallback(() => {
+    let token = localStorage.getItem("token");
+
+    axios
+      .get("http://localhost:8080/api/posts", {
+        headers: {
+          Authorization: `Bearer ${token}`, //here remove + in template litereal
+        },
+      })
+      .then((res) => {
+        console.log("Success");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
   useEffect(() => {
     getAllPosts();

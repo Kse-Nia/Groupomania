@@ -37,7 +37,7 @@ const Users = () => {
   const getUsers = useCallback(() => {
     axios({
       method: "get",
-      url: "http://localhost:8080/home/",
+      url: "http://localhost:8080/home/users",
       headers: { Authorization: `Bearer ${AuthState.token}` },
     }).then((res) => {
       setUsers(res.data);

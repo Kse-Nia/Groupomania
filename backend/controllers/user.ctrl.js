@@ -7,13 +7,13 @@ const fs = require("fs");
 
 secretToken = process.env.TOKEN_SECRET;
 
-// Recup User Id token
-const getTokenUserId = (req) => {
+// Get UserId by token
+const getTokenId = (req) => {
     const token = req.headers.authorization.split(" ");
-    const decodedToken = jwt.verify(token[1], secretToken);
-    const decodedId = decodedToken.userId;
-    return decodedId;
-}
+    const decodedToken = jwt.verify(token[1], secretTokenKey);
+    const decodedId = decodedToken.UserId;
+    return decodedId
+};
 
 //Check admin/user
 let admin = false;
@@ -31,7 +31,7 @@ exports.register = async (req, res) => {
         return res.status(403).send("Veillez remplir tous les champs")
     }
 
-    let imageUrl = `${req.protocol}://${req.get("host")}/images/efaultProfile.png`;
+    let imageUrl = `${req.protocol}://${req.get("host")}/images/defaultPicture.png`;
 
     // crypt password
     bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -62,11 +62,11 @@ exports.login = (req, res, next) => {
             }
         })
         .then((user) => {
-            if (!user) return res.status(403).send("Can't find Account")
+            if (!user) return res.status(403).send("Compte introuvable")
 
             // Compare hash
             bcrypt.compare(req.body.password, user.password).then((valid) => {
-                if (!valid) return res.status(403).send("Wrong password")
+                if (!valid) return res.status(403).send("Mauvais mot de passe")
                 res.status(200).send({
                     UserId: user.id,
                     token: jwt.sign({
@@ -130,7 +130,7 @@ exports.getOneUser = (req, res) => {
 
 // Partie Admin
 exports.deleteOneUser = (req, res) => {
-    const decodedId = getTokenUserId(req);
+    const decodedId = getTokenId(req);
     User.findOne({
             where: {
                 email: req.params.email
@@ -140,7 +140,7 @@ exports.deleteOneUser = (req, res) => {
             // Check Admin/User
             if (checkAdmin(decodedId)) {
                 const filename = user.imageUrl.split("/images/")[1] //Delete avatar
-                if (!filename === "defaultProfile.png") {
+                if (!filename === "defaultPicture.png") {
                     fs.unlink(`./images/${filename}`, () => {})
                 }
                 User.destroy({
@@ -162,7 +162,7 @@ exports.deleteOneUser = (req, res) => {
 }
 
 exports.delete = (req, res) => {
-    const decodedId = getTokenUserId(req) // Recup id
+    const decodedId = getTokenId(req) // Recup id
 
     User.findOne({
             where: {
@@ -172,7 +172,7 @@ exports.delete = (req, res) => {
         .then((user) => {
             if (user.id === decodedId && !checkAdmin(decodedId)) {
                 const filename = user.imageUrl.split("/images/")[1]
-                if (!filename === "defaultProfile.png") {
+                if (!filename === "defaultPicture.png") {
                     fs.unlink(`./images/${filename}`, () => {})
                 }
                 User.destroy({
@@ -180,7 +180,7 @@ exports.delete = (req, res) => {
                             id: user.id
                         }
                     })
-                    .then(() => res.status(200).send("Compte supprimé.."))
+                    .then(() => res.status(200).send("Compte supprimé"))
                     .catch((err) => res.status(500).send({
                         err
                     }))
@@ -212,7 +212,7 @@ exports.modifyProfile = (req, res) => {
                 if (req.imageUrl) {
                     // delete old picture
                     const oldFilename = user.imageUrl.split("/images/")[1]
-                    if (oldFilename !== "defaultProfile.png") {
+                    if (oldFilename !== "defaultPicture.png") {
                         fs.unlink(`./images/${oldFilename}`, () => {})
                     }
                     newUser = {
@@ -264,10 +264,10 @@ exports.modifyProfile = (req, res) => {
 
 exports.modifyPass = (req, res) => {
     if (!req.body.oldPassword || !req.body.password || !req.body.controlPassword) {
-        return res.status(403).send("Veillez saisir toutes les données")
+        return res.status(403).send("Veillez remplir tous les champs")
     };
 
-    const decodedId = getTokenUserId(req);
+    const decodedId = getTokenId(req);
 
     User.findOne({
             where: {
@@ -289,7 +289,7 @@ exports.modifyPass = (req, res) => {
                                 }
                             })
                             .then(() => {
-                                return res.status(200).send("Mot de passe modifié!")
+                                return res.status(200).send("Mot de passe modifié")
                             })
                             .catch((err) => console.log(err))
                     })

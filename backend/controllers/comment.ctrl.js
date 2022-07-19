@@ -5,13 +5,13 @@ const User = models.User;
 const Comment = models.Comment;
 secretTokenKey = process.env.TOKEN_SECRET;
 
-// Get Token User
-const getTokenUserId = (req) => {
-    const token = req.headers.authorization.split(" ")
-    const decodedToken = jwt.verify(token[1], secretTokenKey)
-    const decodedId = decodedToken.userId
+// Get UserId by token
+const getTokenId = (req) => {
+    const token = req.headers.authorization.split(" ");
+    const decodedToken = jwt.verify(token[1], secretTokenKey);
+    const decodedId = decodedToken.UserId;
     return decodedId
-}
+};
 
 // Check Admin/User
 let admin = false
@@ -25,13 +25,13 @@ const checkAdmin = (decodedId) => {
 }
 
 // Create Com
-exports.createComment = (req, res) => {
+/* exports.createComment = (req, res) => {
     if (!req.body) return res.status(403).send("Erreur");
-    const decodedId = getTokenUserId(req) // recup ID
+    const decodedId = getTokenId(req) // recup ID
 
     // Create comment
     const comment = {
-        text: req.body.text,
+        body: req.body.text,
         UserId: decodedId,
         PostId: req.params.id
     }
@@ -43,8 +43,37 @@ exports.createComment = (req, res) => {
         .catch((error) => res.status(400).json({
             error
         }))
-}
+} */
 
+exports.createComment = (req, res, next) => {
+    db.Post.findOne({
+            where: {
+                id: req.body.PostId
+            }
+        })
+        .then(post => {
+            if (!post) {
+                return res.status(404).json({
+                    error: 'Post introuvable'
+                })
+            }
+
+            db.Comment.create({
+                    body: req.body.body,
+                    UserId: res.locals.UserId,
+                    PostId: post.id
+                })
+                .then(comment => res.status(201).json({
+                    comment
+                }))
+                .catch(error => res.status(400).json({
+                    error
+                }))
+        })
+        .catch(error => res.status(400).json({
+            error
+        }))
+}
 
 // Get all comments
 exports.getAllComments = (req, res) => {
@@ -72,7 +101,7 @@ exports.getAllComments = (req, res) => {
 
 // Delete Com
 exports.deleteComment = (req, res) => {
-    const decodedId = getTokenUserId(req); // recup Id
+    const decodedId = getTokenId(req); // recup Id
 
     Comment.findOne({
             where: {

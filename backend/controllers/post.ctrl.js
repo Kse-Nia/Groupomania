@@ -11,7 +11,7 @@ const User = models.User;
 const getTokenId = (req) => {
     const token = req.headers.authorization.split(" ");
     const decodedToken = jwt.verify(token[1], secretTokenKey);
-    const decodedId = decodedToken.userId;
+    const decodedId = decodedToken.UserId;
     return decodedId
 };
 
@@ -36,7 +36,7 @@ const checkAdmin = (decodedId) => {
 }
 
 // Créer Post   
-exports.createPost = (req, res, next) => {
+/* exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
     if (!req.body.content) {
         return res.status(403).send("Aucun contenu");
@@ -65,10 +65,36 @@ exports.createPost = (req, res, next) => {
                 error
             })
         })
+} */
+
+exports.createPost = (req, res, next) => {
+    const UserId = req.body.UserId;
+    if (!req.body) {
+        return res.status(403).send("Aucun contenu");
+    }
+
+    let imageUrl = ""
+    if (req.file) {
+        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    }
+
+    const post = {
+        UserId: UserId,
+        content: req.body.content,
+        author: UserId,
+        imageUrl: imageUrl,
+    }
+    Post.create(post)
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((error) => res.status(500).send({
+            error
+        }))
 }
 
 
-exports.getAllPosts = (req, res) => {
+/* exports.getAllPosts = (req, res) => {
     Post.findAll({
             order: [
                 ["createdAt", "DESC"]
@@ -78,7 +104,29 @@ exports.getAllPosts = (req, res) => {
         .catch((error) => res.status(400).json({
             error
         }));
-};
+}; */
+
+exports.getAllPosts = async (req, res) => {
+    try {
+        const posts = await models.Post.findAll({
+            include: [{
+                    model: models.Comment,
+                    as: 'comments'
+                },
+                {
+                    model: models.User,
+                    as: 'author'
+                }
+            ]
+        });
+        return res.status(200).json({
+            posts
+        });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 
 // Get One Post
 exports.getOnePost = (req, res) => {

@@ -17,8 +17,8 @@ import { Card } from "@mui/material";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { dispatchAuthState } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState(null);
+  const { dispatchAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
@@ -27,20 +27,12 @@ const Login = () => {
     axios({
       method: "post",
       url: "http://localhost:8080/home/login",
-      /*   url: `${api}/home/login`, */
       data: {
         email,
         password,
       },
     })
       .then((res) => {
-        /*      if (res.status === 200) {
-          dispatchAuthState({
-            // Permet un changement de state; Propriété payload qui contient les données;
-            type: "Login",
-            payload: res.data,
-          });
-        } */
         if (res.status === 200) {
           dispatchAuthState({
             // Permet un changement de state; Propriété payload qui contient les données;
@@ -50,8 +42,16 @@ const Login = () => {
         }
         navigate.push("/dashboard");
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
       });
   };
 

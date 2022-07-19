@@ -1,17 +1,18 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar/Navbar";
-import Posts from "../Components/Post/Posts";
+//import Posts from "../Components/Post/Posts";
+import GetPosts from "../Components/Post/GetPosts";
 
 const Dashboard = () => {
-  const [posts, setPosts] = useState([]);
+  /*   const [posts, setPosts] = useState([]);
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/posts")
       .then((res) => {
         setPosts(res.data);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
@@ -22,12 +23,12 @@ const Dashboard = () => {
           console.log("Error", error.message);
         }
       });
-  });
+  }); */
   return (
     <div>
       <Navbar />
       <h1>Actualité</h1>
-      <Posts posts={posts} />
+      <GetPosts />
     </div>
   );
 };

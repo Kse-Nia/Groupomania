@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     UserId: DataTypes.INTEGER,
     postId: DataTypes.INTEGER,
     body: DataTypes.STRING,
-    imageUrl: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Comment',
