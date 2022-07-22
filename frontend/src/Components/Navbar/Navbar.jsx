@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import "../Navbar/Navbar.css";
 import Button from "@mui/material/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Logo from "../../Assets/icon.svg";
 
 const Navbar = () => {
   const navigate = useNavigate;
@@ -17,12 +18,11 @@ const Navbar = () => {
     <header className="header">
       <div className="nav">
         <input type="checkbox" id="nav-check" />
-        {/*  <div className="nav-header">
+        <div className="nav-header">
           <img src={Logo} alt="logo" className="logo" />
-        </div> */}
+        </div>
         <div className="nav-btn">
           <label htmlFor="nav-check">
-            <span></span>
             <span></span>
             <span></span>
             <span></span>

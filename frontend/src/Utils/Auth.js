@@ -11,17 +11,17 @@ let savedAt = localStorage.getItem('savedAt')
 if (savedAt && (new Date().getTime() - savedAt > nbrHours * 60 * 60 * 1000)) {
     localStorage.clear()
     initialAuth = {
-        isAuthenticated: false,
-        isAdmin: false,
-        user: null,
         token: null,
+        user: null,
+        isAdmin: false,
+        isAuthenticated: false,
     }
 } else if (JSON.parse(localStorage.getItem("isAuthenticated")) === true) {
     // Recup données du Back puis conversion en objet JS
     initialAuth = {
+        user: JSON.parse(localStorage.getItem("user")),
         token: JSON.parse(localStorage.getItem("token")),
-        //user: JSON.parse(localStorage.getItem("user")),
-        UserId: JSON.parse(localStorage.getItem("UserId")),
+        //UserId: JSON.parse(localStorage.getItem("UserId")),
         firstName: JSON.parse(localStorage.getItem("firstName")),
         lastName: JSON.parse(localStorage.getItem("lastName")),
         email: JSON.parse(localStorage.getItem("email")),
@@ -33,11 +33,10 @@ if (savedAt && (new Date().getTime() - savedAt > nbrHours * 60 * 60 * 1000)) {
     // Initial state
     localStorage.clear()
     initialAuth = {
-        UserId: null,
         token: null,
         user: null,
-        isAuthenticated: false,
         isAdmin: false,
+        isAuthenticated: false,
     }
 }
 
@@ -47,7 +46,7 @@ export const AuthReducer = (authState, action) => {
             // Sauvegarde Data dans LS
             localStorage.setItem("token", JSON.stringify(action.payload.token));
             localStorage.setItem("user", JSON.stringify(action.payload.user));
-            localStorage.setItem("UserId", JSON.stringify(action.payload.UserId));
+            //localStorage.setItem("UserId", JSON.stringify(action.payload.UserId));
             localStorage.setItem("firstName", JSON.stringify(action.payload.firstName));
             localStorage.setItem("lastName", JSON.stringify(action.payload.lastName));
             localStorage.setItem("email", JSON.stringify(action.payload.email));
@@ -62,7 +61,7 @@ export const AuthReducer = (authState, action) => {
 
             return {
                 ...authState,
-                UserId: action.payload.UserId,
+                user: action.payload.UserId,
                     token: action.payload.token,
                     firstName: action.payload.firstName,
                     lastName: action.payload.lastName,
@@ -76,7 +75,7 @@ export const AuthReducer = (authState, action) => {
                 return {
                     isAuthenticated: false,
                         isAdmin: false,
-                        UserId: null,
+                        //UserId: null,
                         user: null,
                         token: null,
                 }

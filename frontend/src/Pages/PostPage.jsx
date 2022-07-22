@@ -1,13 +1,12 @@
 import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
-//import CreatePost from "../Components/Post/CreatePost";
-import TestPost from "../Components/Post/TestPost";
+import CardPost from "../Components/Post/CardPost";
 
 const PostPage = () => {
   return (
     <div>
       <Navbar />
-      <TestPost />
+      <CardPost />
     </div>
   );
 };

@@ -24,27 +24,6 @@ const checkAdmin = (decodedId) => {
     return admin
 }
 
-// Create Com
-/* exports.createComment = (req, res) => {
-    if (!req.body) return res.status(403).send("Erreur");
-    const decodedId = getTokenId(req) // recup ID
-
-    // Create comment
-    const comment = {
-        body: req.body.text,
-        UserId: decodedId,
-        PostId: req.params.id
-    }
-
-    Comment.create(comment)
-        .then(() => {
-            res.send("Commentaire créé")
-        })
-        .catch((error) => res.status(400).json({
-            error
-        }))
-} */
-
 exports.createComment = (req, res, next) => {
     db.Post.findOne({
             where: {
