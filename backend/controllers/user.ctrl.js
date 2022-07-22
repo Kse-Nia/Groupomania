@@ -133,7 +133,7 @@ exports.delete = (req, res) => {
 }
 
 exports.modifyProfile = (req, res) => {
-    if (!req.body.firstName || !req.body.lastName) {
+    if (!req.body.firstName && !req.body.lastName) {
         return res.status(403).send("Veillez saisir au moins une donnée");
     }
 
@@ -149,7 +149,6 @@ exports.modifyProfile = (req, res) => {
                     ...req.body
                 }
                 if (req.imageUrl) {
-                    // delete old picture
                     const oldFilename = user.imageUrl.split("/images/")[1]
                     if (oldFilename !== "defaultPicture.png") {
                         fs.unlink(`./images/${oldFilename}`, () => {})

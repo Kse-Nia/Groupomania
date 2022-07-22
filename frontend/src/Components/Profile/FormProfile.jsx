@@ -25,9 +25,8 @@ const FormProfile = (props) => {
   const [imageUrl, setImageUrl] = useState();
   const reactSwal = withReactContent(Swal);
 
-  const handleFormSubmit = (values, error) => {
+  const handleFormSubmit = (values) => {
     if (!values.firstName || !values.lastName || !imageUrl) {
-      //return setErrorMessage("Veuillez remplir au moins 1 champs");
       toast.error("Veuillez remplir au moins 1 champs", {
         position: "top-center",
         autoClose: 5000,
@@ -40,6 +39,7 @@ const FormProfile = (props) => {
     }
 
     const formData = new FormData();
+
     for (let i in values) {
       if (!values[i]) {
       } else if (i === "email") formData.append(i, values[i].toLowerCase());
@@ -52,7 +52,7 @@ const FormProfile = (props) => {
 
     axios({
       method: "put",
-      url: "http://localhost:8080/home/",
+      url: "http://localhost:8080/home/update",
       data: formData,
       headers: {
         Authorization: `Bearer ${AuthState.token}`,
@@ -199,13 +199,12 @@ const FormProfile = (props) => {
                 <ErrorMessage name="lastName" className="errorInput" />
 
                 <Field
-                  name="picture"
+                  name="imageUrl"
                   onChange={(e) => setImageUrl(e.target.files[0])}
                   type="file"
-                  accept=".jpg, .jpeg, .png,"
-                  className="file-input"
+                  accept=".jpg, .jpeg, .png, .gif"
                 />
-                <ErrorMessage name="picture" className="errorInput" />
+                <ErrorMessage name="imageUrl" className="errorInput" />
 
                 <Button variant="contained" type="submit" title="Modifier">
                   Valider les modifications
