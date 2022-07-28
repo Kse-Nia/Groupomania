@@ -36,7 +36,7 @@ const GetPosts = () => {
         {loading &&
           posts.map((post) => (
             <Card>
-              <Typography key={post.UserId}></Typography>
+              <Typography key={post.user}></Typography>
               <Typography key={post.createdAt}></Typography>
               <Typography key={post.content}></Typography>
             </Card>

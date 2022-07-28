@@ -127,13 +127,21 @@ exports.delete = (req, res) => {
                 res.status(403).send("Error")
             }
         })
-        .catch((err) => res.status(500).send({
-            err
-        }))
+        .catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log("Error", error.message);
+            }
+        });
 }
 
 exports.modifyProfile = (req, res) => {
-    if (!req.body.firstName && !req.body.lastName) {
+    if (!req.body.firstName || !req.body.lastName) {
         return res.status(403).send("Veillez saisir au moins une donnée");
     }
 
