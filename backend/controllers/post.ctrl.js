@@ -35,7 +35,6 @@ const checkAdmin = (decodedId) => {
     return admin;
 }
 
-
 /* exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
     if (!req.body) {
