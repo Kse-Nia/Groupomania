@@ -35,39 +35,8 @@ const checkAdmin = (decodedId) => {
     return admin;
 }
 
-// Créer Post   
+
 /* exports.createPost = (req, res, next) => {
-    const UserId = req.body.UserId;
-    if (!req.body.content) {
-        return res.status(403).send("Aucun contenu");
-    }
-
-    let imageUrl = "";
-    if (req.file) {
-        imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-    }
-
-    // Création Post
-    const post = {
-        author: UserId,
-        content: req.body.content,
-        imageUrl: imageUrl,
-    }
-
-    Post.create(post)
-        .then(() => {
-            res.status(201).json({
-                message: 'Post enregistré !'
-            })
-        })
-        .catch(error => {
-            res.status(400).json({
-                error
-            })
-        })
-} */
-
-exports.createPost = (req, res, next) => {
     const UserId = req.body.UserId;
     if (!req.body) {
         return res.status(403).send("Aucun contenu");
@@ -91,7 +60,29 @@ exports.createPost = (req, res, next) => {
         .catch((error) => res.status(500).send({
             error
         }))
-}
+} */
+
+exports.createPost = (req, res, next) => {
+    const postObject = req.body
+    const UserId = req.body.user;
+    console.log(UserId);
+    const firstName = req.body.firstName
+    if (req.file) {
+        postObject.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    }
+    const post = new Post({
+        ...postObject,
+        UserId: UserId,
+        firstName: firstName
+    });
+    post.save()
+        .then(() => res.status(201).json({
+            message: 'Post registered !'
+        }))
+        .catch(error => res.status(400).json({
+            error
+        }));
+};
 
 
 /* exports.getAllPosts = (req, res) => {
@@ -105,7 +96,7 @@ exports.createPost = (req, res, next) => {
             error
         }));
 }; */
-
+/* 
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await models.Post.findAll({
@@ -125,8 +116,15 @@ exports.getAllPosts = async (req, res) => {
     } catch (error) {
         return res.status(500).send(error.message);
     }
-}
+} */
 
+exports.getAllPosts = (req, res) => {
+    Post.findAll()
+        .then(posts => res.status(200).json(posts))
+        .catch(error => res.status(400).json({
+            error
+        }));
+};
 
 // Get One Post
 exports.getOnePost = (req, res) => {

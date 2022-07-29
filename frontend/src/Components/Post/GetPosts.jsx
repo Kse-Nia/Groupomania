@@ -1,5 +1,12 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  Fragment,
+} from "react";
 import axios from "axios";
+import { AuthContext } from "../../App";
 
 // CSS
 import Avatar from "@mui/material/Avatar";
@@ -13,14 +20,31 @@ import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
 
 const GetPosts = () => {
+  const { AuthState } = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     getPosts();
   }, []);
 
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const getPosts = useCallback(() => {
+    axios
+      .get("http://localhost:8080/api/posts", {
+        headers: {
+          Authorization: `Bearer ${AuthState.token}`,
+        },
+      })
+      .then((response) => {
+        setPosts(response.data);
+      });
+  }, [AuthState.token]);
 
-  const getPosts = async () => {
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  /*   const getPosts = async () => {
     try {
       const res = await axios.get("http://localhost:8080/api/posts");
       setPosts(res.data.results);
@@ -28,19 +52,32 @@ const GetPosts = () => {
     } catch (error) {
       alert(error.message);
     }
-  };
+  }; */
 
   return (
     <Fragment>
-      <Container>
+      {/*  <Container>
         {loading &&
           posts.map((post) => (
             <Card>
-              <Typography key={post.user}></Typography>
+              <Typography key={post.id}></Typography>
               <Typography key={post.createdAt}></Typography>
               <Typography key={post.content}></Typography>
             </Card>
           ))}
+      </Container> */}
+
+      <Container>
+        {posts.map((post) => {
+          return (
+            <Card>
+              <Typography key={post.id}></Typography>
+              <Typography key={post.createdAt}></Typography>
+              <Typography key={post.content}></Typography>
+              <img src={require(post.imageUrl)} alt="" />
+            </Card>
+          );
+        })}
       </Container>
     </Fragment>
   );

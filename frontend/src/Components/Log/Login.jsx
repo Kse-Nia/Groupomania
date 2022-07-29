@@ -33,6 +33,7 @@ const Login = () => {
       },
     })
       .then((res) => {
+        navigate.push("/dashboard");
         if (res.status === 200) {
           dispatchAuthState({
             // Permet un changement de state; Propriété payload qui contient les données;
@@ -40,7 +41,6 @@ const Login = () => {
             payload: res.data,
           });
         }
-        navigate.push("/dashboard");
       })
       .catch(function (error) {
         if (error.response) {
