@@ -109,7 +109,6 @@ const Users = () => {
               width: 400,
             }}
           >
-            {" "}
             <SearchIcon />
             <InputBase
               sx={{ ml: 1, flex: 1 }}
@@ -137,7 +136,7 @@ const Users = () => {
                   >
                     <Card>
                       <ProfileAvatar
-                        photo={user.imageUrl}
+                        imageUrl={user.imageUrl}
                         className="user_avatar"
                       />
                       <Typography>Prénom: {user.firstName}</Typography>

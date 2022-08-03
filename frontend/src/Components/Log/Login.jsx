@@ -15,11 +15,11 @@ import Container from "@mui/material/Container";
 import { Card } from "@mui/material";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { dispatchAuthState } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ const Login = () => {
       },
     })
       .then((res) => {
-        navigate.push("/dashboard");
+        navigate("/dashboard");
         if (res.status === 200) {
           dispatchAuthState({
             // Permet un changement de state; Propriété payload qui contient les données;

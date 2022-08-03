@@ -60,6 +60,15 @@ const CardPost = (props) => {
         setErrorMessage(null);
         setSelectedFile();
         setMedia("default");
+        toast.success("Posté !", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         console.log("Posté");
       })
       .catch((error) => {
@@ -94,6 +103,17 @@ const CardPost = (props) => {
           }}
         >
           <Typography variant="h4">Créer un nouveau post</Typography>
+          <ToastContainer
+            position="top-center"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <Formik
             initialValues={{ content: "" }}
             onSubmit={(values) => {

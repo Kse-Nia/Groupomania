@@ -11,7 +11,7 @@ const Navbar = () => {
   function clearStorage() {
     window.localStorage.clear();
     window.location.reload();
-    navigate.push("/");
+    navigate("/");
   }
 
   return (
